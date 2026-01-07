@@ -13,20 +13,25 @@
  * 
  * 3. Permission-Based Access Control:
  *    app.put('/properties/:id', ({ user, resourceId }) => updateProperty(resourceId), {
- *      requirePermission: { user: ['update'], property: ['delete'] }
+ *      requirePermission: { property: ['update'] }
  *    })
  * 
  * Available Roles:
  * - admin: Full system access
- * - user: Regular user access
+ * - landlord: Property owner, can manage their properties and tenants
+ * - manager: Property management, can handle day-to-day operations
+ * - staff: Limited access, can handle maintenance and view data
+ * - tenant: Can view their own data and create maintenance requests
  * 
- * Available Resources:
- * - user (permissions: create, list, set-role, ban, delete)
- * - session (permissions: list, revoke)
- * 
- * Available Actions:
- * - create, list, set-role, ban, delete (user)
- * - list, revoke (session)
+ * Available Resources & Permissions:
+ * - user: create, list, set-role, ban, delete
+ * - session: list, revoke
+ * - property: create, read, update, delete, list
+ * - tenant: create, read, update, delete, list
+ * - lease: create, read, update, delete, list
+ * - maintenance: create, read, update, delete, list, assign
+ * - payment: create, read, update, list
+ * - document: create, read, delete, list
  */
 
 import { auth } from "@/lib/auth";
@@ -102,7 +107,7 @@ export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
 
         if (!session) return status(401);
 
-        const userRole = (session.user.role || "user") as "admin" | "user";
+        const userRole = (session.user.role || "tenant") as "admin" | "landlord" | "manager" | "staff" | "tenant";
         const hasPermission = await auth.api.userHasPermission({
           body: {
             role: userRole,
