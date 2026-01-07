@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { date, numeric, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { date, numeric, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { properties } from "./properties";
 import { units } from "./units";
@@ -7,8 +7,8 @@ import { units } from "./units";
 // Maintenance requests table logs repair tickets, assignment, priority, and cost tracking
 export const maintenanceRequests = pgTable("maintenance_requests", {
   ...commonColumns,
-  propertyId: varchar("property_id", { length: 255 }).notNull().references(() => properties.id, { onDelete: "cascade" }),
-  unitId: varchar("unit_id", { length: 255 }).references(() => units.id, { onDelete: "cascade" }),
+  propertyId: uuid("property_id").notNull().references(() => properties.id, { onDelete: "cascade" }),
+  unitId: uuid("unit_id").references(() => units.id, { onDelete: "cascade" }),
   requestedById: varchar("requested_by_id", { length: 255 }).notNull(),
   assignedToId: varchar("assigned_to_id", { length: 255 }),
   title: varchar("title", { length: 255 }).notNull(),

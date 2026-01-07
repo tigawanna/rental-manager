@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { date, numeric, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { date, numeric, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { units } from "./units";
 import { payments } from "./payments";
@@ -7,7 +7,7 @@ import { payments } from "./payments";
 // Leases table captures rental agreements between tenants and units with rent terms
 export const leases = pgTable("leases", {
   ...commonColumns,
-  unitId: varchar("unit_id", { length: 255 }).notNull().references(() => units.id, { onDelete: "cascade" }),
+  unitId: uuid("unit_id").notNull().references(() => units.id, { onDelete: "cascade" }),
   tenantId: varchar("tenant_id", { length: 255 }).notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),

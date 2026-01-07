@@ -116,8 +116,8 @@ CREATE TABLE "documents" (
 	"file_size" integer,
 	"category" varchar(50) NOT NULL,
 	"uploaded_by_id" varchar(255) NOT NULL,
-	"property_id" varchar(255),
-	"lease_id" varchar(255)
+	"property_id" uuid,
+	"lease_id" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "properties" (
@@ -143,7 +143,7 @@ CREATE TABLE "units" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp,
-	"property_id" varchar(255) NOT NULL,
+	"property_id" uuid NOT NULL,
 	"unit_number" varchar(50) NOT NULL,
 	"floor" integer,
 	"bedrooms" integer DEFAULT 1 NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE "leases" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp,
-	"unit_id" varchar(255) NOT NULL,
+	"unit_id" uuid NOT NULL,
 	"tenant_id" varchar(255) NOT NULL,
 	"start_date" date NOT NULL,
 	"end_date" date NOT NULL,
@@ -176,7 +176,7 @@ CREATE TABLE "payments" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp,
-	"lease_id" varchar(255) NOT NULL,
+	"lease_id" uuid NOT NULL,
 	"tenant_id" varchar(255) NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
 	"due_date" date NOT NULL,
@@ -192,8 +192,8 @@ CREATE TABLE "maintenance_requests" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp,
-	"property_id" varchar(255) NOT NULL,
-	"unit_id" varchar(255),
+	"property_id" uuid NOT NULL,
+	"unit_id" uuid,
 	"requested_by_id" varchar(255) NOT NULL,
 	"assigned_to_id" varchar(255),
 	"title" varchar(255) NOT NULL,

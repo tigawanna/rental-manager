@@ -1,12 +1,12 @@
 import { relations } from "drizzle-orm";
-import { date, numeric, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { date, numeric, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { leases } from "./leases";
 
 // Payments table tracks rent and related charges against leases and tenants
 export const payments = pgTable("payments", {
   ...commonColumns,
-  leaseId: varchar("lease_id", { length: 255 }).notNull().references(() => leases.id, { onDelete: "cascade" }),
+  leaseId: uuid("lease_id").notNull().references(() => leases.id, { onDelete: "cascade" }),
   tenantId: varchar("tenant_id", { length: 255 }).notNull(),
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: date("due_date").notNull(),

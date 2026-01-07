@@ -1,5 +1,5 @@
 {
-  "id": "6a98903c-d5d4-479c-bdb7-2c6da72597fd",
+  "id": "129b93de-6998-4996-9d86-5e333c8f53dd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -949,13 +949,13 @@
         },
         "property_id": {
           "name": "property_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "lease_id": {
           "name": "lease_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -1135,7 +1135,7 @@
         },
         "property_id": {
           "name": "property_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1251,7 +1251,7 @@
         },
         "unit_id": {
           "name": "unit_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1360,7 +1360,7 @@
         },
         "lease_id": {
           "name": "lease_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1469,13 +1469,13 @@
         },
         "property_id": {
           "name": "property_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "unit_id": {
           "name": "unit_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },

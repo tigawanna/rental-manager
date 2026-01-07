@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { properties } from "./properties";
 import { leases } from "./leases";
@@ -14,8 +14,8 @@ export const documents = pgTable("documents", {
   fileSize: integer("file_size"), // in bytes
   category: varchar("category", { length: 50 }).notNull(), // lease_agreement, inspection, invoice, photo, other
   uploadedById: varchar("uploaded_by_id", { length: 255 }).notNull(),
-  propertyId: varchar("property_id", { length: 255 }).references(() => properties.id, { onDelete: "cascade" }),
-  leaseId: varchar("lease_id", { length: 255 }).references(() => leases.id, { onDelete: "cascade" }),
+  propertyId: uuid("property_id").references(() => properties.id, { onDelete: "cascade" }),
+  leaseId: uuid("lease_id").references(() => leases.id, { onDelete: "cascade" }),
 });
 
 // Document relations link files to optional property or lease context
