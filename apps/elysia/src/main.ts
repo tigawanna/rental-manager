@@ -4,7 +4,6 @@ import { root } from "@/controllers";
 import { openapi, fromTypes } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
 import { AUTHORIZED_ORIGINS } from "./utils/constants";
-import { betterAuthMiddleware } from "./controllers/auth";
 import { BetterAuthOpenAPI } from "./lib/auth";
 
 
