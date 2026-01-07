@@ -5,6 +5,8 @@ import { openapi, fromTypes } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
 import { AUTHORIZED_ORIGINS } from "./utils/constants";
 import { betterAuthMiddleware } from "./controllers/auth";
+import { BetterAuthOpenAPI } from "./lib/auth";
+
 
 
 // Export app instance for type generation
@@ -26,10 +28,10 @@ export const app = new Elysia({ adapter: node() })
       // OpenAPI documentation configuration
       documentation: {
         info: {
-          title: "Inventory Management API",
+          title: "Rental management API",
           version: "1.0.0",
           description:
-            "A comprehensive inventory management system with user authentication and product management",
+            "A comprehensive rental management system with user authentication and staff management",
         },
         // Define available tags for organizing endpoints
         tags: [
@@ -47,16 +49,8 @@ export const app = new Elysia({ adapter: node() })
           },
         ],
         // Security schemes definition
-        components: {
-          securitySchemes: {
-            bearerAuth: {
-              type: "http",
-              scheme: "bearer",
-              bearerFormat: "JWT",
-              description: "JWT Bearer token authentication",
-            },
-          },
-        },
+        components: await BetterAuthOpenAPI.components,
+        paths: await BetterAuthOpenAPI.getPaths(),
       },
     })
   )
