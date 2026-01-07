@@ -2,6 +2,7 @@ import { db } from "@/db/client";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, openAPI, organization } from "better-auth/plugins";
+import { ac, roles } from "./auth-rbac";
 
 
 export const auth = betterAuth({
@@ -11,7 +12,14 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
   }),
-  plugins: [openAPI(),admin(),organization()],
+  plugins: [
+    openAPI(),
+    admin({
+      ac,
+      roles,
+    }),
+    organization(),
+  ],
 });
 
 
