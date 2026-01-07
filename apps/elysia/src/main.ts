@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
 import { node } from "@elysiajs/node";
-import { root } from "@/controllers";
 import { openapi, fromTypes } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
 import { AUTHORIZED_ORIGINS } from "./utils/constants";
 import { BetterAuthOpenAPI } from "./lib/auth";
+import { allRoutes } from "./controllers/all";
 
 
 
@@ -53,7 +53,7 @@ export const app = new Elysia({ adapter: node() })
       },
     })
   )
-  .use(root)
+  .use(allRoutes)
   .listen(4000, ({ url }) => {
     console.log(`🦊 Elysia is running at ${url}`);
   });
