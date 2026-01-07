@@ -5,3 +5,4 @@ export * from "./leases";
 export * from "./payments";
 export * from "./maintenance";
 export * from "./documents";
+export * from "./auth-schema";
