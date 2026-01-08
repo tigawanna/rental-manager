@@ -5,5 +5,9 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 function RouteComponent() {
-  return <div className='bg-base-100'><Outlet/></div>
+  return (
+    <div className="min-h-screen w-full">
+      <Outlet />
+    </div>
+  );
 }

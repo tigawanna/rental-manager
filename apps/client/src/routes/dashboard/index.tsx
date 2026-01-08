@@ -7,11 +7,13 @@ export const Route = createFileRoute("/dashboard/")({
 
 function RouteComponent() {
   return (
-    <div className="content min-h-screen w-full bg-base-100">
-      Hello "/dashboard/"!
-      <Link to="/" className="btn">
-        <ChevronLeft /> Go to home
-      </Link>
+    <div className="min-h-screen w-full h-full flex justify-center items-center bg-base-100">
+      <div className="text-center flex flex-col gap-4">
+        <h1 className="text-4xl font-bold mb-4">Dashboard Home</h1>
+        <Link to="/" className="btn">
+          <ChevronLeft /> Go to home
+        </Link>
+      </div>
     </div>
   );
 }
