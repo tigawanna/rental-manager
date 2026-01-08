@@ -45,7 +45,7 @@ return (
             data-test="homepage-home-link"
             className="flex items-center gap-2 text-2xl font-bold hover:text-accent"
           >
-            My property manager
+            My rentals dashboard
             <MapPinHouse />
           </Link>
         </div>
@@ -71,7 +71,7 @@ return (
           data-test="sidebar-homepage-home-link"
           className="flex flex-col-reverse items-center gap-2 p-3 text-2xl font-bold hover:text-accent md:flex-row"
         >
-          My property manager
+          My rentals dashboard
           <MapPinHouse className="size-32 md:hidden" />
         </Link>
 

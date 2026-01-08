@@ -5,5 +5,5 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 function RouteComponent() {
-  return <div><Outlet/></div>
+  return <div className='bg-base-100'><Outlet/></div>
 }

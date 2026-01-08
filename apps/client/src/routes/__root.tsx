@@ -7,6 +7,11 @@ import { TViewer } from "@/data-access-layer/users/viewer";
 import { Toaster } from "@/components/ui/sonner";
 import { z } from "zod";
 
+import "@/view-transition/angled-transition.css";
+import "@/view-transition/wipe-transition.css";
+import "@/view-transition/slides-transition.css";
+import "@/view-transition/flip-transition.css";
+import "@/view-transition/vertical-transition.css";
 
 const searchparams = z.object({
   globalPage: z.number().optional(),
@@ -23,7 +28,7 @@ export const Route = createRootRouteWithContext<{
 
 export function RootComponent() {
   return (
-    <div className="content min-h-screen w-full">
+    <div className="content min-h-screen w-full bg-base-100">
       <Outlet />
       <Toaster />
       <TanStackDevtools
