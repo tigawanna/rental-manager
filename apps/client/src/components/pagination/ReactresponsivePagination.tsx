@@ -11,6 +11,7 @@ export function ListPagination({ total_pages }: ListingsPaginationProps) {
     from: "__root__",
   });
   const navigate = useNavigate({
+    // @ts-expect-error
     from: location.pathname,
   });
 

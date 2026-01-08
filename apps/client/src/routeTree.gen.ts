@@ -17,6 +17,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as DashboardUtilitiesRouteImport } from './routes/dashboard/utilities'
 import { Route as DashboardUnitsRouteImport } from './routes/dashboard/units'
+import { Route as DashboardTodosRouteImport } from './routes/dashboard/todos'
 import { Route as DashboardTenantsRouteImport } from './routes/dashboard/tenants'
 import { Route as DashboardStaffRouteImport } from './routes/dashboard/staff'
 import { Route as DashboardPaymentsRouteImport } from './routes/dashboard/payments'
@@ -62,6 +63,11 @@ const DashboardUnitsRoute = DashboardUnitsRouteImport.update({
   path: '/units',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
+const DashboardTodosRoute = DashboardTodosRouteImport.update({
+  id: '/todos',
+  path: '/todos',
+  getParentRoute: () => DashboardLayoutRoute,
+} as any)
 const DashboardTenantsRoute = DashboardTenantsRouteImport.update({
   id: '/tenants',
   path: '/tenants',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
   '/dashboard/units': typeof DashboardUnitsRoute
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth/': typeof AuthIndexRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
   '/dashboard/units': typeof DashboardUnitsRoute
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth': typeof AuthIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
   '/dashboard/units': typeof DashboardUnitsRoute
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth/': typeof AuthIndexRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/dashboard/payments'
     | '/dashboard/staff'
     | '/dashboard/tenants'
+    | '/dashboard/todos'
     | '/dashboard/units'
     | '/dashboard/utilities'
     | '/auth/'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/dashboard/payments'
     | '/dashboard/staff'
     | '/dashboard/tenants'
+    | '/dashboard/todos'
     | '/dashboard/units'
     | '/dashboard/utilities'
     | '/auth'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/dashboard/payments'
     | '/dashboard/staff'
     | '/dashboard/tenants'
+    | '/dashboard/todos'
     | '/dashboard/units'
     | '/dashboard/utilities'
     | '/auth/'
@@ -232,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardUnitsRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
+    '/dashboard/todos': {
+      id: '/dashboard/todos'
+      path: '/todos'
+      fullPath: '/dashboard/todos'
+      preLoaderRoute: typeof DashboardTodosRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     '/dashboard/tenants': {
       id: '/dashboard/tenants'
       path: '/tenants'
@@ -281,6 +300,7 @@ interface DashboardLayoutRouteChildren {
   DashboardPaymentsRoute: typeof DashboardPaymentsRoute
   DashboardStaffRoute: typeof DashboardStaffRoute
   DashboardTenantsRoute: typeof DashboardTenantsRoute
+  DashboardTodosRoute: typeof DashboardTodosRoute
   DashboardUnitsRoute: typeof DashboardUnitsRoute
   DashboardUtilitiesRoute: typeof DashboardUtilitiesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -290,6 +310,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardPaymentsRoute: DashboardPaymentsRoute,
   DashboardStaffRoute: DashboardStaffRoute,
   DashboardTenantsRoute: DashboardTenantsRoute,
+  DashboardTodosRoute: DashboardTodosRoute,
   DashboardUnitsRoute: DashboardUnitsRoute,
   DashboardUtilitiesRoute: DashboardUtilitiesRoute,
   DashboardIndexRoute: DashboardIndexRoute,

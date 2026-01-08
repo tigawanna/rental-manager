@@ -16,8 +16,7 @@ export function LandingPageNavbar({}: LandingPageNavbarProps) {
   );
 }
 //  home,about us , resurces, comunitty, contact us , products , blog,shop
-const landingPageRoutes= [
-
+const landingPageRoutes = [
   { name: "home", href: "/" },
   { name: "about us", href: "/about-us" },
   { name: "resources", href: "/resources" },
@@ -25,4 +24,4 @@ const landingPageRoutes= [
   { name: "products", href: "/products" },
   { name: "blog", href: "/blog" },
   { name: "shop", href: "/shop" },
-]
+];
