@@ -10,3 +10,5 @@ export const app = new Elysia({ adapter: node() })
   .listen(4000, ({ url }) => {
     console.log(`🦊 Elysia is running at ${url}`);
   });
+
+  export type App = typeof app; 
