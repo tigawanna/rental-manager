@@ -58,7 +58,7 @@ export function CurrentUser({}: CurrentUserProps) {
       </DropdownMenu>
     );
   }
-const avatarUrl = viewer.user?.image
+const avatarUrl = viewer.user?.image ?? "/blank-user.png";
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

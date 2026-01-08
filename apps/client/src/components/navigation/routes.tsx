@@ -1,10 +1,10 @@
 import { Droplet, Home, NotepadText, ShieldCheck, Store, User, Users, Wallet, Zap } from "lucide-react";
 
 export const dashboard_routes = [
-  { name: "shops", href: "/dashboard/shops", icon: <Store /> },
+  { name: "units", href: "/dashboard/units", icon: <Store /> },
   {
     name: "utilities",
-    href: "/dashboard/bills",
+    href: "/dashboard/utilities",
     icon: (
       <div className="flex">
         <Droplet className="fill-info text-info" />
