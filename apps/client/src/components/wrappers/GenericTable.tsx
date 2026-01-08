@@ -1,4 +1,4 @@
-import { useViewer } from "@/lib/tanstack/query/use-viewer";
+import { useViewer } from "@/data-access-layer/users/viewer";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Loader } from "lucide-react";
 import { useRef, useState } from "react";
@@ -20,7 +20,8 @@ export function GenericTable<T extends Record<string, any>>({
   updateItem,
 }: GenericTableProps<T>) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
-  const { role } = useViewer();
+  const { viewer } = useViewer();
+  const role = viewer?.role
   // @ts-expect-error
   const [input, setInput] = useState<T>({});
   const mutation = useMutation({

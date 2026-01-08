@@ -8,9 +8,12 @@ type ViewerPayloadError = Extract<InferGetSession, { data: null; error: any }>["
 type ViewerUser = NonNullable<ViewerPayloadData>["user"];
 type ViewerSession = NonNullable<ViewerPayloadData>["session"];
 
+
+export type TRoles = "tenant" | "staff" | "admin" | "manager";
 export type TViewer = {
   user?: ViewerUser;
   session?: ViewerSession;
+  role?: TRoles;
 };
 export const viewerqueryOptions = queryOptions({
   queryKey: ["viewer"],
@@ -42,6 +45,7 @@ export function useViewer() {
     viewer: {
       user: viewerQuery.data.data?.user,
       session: viewerQuery.data.data?.session,
+      role:undefined
     },
     logoutMutation,
   } as const;

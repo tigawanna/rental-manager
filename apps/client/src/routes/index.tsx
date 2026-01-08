@@ -1,5 +1,8 @@
+import { ProfileLinkCard } from "@/components/identity/ProfileLinkCard";
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 import { ThemeToggle } from "@/components/navigation/ThemeToggle";
+import { Helmet } from "@/components/wrappers/custom-helmet";
+import { useViewer } from "@/data-access-layer/users/viewer";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -10,30 +13,9 @@ function HomePage() {
   return (
     <div
       data-test="homepage"
-      className="justify-center flex h-full min-h-screen w-full flex-col items-center overflow-auto bg-gradient-to-br from-primary/60 via-red/60 to-primary/30">
+      className="justify-center flex h-full min-h-screen w-full flex-col items-center overflow-auto bg-linear-to-br from-primary/60 via-red/60 to-primary/30">
       <Helmet title="My property manager" description="Welcome to your property manager" />
-      {/* <picture className="fixed inset-0 z-0 size-full">
-        <source
-          media="(min-width:350px)"
-          className="size-full object-fill"
-          srcSet="https://picsum.photos/id/56/300/300"
-        />
-        <source
-          media="(min-width:465px)"
-          className="size-full object-fill"
-          srcSet="https://picsum.photos/id/56/500/500"
-        />
-        <source
-          media="(min-width:865px)"
-          className="size-full object-fill"
-          srcSet="https://picsum.photos/id/56/800/800"
-        />
-        <img
-          src="https://picsum.photos/id/56/500/500"
-          alt="main bg"
-          className="size-full object-fill"
-        />
-      </picture> */}
+
       <ResponsiveGenericToolbar>
         <div className="flex h-full  w-full flex-col items-center justify-center gap-5 p-3 ">
           <div
@@ -42,9 +24,9 @@ function HomePage() {
             <h1
               data-test="homepage-section-welcome"
               className="break-all text-7xl font-bold text-primary">
-              welcome {viewer?.username}
+              welcome {viewer.user?.name}
             </h1>
-            {viewer && <ProfileLinkCard viewer={viewer} />}
+            {viewer?.user && <ProfileLinkCard viewer={{...viewer.user,role:undefined}} />}
             <div
               data-test="homepage-section-links"
               className="min-h-fit w-full justify-center gap-5 text-4xl">
