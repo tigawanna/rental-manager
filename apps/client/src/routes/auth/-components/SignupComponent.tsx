@@ -1,30 +1,31 @@
-import { formOptions, useForm } from "@tanstack/react-form";
-import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TextFormField } from "@/lib/tanstack/form/TextFields";
-import { MutationButton } from "@/lib/tanstack/query/MutationButton";
-import { useState } from "react";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { authClient } from "@/lib/better-auth/client";
 import { viewerqueryOptions } from "@/data-access-layer/users/viewer";
+import { authClient } from "@/lib/better-auth/client";
+import { useAppForm } from "@/lib/tanstack/form";
+import { formOptions } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 interface SignupComponentProps {}
 
-type PropertyUserCreate={
+type PropertyUserCreate = {
   name: string;
   email: string;
   password: string;
+  passwordConfirm: string;
   image: string | undefined;
-}
+};
 
 const formOpts = formOptions({
   defaultValues: {
     name: "",
     email: "",
     password: "",
-    image: null,
-  },
+    passwordConfirm: "",
+    image: undefined,
+  } satisfies PropertyUserCreate,
 });
 
 export function SignupComponent({}: SignupComponentProps) {
@@ -34,6 +35,7 @@ export function SignupComponent({}: SignupComponentProps) {
   const [showPassword, setShowPassword] = useState(false);
   const qc = useQueryClient();
   const navigate = useNavigate({ from: "/auth/signup" });
+
   const mutation = useMutation({
     mutationFn: (data: PropertyUserCreate) => {
       return authClient.signUp.email({
@@ -41,129 +43,92 @@ export function SignupComponent({}: SignupComponentProps) {
         password: data.password,
         name: data.name,
         image: data.image,
-      })
-    
+      });
     },
     onSuccess(data) {
-      toast.success("Signed up",{
+      toast.success("Signed up", {
         description: `Welcome ${data.data?.user.name}`,
       });
       qc.invalidateQueries(viewerqueryOptions);
-      // qc.setQueryData(["viewer"], () => data);
       navigate({ to: "/auth", search: { returnTo: "/profile" } });
-      // if (typeof window !== "undefined") {
-      //   location.reload();
-      // }
     },
     onError(error) {
-      toast.error("Something went wrong",{
+      toast.error("Something went wrong", {
         description: `${error.message}`,
       });
     },
   });
-  const form = useForm({
+
+  const form = useAppForm({
     ...formOpts,
-      onSubmit: async ({ value }) => {
-      await mutation.mutate(value);
+    onSubmit: async ({ value }) => {
+      const formData = value as PropertyUserCreate;
+      if (formData.password !== formData.passwordConfirm) {
+        toast.error("Passwords don't match");
+        return;
+      }
+      await mutation.mutate(formData);
     },
   });
 
   return (
     <div className="flex h-full w-full items-center justify-evenly gap-2 p-5">
-      <img
-        src="/site.svg"
-        alt="logo"
-        className="hidden w-[30%] object-cover md:flex"
-      />
+      <img src="/site.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="rounded-lh flex h-full w-[90%] flex-col items-center justify-center gap-6 bg-base-300/20 p-[2%] md:w-[70%] lg:w-[40%]"
+        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 bg-base-300/20 p-[2%] md:w-[70%] lg:w-[40%]"
       >
-        <div className="gap- flex h-full w-full flex-col items-center justify-center">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <h1 className="text-4xl font-bold">Sign up</h1>
-          <form.Field
+
+          <form.AppField
             name="name"
             validators={{
-              onChange: z.string(),
+              onChange: z.string().min(1, "Name is required"),
             }}
-            children={(field) => {
-              return (
-                <TextFormField<PropertyUserCreate>
-                  field={field}
-                  fieldKey="username"
-                  inputOptions={{
-                    onBlur: field.handleBlur,
-                    onChange: (e) => {
-                      field.handleChange(e.target.value)
-                    },
-                  }}
-                />
-              );
-            }}
-          />
-          <form.Field
+          >
+            {(field) => <field.TextField label="Username" />}
+          </form.AppField>
+
+          <form.AppField
             name="email"
             validators={{
-              onChange: z.email(),
+              onChange: z.string().email("Invalid email address"),
             }}
-            children={(field) => {
-              return (
-                <TextFormField<PropertyUserCreate>
-                  field={field}
-                  fieldKey="email"
-                  inputOptions={{
-                    autoComplete: "email",
-                    onBlur: field.handleBlur,
-                    onChange: (e) => field.handleChange(e.target.value),
-                  }}
-                />
-              );
-            }}
-          />
-          <form.Field
+          >
+            {(field) => <field.EmailField />}
+          </form.AppField>
+
+          <form.AppField
             name="password"
             validators={{
-              onChange: z.string().min(8),
+              onChange: z.string().min(8, "Password must be at least 8 characters"),
             }}
-            children={(field) => {
-              return (
-                <TextFormField<PropertyUserCreate>
-                  field={field}
-                  fieldKey="password"
-                  inputOptions={{
-                    type: showPassword ? "text" : "password",
-                    onBlur: field.handleBlur,
-                    onChange: (e) => field.handleChange(e.target.value),
-                  }}
-                />
-              );
-            }}
-          />
-          <form.Field
+          >
+            {(field) => <field.PasswordField label="Password" showPassword={showPassword} />}
+          </form.AppField>
+
+          <form.AppField
             name="passwordConfirm"
             validators={{
-              onChange: z.string().min(8),
+              onChange: z.string().min(8, "Password must be at least 8 characters"),
+              onChangeListenTo: ["password"],
+              onChangeAsyncDebounceMs: 500,
             }}
-            children={(field) => {
-              return (
-                <TextFormField<PropertyUserCreate>
-                  field={field}
-                  fieldKey="passwordConfirm"
-                  fieldlabel="Confirm password"
-                  inputOptions={{
-                    type: showPassword ? "text" : "password",
-                    onBlur: field.handleBlur,
-                    onChange: (e) => field.handleChange(e.target.value),
-                  }}
-                />
-              );
-            }}
-          />
-          <div className="w-full p-5">
+          >
+            {(field) => (
+              <field.PasswordField
+                label="Confirm password"
+                showPassword={showPassword}
+              />
+            )}
+          </form.AppField>
+
+          <div className="w-full">
             <div className="flex w-full items-center justify-center gap-3">
               <label htmlFor="showPassword" className="text-sm">
                 Show password
@@ -179,7 +144,11 @@ export function SignupComponent({}: SignupComponentProps) {
             </div>
           </div>
         </div>
-        <MutationButton className="btn-primary" mutation={mutation} />
+
+        <form.AppForm>
+          <form.SubmitButton label="Sign up" className="w-full" />
+        </form.AppForm>
+
         <div className="flex gap-2">
           Already have an account?
           <Link to="/auth" search={{ returnTo }} className="text-primary">
