@@ -9,20 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MoviesRouteImport } from './routes/movies'
-import { Route as ActorsRouteImport } from './routes/actors'
+import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as MoviesFilmIdRouteImport } from './routes/movies.$filmId'
-import { Route as ActorsActorIdRouteImport } from './routes/actors.$actorId'
+import { Route as AuthIndexRouteImport } from './routes/auth/index'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 
-const MoviesRoute = MoviesRouteImport.update({
-  id: '/movies',
-  path: '/movies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ActorsRoute = ActorsRouteImport.update({
-  id: '/actors',
-  path: '/actors',
+const AuthLayoutRoute = AuthLayoutRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -30,78 +24,55 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MoviesFilmIdRoute = MoviesFilmIdRouteImport.update({
-  id: '/$filmId',
-  path: '/$filmId',
-  getParentRoute: () => MoviesRoute,
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthLayoutRoute,
 } as any)
-const ActorsActorIdRoute = ActorsActorIdRouteImport.update({
-  id: '/$actorId',
-  path: '/$actorId',
-  getParentRoute: () => ActorsRoute,
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthLayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/actors': typeof ActorsRouteWithChildren
-  '/movies': typeof MoviesRouteWithChildren
-  '/actors/$actorId': typeof ActorsActorIdRoute
-  '/movies/$filmId': typeof MoviesFilmIdRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/': typeof AuthIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/actors': typeof ActorsRouteWithChildren
-  '/movies': typeof MoviesRouteWithChildren
-  '/actors/$actorId': typeof ActorsActorIdRoute
-  '/movies/$filmId': typeof MoviesFilmIdRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth': typeof AuthIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/actors': typeof ActorsRouteWithChildren
-  '/movies': typeof MoviesRouteWithChildren
-  '/actors/$actorId': typeof ActorsActorIdRoute
-  '/movies/$filmId': typeof MoviesFilmIdRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/': typeof AuthIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/actors'
-    | '/movies'
-    | '/actors/$actorId'
-    | '/movies/$filmId'
+  fullPaths: '/' | '/auth' | '/auth/signup' | '/auth/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/actors' | '/movies' | '/actors/$actorId' | '/movies/$filmId'
-  id:
-    | '__root__'
-    | '/'
-    | '/actors'
-    | '/movies'
-    | '/actors/$actorId'
-    | '/movies/$filmId'
+  to: '/' | '/auth/signup' | '/auth'
+  id: '__root__' | '/' | '/auth' | '/auth/signup' | '/auth/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ActorsRoute: typeof ActorsRouteWithChildren
-  MoviesRoute: typeof MoviesRouteWithChildren
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/movies': {
-      id: '/movies'
-      path: '/movies'
-      fullPath: '/movies'
-      preLoaderRoute: typeof MoviesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/actors': {
-      id: '/actors'
-      path: '/actors'
-      fullPath: '/actors'
-      preLoaderRoute: typeof ActorsRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -111,59 +82,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/movies/$filmId': {
-      id: '/movies/$filmId'
-      path: '/$filmId'
-      fullPath: '/movies/$filmId'
-      preLoaderRoute: typeof MoviesFilmIdRouteImport
-      parentRoute: typeof MoviesRoute
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthLayoutRoute
     }
-    '/actors/$actorId': {
-      id: '/actors/$actorId'
-      path: '/$actorId'
-      fullPath: '/actors/$actorId'
-      preLoaderRoute: typeof ActorsActorIdRouteImport
-      parentRoute: typeof ActorsRoute
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthLayoutRoute
     }
   }
 }
 
-interface ActorsRouteChildren {
-  ActorsActorIdRoute: typeof ActorsActorIdRoute
+interface AuthLayoutRouteChildren {
+  AuthSignupRoute: typeof AuthSignupRoute
+  AuthIndexRoute: typeof AuthIndexRoute
 }
 
-const ActorsRouteChildren: ActorsRouteChildren = {
-  ActorsActorIdRoute: ActorsActorIdRoute,
+const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthSignupRoute: AuthSignupRoute,
+  AuthIndexRoute: AuthIndexRoute,
 }
 
-const ActorsRouteWithChildren =
-  ActorsRoute._addFileChildren(ActorsRouteChildren)
-
-interface MoviesRouteChildren {
-  MoviesFilmIdRoute: typeof MoviesFilmIdRoute
-}
-
-const MoviesRouteChildren: MoviesRouteChildren = {
-  MoviesFilmIdRoute: MoviesFilmIdRoute,
-}
-
-const MoviesRouteWithChildren =
-  MoviesRoute._addFileChildren(MoviesRouteChildren)
+const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
+  AuthLayoutRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ActorsRoute: ActorsRouteWithChildren,
-  MoviesRoute: MoviesRouteWithChildren,
+  AuthLayoutRoute: AuthLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

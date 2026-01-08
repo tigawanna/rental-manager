@@ -1,71 +1,43 @@
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-
-import Header from "../components/Header";
-
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
-
-import appCss from "../styles.css?url";
-
+import ReactQueryDevtoolsPanel from "@/lib/tanstack/query/devtools";
 import type { QueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { TViewer } from "@/data-access-layer/users/viewer";
+import { Toaster } from "@/components/ui/sonner";
 
-interface MyRouterContext {
-  queryClient: QueryClient;
-}
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Movie Rentals - TanStack DB Query-Driven Sync",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-
-  shellComponent: RootDocument,
+const searchparams = z.object({
+  globalPage: z.number().optional(),
+  globalSearch: z.string().optional(),
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+  viewer?: TViewer;
+}>()({
+  component: RootComponent,
+  validateSearch: (search) => searchparams.parse(search),
+});
+
+export function RootComponent() {
   return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body className="min-h-screen flex flex-col">
-        <Header />
-        {children}
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
-        <Scripts />
-      </body>
-    </html>
+    <div className="content min-h-screen w-full">
+      <Outlet />
+      <Toaster />
+      <TanStackDevtools
+        config={{
+          position: "bottom-right",
+        }}
+        plugins={[
+          {
+            name: "Tanstack Router",
+            render: <TanStackRouterDevtoolsPanel />,
+          },
+          ReactQueryDevtoolsPanel,
+        ]}
+      />
+    </div>
   );
 }
