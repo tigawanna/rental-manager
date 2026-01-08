@@ -7,6 +7,12 @@ import { RouterPendingComponent } from "./lib/tanstack/router/RouterPendingCompo
 import { RouterErrorComponent } from "./lib/tanstack/router/routerErrorComponent";
 import { RouterNotFoundComponent } from "./lib/tanstack/router/RouterNotFoundComponent";
 import { App } from "./App";
+import "@/view-transition/angled-transition.css";
+import "@/view-transition/wipe-transition.css";
+import "@/view-transition/slides-transition.css";
+import "@/view-transition/flip-transition.css";
+import "@/view-transition/vertical-transition.css";
+import "./styles.css";
 
 export const queryClient = new QueryClient({
   mutationCache: new MutationCache({
