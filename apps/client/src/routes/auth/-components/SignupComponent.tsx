@@ -46,6 +46,12 @@ export function SignupComponent({}: SignupComponentProps) {
       });
     },
     onSuccess(data) {
+      if(data.error){
+        toast.error("Something went wrong", {
+          description: `${data.error.message}`,
+        });
+        return;
+      }
       toast.success("Signed up", {
         description: `Welcome ${data.data?.user.name}`,
       });

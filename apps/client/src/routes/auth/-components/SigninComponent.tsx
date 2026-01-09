@@ -37,6 +37,13 @@ export function SigninComponent({}: SigninComponentProps) {
       });
     },
     onSuccess(data) {
+      if(data.error){
+        toast.error("Something went wrong", {
+          description: `${data.error.message}`,
+          position:"top-center"
+        });
+        return;
+      }
       toast.success("Signed in", {
         description: `Welcome back ${data.data?.user.name}`,
       });

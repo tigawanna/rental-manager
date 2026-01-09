@@ -3,9 +3,11 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, openAPI, organization, apiKey, bearer } from "better-auth/plugins";
 import { ac, roles } from "./auth-rbac";
+import { AUTHORIZED_ORIGINS } from "@/utils/constants";
 
 
 export const auth = betterAuth({
+  trustedOrigins:AUTHORIZED_ORIGINS,
   emailAndPassword: {
     enabled: true,
   },
