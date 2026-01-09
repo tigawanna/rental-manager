@@ -4,10 +4,17 @@ import { cors } from "@elysiajs/cors";
 import { AUTHORIZED_ORIGINS } from "@/utils/constants";
 import { auth, BetterAuthOpenAPI } from "@/lib/auth";
 import { indexRoute } from ".";
+import { logger } from "@bogeychan/elysia-logger";
 
 
 
 export const allRoutes = new Elysia()
+  .use(
+    logger({
+      level: "info",
+      
+    })
+  )
   .use(
     cors({
       origin: AUTHORIZED_ORIGINS,
@@ -51,5 +58,5 @@ export const allRoutes = new Elysia()
       },
     })
   )
-  .mount("/auth", auth.handler)
+  .mount(auth.handler)
   .use(indexRoute);

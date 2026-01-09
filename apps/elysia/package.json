@@ -16,6 +16,7 @@
     "drizzle:migrate": "drizzle-kit migrate "
   },
   "dependencies": {
+    "@bogeychan/elysia-logger": "^0.1.10",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/node": "^1.4.3",
     "@elysiajs/openapi": "^1.4.13",
