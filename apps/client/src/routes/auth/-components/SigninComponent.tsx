@@ -2,7 +2,7 @@ import { authClient } from "@/lib/better-auth/client";
 import { useAppForm } from "@/lib/tanstack/form";
 import { formOptions } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -63,24 +63,22 @@ export function SigninComponent({}: SigninComponentProps) {
 
   return (
     <div className="flex h-full w-full items-center justify-evenly gap-2 p-5">
-      <img src="/site.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
+      <img src="/logo.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 p-[2%] md:w-[70%] lg:w-[40%]"
-      >
+        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 p-[2%] md:w-[70%] lg:w-[40%]">
         <div className="flex w-full flex-col items-center justify-center gap-4">
           <h1 className="text-4xl font-bold">Sign in</h1>
-          
+
           <form.AppField
             name="email"
             validators={{
               onChange: z.string().min(1, "Email is required"),
-            }}
-          >
+            }}>
             {(field) => <field.TextField label="Email or username" />}
           </form.AppField>
 
@@ -88,8 +86,7 @@ export function SigninComponent({}: SigninComponentProps) {
             name="password"
             validators={{
               onChange: z.string().min(8, "Password must be at least 8 characters"),
-            }}
-          >
+            }}>
             {(field) => <field.PasswordField label="Password" showPassword={showPassword} />}
           </form.AppField>
 
@@ -102,7 +99,7 @@ export function SigninComponent({}: SigninComponentProps) {
                 type="checkbox"
                 id="showPassword"
                 name="showPassword"
-                className="checkbox-primary checkbox"
+                className="checkbox-primary checkbox ring-1 ring-primary"
                 checked={showPassword}
                 onChange={() => setShowPassword(!showPassword)}
               />
@@ -114,9 +111,14 @@ export function SigninComponent({}: SigninComponentProps) {
           <form.SubmitButton label="Sign in" className="w-full" />
         </form.AppForm>
 
-        <div className="flex flex-col items-center justify-center gap-2">
-          Don&apos;t have an account?
-          <div className="flex gap-2">
+        <div className="flex w-full flex-col items-center justify-center gap-4">
+          <div className="flex items-center gap-1">
+            <span>Don&apos;t have an account?</span>
+            <Link to="/auth/signup" search={{ returnTo }} className="link link-primary">
+              Sign up
+            </Link>
+          </div>
+          <div className="flex w-full flex-wrap items-center justify-center gap-2">
             <button
               type="button"
               disabled={mutation.isPending}
@@ -124,8 +126,7 @@ export function SigninComponent({}: SigninComponentProps) {
               onClick={() => {
                 form.setFieldValue("email", "stranger1@email.com");
                 form.setFieldValue("password", "stranger1@email.com");
-              }}
-            >
+              }}>
               Login as stranger 1
             </button>
             <button
@@ -135,8 +136,7 @@ export function SigninComponent({}: SigninComponentProps) {
               onClick={() => {
                 form.setFieldValue("email", "stranger2@email.com");
                 form.setFieldValue("password", "stranger2@email.com");
-              }}
-            >
+              }}>
               Login as stranger 2
             </button>
           </div>

@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { SigninComponent } from "./-components/SigninComponent";
 import { Helmet } from "@/components/wrappers/custom-helmet";
+import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 
 const searchparams = z.object({
   returnTo: z.string(),
@@ -21,11 +22,12 @@ export const Route = createFileRoute("/auth/")({
 interface SigninPageProps {}
 
 export function SigninPage({}: SigninPageProps) {
-  
   return (
     <div className="flex min-h-screen flex-col items-center justify-center ">
-      <Helmet title="Property | Signin" description="Login to your account" />
-      <SigninComponent />
+      <ResponsiveGenericToolbar>
+        <Helmet title="Property | Signin" description="Login to your account" />
+        <SigninComponent />
+      </ResponsiveGenericToolbar>
     </div>
   );
 }

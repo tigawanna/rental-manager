@@ -1,10 +1,8 @@
-import { ProfileLinkCard } from "@/components/identity/ProfileLinkCard";
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
-import { ThemeToggle } from "@/components/navigation/ThemeToggle";
 import { Helmet } from "@/components/wrappers/custom-helmet";
 import { useViewer } from "@/data-access-layer/users/viewer";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, Building2, DollarSign, User, UserCog, Users } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: HomePage });
 
@@ -13,43 +11,82 @@ function HomePage() {
   return (
     <div
       data-test="homepage"
-      className="justify-center flex h-full min-h-screen w-full flex-col items-center overflow-auto bg-linear-to-br from-primary/60 via-red/60 to-primary/30">
+      className="flex h-full min-h-screen w-full flex-col items-center bg-base-100">
       <Helmet title="My property manager" description="Welcome to your property manager" />
 
       <ResponsiveGenericToolbar>
-        <div className="flex h-full  w-full flex-col items-center justify-center gap-5 p-3 ">
-          <div
-            data-test="homepage-section"
-            className="grid grid-cols-1 justify-center gap-[5%]  *:flex *:items-center *:rounded-xl *:bg-base-200/40 *:p-5 md:grid-cols-2 lg:w-[80%] lg:grid-cols-2">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-10 p-5">
+          <div className="flex flex-col items-center gap-4 text-center">
             <h1
               data-test="homepage-section-welcome"
-              className="break-all text-7xl font-bold text-primary">
-              welcome {viewer.user?.name}
+              className="text-5xl font-bold text-base-content md:text-6xl">
+              Welcome Back{viewer.user?.name ? `, ${viewer.user.name}` : ""}
             </h1>
-            {viewer?.user && <ProfileLinkCard viewer={{...viewer.user,role:undefined}} />}
-            <div
-              data-test="homepage-section-links"
-              className="min-h-fit w-full justify-center gap-5 text-4xl">
-              {viewer ? (
-                <Link
-                  to="/dashboard"
-                  data-test="homepage-section--dashboard-link"
-                  className="group flex items-center justify-center">
-                  Proceed to Dashboard
-                  <ArrowRightIcon className="size-10 group-hover:animate-ping group-hover:text-secondary" />
-                </Link>
-              ) : (
-                <Link
-                  className="group flex items-center justify-center gap-2"
-                  to="/auth"
-                  search={{ returnTo: "/dashboard" }}>
-                  Login
-                  <ArrowRightIcon className="size-10 group-hover:animate-ping group-hover:text-secondary" />
-                </Link>
-              )}
-            </div>
+            <p className="text-lg text-base-content/70">
+              Manage your properties, tenants, and rentals all in one place
+            </p>
           </div>
-          <div className="h-24 w-full -z-10 " />
+
+          <div className="flex flex-wrap gap-4 w-full max-w-2xl justify-center">
+            <Link
+              to="/dashboard"
+              data-test="homepage-section--dashboard-link"
+              className="btn btn-primary btn-lg gap-2">
+              <span>Dashboard</span>
+              <ArrowRightIcon className="size-6" />
+            </Link>
+            <Link to="/profile" className="btn btn-outline btn-lg gap-2">
+              <User className="size-5" />
+              <span>Profile</span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mt-10">
+            <Link
+              to="/dashboard/units"
+              className="card bg-base-200 hover:bg-base-300 shadow-lg transition-all hover:scale-105">
+              <div className="card-body items-center text-center">
+                <Building2 className="size-12 text-primary mb-2" />
+                <h3 className="card-title text-lg">Units</h3>
+                <p className="text-sm text-base-content/70">
+                  View and manage rental units
+                </p>
+              </div>
+            </Link>
+            <Link
+              to="/dashboard/tenants"
+              className="card bg-base-200 hover:bg-base-300 shadow-lg transition-all hover:scale-105">
+              <div className="card-body items-center text-center">
+                <Users className="size-12 text-primary mb-2" />
+                <h3 className="card-title text-lg">Tenants</h3>
+                <p className="text-sm text-base-content/70">
+                  View tenant details and lease agreements
+                </p>
+              </div>
+            </Link>
+            <Link
+              to="/dashboard/payments"
+              className="card bg-base-200 hover:bg-base-300 shadow-lg transition-all hover:scale-105">
+              <div className="card-body items-center text-center">
+                <DollarSign className="size-12 text-primary mb-2" />
+                <h3 className="card-title text-lg">Payments</h3>
+                <p className="text-sm text-base-content/70">
+                  Track rent payments and billing history
+                </p>
+              </div>
+            </Link>
+            <Link
+              to="/dashboard/staff"
+              className="card bg-base-200 hover:bg-base-300 shadow-lg transition-all hover:scale-105">
+              <div className="card-body items-center text-center">
+                <UserCog className="size-12 text-primary mb-2" />
+                <h3 className="card-title text-lg">Staff</h3>
+                <p className="text-sm text-base-content/70">
+                  Manage staff accounts and permissions
+                </p>
+              </div>
+            </Link>
+          </div>
         </div>
       </ResponsiveGenericToolbar>
     </div>

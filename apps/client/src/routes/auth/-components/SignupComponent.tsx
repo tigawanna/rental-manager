@@ -73,15 +73,14 @@ export function SignupComponent({}: SignupComponentProps) {
 
   return (
     <div className="flex h-full w-full items-center justify-evenly gap-2 p-5">
-      <img src="/site.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
+      <img src="/logo.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 bg-base-300/20 p-[2%] md:w-[70%] lg:w-[40%]"
-      >
+        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 bg-base-300/20 p-[2%] md:w-[70%] lg:w-[40%]">
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <h1 className="text-4xl font-bold">Sign up</h1>
 
@@ -89,17 +88,15 @@ export function SignupComponent({}: SignupComponentProps) {
             name="name"
             validators={{
               onChange: z.string().min(1, "Name is required"),
-            }}
-          >
+            }}>
             {(field) => <field.TextField label="Username" />}
           </form.AppField>
 
           <form.AppField
             name="email"
             validators={{
-              onChange: z.string().email("Invalid email address"),
-            }}
-          >
+              onChange: z.email("Invalid email address"),
+            }}>
             {(field) => <field.EmailField />}
           </form.AppField>
 
@@ -107,8 +104,7 @@ export function SignupComponent({}: SignupComponentProps) {
             name="password"
             validators={{
               onChange: z.string().min(8, "Password must be at least 8 characters"),
-            }}
-          >
+            }}>
             {(field) => <field.PasswordField label="Password" showPassword={showPassword} />}
           </form.AppField>
 
@@ -118,13 +114,9 @@ export function SignupComponent({}: SignupComponentProps) {
               onChange: z.string().min(8, "Password must be at least 8 characters"),
               onChangeListenTo: ["password"],
               onChangeAsyncDebounceMs: 500,
-            }}
-          >
+            }}>
             {(field) => (
-              <field.PasswordField
-                label="Confirm password"
-                showPassword={showPassword}
-              />
+              <field.PasswordField label="Confirm password" showPassword={showPassword} />
             )}
           </form.AppField>
 
@@ -137,7 +129,7 @@ export function SignupComponent({}: SignupComponentProps) {
                 type="checkbox"
                 id="showPassword"
                 name="showPassword"
-                className="checkbox-primary checkbox"
+                className="checkbox-primary checkbox ring-1 ring-primary"
                 checked={showPassword}
                 onChange={() => setShowPassword(!showPassword)}
               />
@@ -149,12 +141,11 @@ export function SignupComponent({}: SignupComponentProps) {
           <form.SubmitButton label="Sign up" className="w-full" />
         </form.AppForm>
 
-        <div className="flex gap-2">
-          Already have an account?
-          <Link to="/auth" search={{ returnTo }} className="text-primary">
+        <div className="flex items-center gap-1">
+          <span>Already have an account?</span>
+          <Link to="/auth" search={{ returnTo }} className="link link-primary">
             Sign in
           </Link>
-          instead
         </div>
       </form>
     </div>
