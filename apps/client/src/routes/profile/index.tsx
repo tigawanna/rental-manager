@@ -1,12 +1,13 @@
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 import { Helmet } from "@/components/wrappers/custom-helmet";
-import { useViewer } from "@/data-access-layer/users/viewer";
+import { TRoles, useViewer } from "@/data-access-layer/users/viewer";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Footer } from "react-day-picker";
 import { AccountActions } from "./-components/AccountActions";
 import { ChangePasswordForm } from "./-components/ChangePasswordForm";
 import { EditProfileForm } from "./-components/EditProfileForm";
 import { UserProfileCard } from "./-components/UserProfileCard";
+
 
 export const Route = createFileRoute("/profile/")({
   component: RouteComponent,
@@ -47,7 +48,7 @@ function RouteComponent() {
               <UserProfileCard
                 user={{
                   ...viewer.user,
-                  role: viewer.role,
+                  role: viewer.user?.role as TRoles,
                 }}
               />
             </div>

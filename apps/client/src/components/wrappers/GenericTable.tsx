@@ -21,7 +21,7 @@ export function GenericTable<T extends Record<string, any>>({
 }: GenericTableProps<T>) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const { viewer } = useViewer();
-  const role = viewer?.role
+  const role = viewer?.user?.role
   // @ts-expect-error
   const [input, setInput] = useState<T>({});
   const mutation = useMutation({
