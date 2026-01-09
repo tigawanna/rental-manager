@@ -10,5 +10,9 @@ export const Route = createFileRoute("/dashboard/admin")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <div className="min-h-screen w-full h-full flex justify-center items-center">
+      <Outlet />
+    </div>
+  );
 }

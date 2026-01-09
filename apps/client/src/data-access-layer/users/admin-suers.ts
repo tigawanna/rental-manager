@@ -3,19 +3,23 @@ import { queryOptions } from "@tanstack/react-query";
 import { UserWithRole } from "better-auth/plugins";
 
 export type AdminUsersQueryOptionsParams = {
-    searchValue?: string | undefined;
-    searchField?: "email" | "name" | undefined;
-    searchOperator?: "contains" | "starts_with" | "ends_with" | undefined;
-    limit?: string | number | undefined;
-    offset?: string | number | undefined;
-    sortBy?: string | undefined;
-    sortDirection?: "asc" | "desc" | undefined;
-    filterField?: string | undefined;
-    filterValue?: string | number | boolean | undefined;
-    filterOperator?: "eq" | "contains" | "ne" | "lt" | "lte" | "gt" | "gte" 
+  searchValue?: string | undefined;
+  searchField?: "email" | "name" | undefined;
+  searchOperator?: "contains" | "starts_with" | "ends_with" | undefined;
+  limit?: string | number | undefined;
+  offset?: string | number | undefined;
+  sortBy?: string | undefined;
+  sortDirection?: "asc" | "desc" | undefined;
+  filterField?: string | undefined;
+  filterValue?: string | number | boolean | undefined;
+  filterOperator?: "eq" | "contains" | "ne" | "lt" | "lte" | "gt" | "gte";
 };
+
 type InferListUsers = Awaited<ReturnType<typeof authClient.admin.listUsers>>;
-export type AdminUsersResult = NonNullable<Extract<InferListUsers, { data: any; error: null }>["data"]> &
+
+export type AdminUsersResult = NonNullable<
+  Extract<InferListUsers, { data: any; error: null }>["data"]
+> &
   (
     | { users: UserWithRole[]; total: number; limit?: number; offset?: number }
     | { users: never[]; total: number }
@@ -34,8 +38,20 @@ export function adminUsers({
   filterOperator,
 }: AdminUsersQueryOptionsParams) {
   return queryOptions({
-    queryKey: ["admin-users", searchValue, searchField, searchOperator, limit, offset, sortBy, sortDirection, filterField, filterValue, filterOperator],
-    queryFn: async ()=> {
+    queryKey: [
+      "admin-users",
+      searchValue,
+      searchField,
+      searchOperator,
+      limit,
+      offset,
+      sortBy,
+      sortDirection,
+      filterField,
+      filterValue,
+      filterOperator,
+    ],
+    queryFn: async () => {
       const { data, error } = await authClient.admin.listUsers({
         query: {
           searchValue,
@@ -50,9 +66,13 @@ export function adminUsers({
           filterOperator,
         },
       });
-      if (error) throw error;
-      // Ensure a consistent return shape
-      return (data ?? { users: [], total: 0 }) as AdminUsersResult;
+      if (error) {
+        return { data: null, error };
+      }
+      if (!("limit" in data && "offset" in data)) {
+        return { data: null, error: new Error("No data available") };
+      }
+      return { data, error: null };
     },
-});
+  });
 }
