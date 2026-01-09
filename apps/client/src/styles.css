@@ -27,7 +27,7 @@
   /* Brand colors using earth green palette */
   --color-primary: oklch(from #267d42 l c h); /* earth-green-600 */
   --color-primary-content: oklch(from #ffffff l c h);
-  
+
   --color-secondary: oklch(from #f3efe7 l c h);
   --color-secondary-content: oklch(from #1b1d1a l c h);
 
@@ -57,8 +57,6 @@
   --noise: 0;
 }
 
-
-
 @plugin "daisyui/theme" {
   name: "dark";
   default: false;
@@ -73,13 +71,13 @@
   /* Brand colors using earth green palette - brighter for dark mode */
   --color-primary: oklch(from #56bc7d l c h); /* earth-green-400 brighter for dark */
   --color-primary-content: oklch(from #0b0f0d l c h);
-  
+
   --color-secondary: oklch(from #1a201c l c h);
   --color-secondary-content: oklch(from #e8ede9 l c h);
 
   --color-accent: oklch(50% 0.15 25); /* Darker, more readable earth-orange */
   --color-accent-content: oklch(90% 0.08 25); /* Softer but still readable content color */
- 
+
   --color-neutral: oklch(from #1a201c l c h); /* muted */
   --color-neutral-content: oklch(from #b6c2ba l c h); /* muted-foreground */
 
@@ -102,10 +100,6 @@
   --depth: 1;
   --noise: 0;
 }
-
-
-
-
 
 @custom-variant dark (&:is(.dark *));
 
@@ -218,7 +212,7 @@
   --border: color-mix(in oklch, var(--color-base-content) 20%, transparent);
   --input: color-mix(in oklch, var(--color-base-content) 20%, transparent);
   --ring: var(--color-primary);
-  
+
   --radius: var(--radius-box);
 
   --chart-1: var(--color-success);
@@ -235,6 +229,7 @@
   --sidebar-accent-foreground: var(--color-accent-content);
   --sidebar-border: var(--color-base-content);
   --sidebar-ring: var(--color-neutral);
+  --sidebar: hsl(0 0% 98%);
 }
 
 @theme inline {
@@ -293,6 +288,14 @@
   --color-earth-orange-700: oklch(from #c2410c l c h);
   --color-earth-orange-800: oklch(from #9a3412 l c h);
   --color-earth-orange-900: oklch(from #7c2d12 l c h);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
 }
 
 @layer base {
@@ -303,7 +306,6 @@
     @apply bg-background text-foreground;
   }
 }
-
 
 ::-webkit-scrollbar {
   width: 0.7vw;
@@ -333,8 +335,6 @@
   background-color: var(--color-accent);
 }
 
-
-
 ::-webkit-scrollbar:vertical {
   width: 5px;
   height: 5px;
@@ -362,4 +362,24 @@
 };
 @utility btn-outline {
   @apply border-border  hover:bg-primary/10 hover:text-primary
+};
+;
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+};
+;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

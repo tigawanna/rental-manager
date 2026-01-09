@@ -15,7 +15,7 @@ type DashboardRoute = {
   name: string;
   href: string;
   icon: React.ReactNode;
-  children?: DashboardRoute;
+  children?: DashboardRoute[];
 };
 type DashboardRouteProps = {
   iconSize?: number;
@@ -50,11 +50,11 @@ export const dashboard_routes = ({ iconSize }: DashboardRouteProps) =>
       name: "admin",
       href: "/dashboard/admin",
       icon: <LockIcon size={iconSize} />,
-      children: {
+      children: [{
         name: "users",
         href: "/dashboard/admin/users",
         icon: <User size={iconSize} />,
-      },
+      }],
     },
   ] satisfies readonly DashboardRoute[];
 
@@ -78,3 +78,4 @@ export const routes = [
     children: undefined,
   },
 ] as const;
+
