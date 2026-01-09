@@ -1,6 +1,6 @@
 import { ThemeToggle } from "@/components/navigation/ThemeToggle";
 import { Link } from "@tanstack/react-router";
-import { MapPinHouse } from "lucide-react";
+import { Building2, DollarSign, Home, LayoutDashboard, MapPinHouse, User, UserCog, Users } from "lucide-react";
 
 interface ResponsiveGenericToolbarProps {
 children: React.ReactNode
@@ -81,7 +81,7 @@ return (
         className="menu min-h-full w-80 bg-base-100 border-r border-base-300 p-4"
       >
         {/* Sidebar content here */}
-        <li className="menu-title">
+        <li className="menu-title mb-2">
           <Link
             to="/"
             data-test="sidebar-homepage-home-link"
@@ -89,6 +89,56 @@ return (
           >
             <MapPinHouse className="size-8" />
             <span>My Rentals</span>
+          </Link>
+        </li>
+
+        <div className="divider" />
+
+        {/* Main Navigation */}
+        <li>
+          <Link to="/" className="gap-3">
+            <Home className="size-5" />
+            Home
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard" className="gap-3">
+            <LayoutDashboard className="size-5" />
+            Dashboard
+          </Link>
+        </li>
+        <li>
+          <Link to="/profile" className="gap-3">
+            <User className="size-5" />
+            Profile
+          </Link>
+        </li>
+
+        <div className="divider">Quick Links</div>
+
+        {/* Quick Links */}
+        <li>
+          <Link to="/dashboard/units" className="gap-3">
+            <Building2 className="size-5" />
+            Units
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard/tenants" className="gap-3">
+            <Users className="size-5" />
+            Tenants
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard/payments" className="gap-3">
+            <DollarSign className="size-5" />
+            Payments
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard/staff" className="gap-3">
+            <UserCog className="size-5" />
+            Staff
           </Link>
         </li>
 

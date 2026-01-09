@@ -1,8 +1,9 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { Footer } from "@/components/navigation/Footer";
+import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
+import { Helmet } from "@/components/wrappers/custom-helmet";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { SigninComponent } from "./-components/SigninComponent";
-import { Helmet } from "@/components/wrappers/custom-helmet";
-import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 
 const searchparams = z.object({
   returnTo: z.string(),
@@ -27,6 +28,7 @@ export function SigninPage({}: SigninPageProps) {
       <ResponsiveGenericToolbar>
         <Helmet title="Property | Signin" description="Login to your account" />
         <SigninComponent />
+        <Footer />
       </ResponsiveGenericToolbar>
     </div>
   );

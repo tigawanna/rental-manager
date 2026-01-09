@@ -1,9 +1,9 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { SignupComponent } from "./-components/SignupComponent";
-import { z } from "zod";
-import { MapPinHouse } from "lucide-react";
+import { Footer } from "@/components/navigation/Footer";
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 import { Helmet } from "@/components/wrappers/custom-helmet";
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import { SignupComponent } from "./-components/SignupComponent";
 
 const searchparams = z.object({
   returnTo: z.string(),
@@ -21,6 +21,7 @@ export function SignupPage({}: SignupProps) {
       <ResponsiveGenericToolbar>
         <Helmet title="Property | Signup" description="Create a new account" />
         <SignupComponent />
+        <Footer />
       </ResponsiveGenericToolbar>
     </div>
   );

@@ -9,10 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as DashboardLayoutRouteImport } from './routes/dashboard/layout'
 import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as DashboardUtilitiesRouteImport } from './routes/dashboard/utilities'
@@ -23,11 +23,6 @@ import { Route as DashboardStaffRouteImport } from './routes/dashboard/staff'
 import { Route as DashboardPaymentsRouteImport } from './routes/dashboard/payments'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -41,6 +36,11 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -93,7 +93,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/dashboard': typeof DashboardLayoutRouteWithChildren
-  '/profile': typeof ProfileRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
@@ -103,10 +102,10 @@ export interface FileRoutesByFullPath {
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/profile': typeof ProfileRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
@@ -116,13 +115,13 @@ export interface FileRoutesByTo {
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth': typeof AuthIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/dashboard': typeof DashboardLayoutRouteWithChildren
-  '/profile': typeof ProfileRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
@@ -132,6 +131,7 @@ export interface FileRoutesById {
   '/dashboard/utilities': typeof DashboardUtilitiesRoute
   '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,7 +139,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
-    | '/profile'
     | '/auth/signup'
     | '/dashboard/payments'
     | '/dashboard/staff'
@@ -149,10 +148,10 @@ export interface FileRouteTypes {
     | '/dashboard/utilities'
     | '/auth/'
     | '/dashboard/'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/profile'
     | '/auth/signup'
     | '/dashboard/payments'
     | '/dashboard/staff'
@@ -162,12 +161,12 @@ export interface FileRouteTypes {
     | '/dashboard/utilities'
     | '/auth'
     | '/dashboard'
+    | '/profile'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/dashboard'
-    | '/profile'
     | '/auth/signup'
     | '/dashboard/payments'
     | '/dashboard/staff'
@@ -177,24 +176,18 @@ export interface FileRouteTypes {
     | '/dashboard/utilities'
     | '/auth/'
     | '/dashboard/'
+    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
-  ProfileRoute: typeof ProfileRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -214,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -324,7 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
-  ProfileRoute: ProfileRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

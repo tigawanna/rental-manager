@@ -1,3 +1,4 @@
+import { Footer } from "@/components/navigation/Footer";
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 import { Helmet } from "@/components/wrappers/custom-helmet";
 import { useViewer } from "@/data-access-layer/users/viewer";
@@ -15,7 +16,7 @@ function HomePage() {
       <Helmet title="My property manager" description="Welcome to your property manager" />
 
       <ResponsiveGenericToolbar>
-        <div className="flex h-full w-full flex-col items-center justify-center gap-10 p-5">
+        <div className="flex min-h-screen  h-full w-full flex-col items-center justify-center gap-10 p-5">
           <div className="flex flex-col items-center gap-4 text-center">
             <h1
               data-test="homepage-section-welcome"
@@ -88,6 +89,7 @@ function HomePage() {
             </Link>
           </div>
         </div>
+        <Footer />
       </ResponsiveGenericToolbar>
     </div>
   );
