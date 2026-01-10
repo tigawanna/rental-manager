@@ -1,10 +1,10 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarMenuSub,
-    useSidebar,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "@tanstack/react-router";
@@ -17,7 +17,7 @@ interface SidebarLinksProps {
 }
 
 export function SidebarLinks({ links, isNested = false }: SidebarLinksProps) {
-  const { state } = useSidebar();
+  const { state, open } = useSidebar();
   const showTooltips = state === "collapsed";
 
   if (links.length === 0) {
@@ -38,10 +38,10 @@ export function SidebarLinks({ links, isNested = false }: SidebarLinksProps) {
               defaultOpen={item.isActive}
               className="group/collapsible">
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  {showTooltips ? (
-                    <TooltipProvider>
-                      <Tooltip delayDuration={200}>
+                {showTooltips ? (
+                  <TooltipProvider>
+                    <Tooltip delayDuration={200}>
+                      <CollapsibleTrigger asChild>
                         <TooltipTrigger asChild>
                           <SidebarMenuButton>
                             {item.icon && <item.icon />}
@@ -49,17 +49,19 @@ export function SidebarLinks({ links, isNested = false }: SidebarLinksProps) {
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                           </SidebarMenuButton>
                         </TooltipTrigger>
-                        <TooltipContent side="right">{item.title}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : (
+                      </CollapsibleTrigger>
+                      <TooltipContent side="right">{item.title}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
-                  )}
-                </CollapsibleTrigger>
+                  </CollapsibleTrigger>
+                )}
                 <CollapsibleContent>
                   <SidebarLinks links={item.sublinks} isNested={true} />
                 </CollapsibleContent>
