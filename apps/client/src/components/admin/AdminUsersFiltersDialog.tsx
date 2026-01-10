@@ -1,20 +1,19 @@
-import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { SlidersHorizontal } from "lucide-react";
 
 interface AdminUsersFiltersDialogProps {
@@ -22,6 +21,11 @@ interface AdminUsersFiltersDialogProps {
   onOpenChange: (open: boolean) => void;
   search: any;
   setSearch: (patch: Partial<Record<string, any>>) => void;
+  searchInput: string;
+  setSearchInput: (value: string) => void;
+  limit: number;
+  searchFields: Array<{ label: string; value: string }>;
+  searchOperators: Array<{ label: string; value: string }>;
 }
 
 const filterFields = [
@@ -37,26 +41,90 @@ const sortByFields = [
   { label: "Email", value: "email" },
 ];
 
-export function AdminUsersFiltersDialog({ open, onOpenChange, search, setSearch }: AdminUsersFiltersDialogProps) {
+export function AdminUsersFiltersDialog({ open, onOpenChange, search, setSearch, searchInput, setSearchInput, limit, searchFields, searchOperators }: AdminUsersFiltersDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="h-10">
-          <SlidersHorizontal className="w-4 h-4 mr-2" />
-          More Filters
+        <Button variant="outline" size="icon">
+          <SlidersHorizontal className="w-4 h-4" />
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="min-w-fit max-w-[90%]">
+      <DialogContent className="min-w-fit max-w-[90%] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Advanced Filters</DialogTitle>
+          <DialogTitle>Filters</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Search Section */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm">Search</h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2">
+                <Select
+                  value={search.searchField ?? undefined}
+                  onValueChange={(v) => setSearch({ searchField: v, offset: 0 })}>
+                  <SelectTrigger className="min-w-40">
+                    <SelectValue placeholder="Field" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {searchFields.map((f) => (
+                      <SelectItem key={f.value} value={f.value}>
+                        {f.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={search.searchOperator ?? undefined}
+                  onValueChange={(v) => setSearch({ searchOperator: v, offset: 0 })}
+                  disabled={!search.searchField}>
+                  <SelectTrigger className="min-w-40">
+                    <SelectValue placeholder="Operator" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {searchOperators.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Input
+                placeholder="Search value…"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                disabled={!search.searchField}
+              />
+            </div>
+          </div>
+
+          {/* Page Size */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm">Page Size</h3>
+            <Select
+              value={String(limit)}
+              onValueChange={(v) => setSearch({ limit: Number(v), offset: 0 })}>
+              <SelectTrigger className="min-w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 50, 100].map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Filter Section */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm">Filter by Field</h3>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 <Select
                   value={(search.filterField as string | undefined) ?? undefined}
@@ -84,7 +152,7 @@ export function AdminUsersFiltersDialog({ open, onOpenChange, search, setSearch 
                   value={(search.filterOperator as string | undefined) ?? undefined}
                   onValueChange={(v) => setSearch({ filterOperator: v, offset: 0 })}
                   disabled={!search.filterField}>
-                  <SelectTrigger className="min-w-36">
+                  <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Operator" />
                   </SelectTrigger>
                   <SelectContent>
@@ -95,15 +163,14 @@ export function AdminUsersFiltersDialog({ open, onOpenChange, search, setSearch 
                     ))}
                   </SelectContent>
                 </Select>
-
-                <Input
-                  className="min-w-48"
-                  placeholder="Filter value…"
-                  value={String(search.filterValue ?? "")}
-                  onChange={(e) => setSearch({ filterValue: e.target.value, offset: 0 })}
-                  disabled={!search.filterField}
-                />
               </div>
+
+              <Input
+                placeholder="Filter value…"
+                value={String(search.filterValue ?? "")}
+                onChange={(e) => setSearch({ filterValue: e.target.value, offset: 0 })}
+                disabled={!search.filterField}
+              />
             </div>
           </div>
 

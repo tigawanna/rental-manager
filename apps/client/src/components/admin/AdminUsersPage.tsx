@@ -2,6 +2,12 @@ import { RoleIcons } from "@/components/identity/RoleIcons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -19,13 +25,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -38,13 +37,14 @@ import {
   AdminUsersQueryOptionsParams,
 } from "@/data-access-layer/users/admin-suers";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { InferUserRoles } from "@/lib/better-auth/client";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
-import { InferUserRoles } from "@/lib/better-auth/client";
 
 interface AdminUsersPageProps {}
 
@@ -84,6 +84,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const { debouncedValue } = useDebouncedValue(searchInput, 400);
+  const isMobile = useIsMobile();
 
   // Apply debounced search to URL
   // Keep operator/field stable from current search
@@ -161,8 +162,8 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
   return (
-    <div className="min-h-screen mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="min-h-screen mx-auto p-6 space-y-6 min-w-[70%]">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -170,7 +171,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           </p>
         </div>
 
-        <div>
+        <div className="mt-3 md:mt-0">
           <Button onClick={() => navigate({ to: "/dashboard/admin/users/new" })}>
             <Plus className="w-4 h-4 mr-2" />
             Create User
@@ -180,129 +181,130 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
 
       <div className="flex items-end gap-3 flex-wrap">
         {/* Search Section */}
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            <Select
-              value={search.searchField ?? undefined}
-              onValueChange={(v) => setSearch({ searchField: v, offset: 0 })}>
-              <SelectTrigger className="min-w-36">
-                <SelectValue placeholder="Field" />
-              </SelectTrigger>
-              <SelectContent>
-                {searchFields.map((f) => (
-                  <SelectItem key={f.value} value={f.value}>
-                    {f.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex gap-2 items-end">
+          <Input
+            className="min-w-64"
+            placeholder="Search value…"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
 
-            <Select
-              value={search.searchOperator ?? undefined}
-              onValueChange={(v) => setSearch({ searchOperator: v, offset: 0 })}>
-              <SelectTrigger className="min-w-36">
-                <SelectValue placeholder="Operator" />
-              </SelectTrigger>
-              <SelectContent>
-                {searchOperators.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Input
-              className="min-w-64"
-              placeholder="Search value…"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="flex-1" />
-
-        <AdminUsersFiltersDialog
-          open={filterDialogOpen}
-          onOpenChange={setFilterDialogOpen}
-          search={search}
-          setSearch={setSearch}
-        />
-
-        {/* Page Size */}
-        <div className="flex flex-col gap-2 items-end">
-          <label className="text-sm text-muted-foreground">Page size</label>
-          <div className="flex gap-2 items-center">
-            <Select
-              value={String(limit)}
-              onValueChange={(v) => setSearch({ limit: Number(v), offset: 0 })}>
-              <SelectTrigger className="w-24">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {[10, 20, 50, 100].map((n) => (
-                  <SelectItem key={n} value={String(n)}>
-                    {n}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <AdminUsersFiltersDialog
+            open={filterDialogOpen}
+            onOpenChange={setFilterDialogOpen}
+            search={search}
+            setSearch={setSearch}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            limit={limit}
+            searchFields={searchFields}
+            searchOperators={searchOperators}
+          />
         </div>
       </div>
 
       <div className="rounded-md border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-15">Role</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        {isMobile ? (
+          // Mobile Card View
+          <div className="space-y-4 p-4">
             {query.isPending ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                  Loading users…
-                </TableCell>
-              </TableRow>
+              <div className="text-center py-10 text-muted-foreground">
+                Loading users…
+              </div>
             ) : (usersList ?? []).length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                  No users found
-                </TableCell>
-              </TableRow>
+              <div className="text-center py-10 text-muted-foreground">
+                No users found
+              </div>
             ) : (
               usersList.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell>
-                    <div className="flex items-center justify-center">
+                <Card key={u.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base">{u.name ?? "—"}</CardTitle>
                       <RoleIcons role={(u.role as InferUserRoles) ?? "tenant"} />
                     </div>
-                  </TableCell>
-                  <TableCell className="font-medium">{u.name ?? "—"}</TableCell>
-                  <TableCell>{u.email}</TableCell>
-                  <TableCell className="space-x-2">
-                    {u.emailVerified ? (
-                      <Badge variant="outline">Verified</Badge>
-                    ) : (
-                      <Badge variant="secondary">Unverified</Badge>
-                    )}
-                    {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
-                    {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
-                  </TableCell>
-                  <TableCell title={String(u.createdAt ?? "")}>
-                    {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
-                  </TableCell>
-                </TableRow>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Email</p>
+                      <p className="text-sm">{u.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Status</p>
+                      <div className="flex flex-wrap gap-2">
+                        {u.emailVerified ? (
+                          <Badge variant="outline">Verified</Badge>
+                        ) : (
+                          <Badge variant="secondary">Unverified</Badge>
+                        )}
+                        {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
+                        {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Created</p>
+                      <p className="text-sm" title={String(u.createdAt ?? "")}>
+                        {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               ))
             )}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          // Desktop Table View
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-15">Role</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {query.isPending ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    Loading users…
+                  </TableCell>
+                </TableRow>
+              ) : (usersList ?? []).length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    No users found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                usersList.map((u) => (
+                  <TableRow key={u.id}>
+                    <TableCell>
+                      <div className="flex items-center justify-center">
+                        <RoleIcons role={(u.role as InferUserRoles) ?? "tenant"} />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{u.name ?? "—"}</TableCell>
+                    <TableCell>{u.email}</TableCell>
+                    <TableCell className="space-x-2">
+                      {u.emailVerified ? (
+                        <Badge variant="outline">Verified</Badge>
+                      ) : (
+                        <Badge variant="secondary">Unverified</Badge>
+                      )}
+                      {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
+                      {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                    </TableCell>
+                    <TableCell title={String(u.createdAt ?? "")}>
+                      {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       <div className="flex items-center justify-between">
