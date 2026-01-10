@@ -1,3 +1,4 @@
+import { SiteIcon } from '@/components/icon/SiteIcon'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/admin/organizations/')({
@@ -5,5 +6,9 @@ export const Route = createFileRoute('/dashboard/admin/organizations/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/dashboard/admin/orgs/"!</div>
+  return (
+    <div className="">
+      <SiteIcon size={100} />
+    </div>
+  );
 }

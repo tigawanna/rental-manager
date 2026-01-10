@@ -6,25 +6,37 @@ interface SiteIconProps {
 export function SiteIcon({ className, size = 24 }: SiteIconProps) {
   return (
     <svg
-      version="1.1"
+      fill="none"
+      viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 512 512"
-      xmlSpace="preserve"
       width={size}
       height={size}
       className={className}
-      fill="hsl(var(--primary))"
-    >
-      <g>
+      stroke="var(--color-primary)">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+      <g id="SVGRepo_iconCarrier">
+        <path d="M22 22L2 22" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
         <path
-          d="M484.516,19.531l-48.297,69.797l47.984,69.344h-54.266l-47.969-69.344l49.813-72h-68.625l-49.813,72 l47.969,69.344h-54.25l-47.969-69.344l49.797-72H240.25l-49.813,72l47.984,69.344h-54.266l-47.969-69.344l49.813-72h-68.625 l-49.813,72l47.969,69.344h-54.25L13.313,89.328l49.813-72H40c-22.094,0-40,17.906-40,40v397.344c0,22.094,17.906,40,40,40h432 c22.094,0,40-17.906,40-40V57.328C512,39.625,500.438,24.797,484.516,19.531z M480,454.672c0,4.422-3.594,8-8,8H40 c-4.406,0-8-3.578-8-8v-264h448V454.672z"
-          fill="hsl(var(--foreground))"
+          d="M17 22V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V22"
+          stroke="var(--color-primary)"
+          strokeWidth="1.5"
         />
         <path
-          d="M215.688,393.156c0.75,0.438,1.672,0.406,2.406-0.031l101.75-60.719c0.719-0.438,1.156-1.219,1.156-2.063 c0-0.813-0.438-1.609-1.156-2.031l-101.75-60.734c-0.734-0.422-1.656-0.453-2.406-0.031c-0.719,0.422-1.188,1.234-1.188,2.078 v60.719v60.734C214.5,391.953,214.969,392.75,215.688,393.156z"
-          fill="hsl(var(--foreground))"
+          d="M21 22V11.5C21 10.0955 21 9.39331 20.6629 8.88886C20.517 8.67048 20.3295 8.48298 20.1111 8.33706C19.6067 8 18.9045 8 17.5 8"
+          stroke="var(--color-primary)"
+          strokeWidth="1.5"
         />
+        <path
+          d="M3 22V11.5C3 10.0955 3 9.39331 3.33706 8.88886C3.48298 8.67048 3.67048 8.48298 3.88886 8.33706C4.39331 8 5.09554 8 6.5 8"
+          stroke="var(--color-primary)"
+          strokeWidth="1.5"
+        />
+        <path d="M12 22V19" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path d="M10 5H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path d="M10 8H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path d="M10 11H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path d="M10 14H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
       </g>
     </svg>
   );

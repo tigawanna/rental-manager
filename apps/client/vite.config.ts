@@ -6,6 +6,10 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 const config = defineConfig({
+  server: {
+    port: 3000,
+    host: true,
+  },
   plugins: [
     devtools(),
     // this is the plugin that enables path aliases
