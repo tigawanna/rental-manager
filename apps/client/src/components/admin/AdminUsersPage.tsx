@@ -1,7 +1,6 @@
 import { RoleIcons } from "@/components/identity/RoleIcons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
 import {
   Empty,
   EmptyContent,
@@ -42,8 +41,9 @@ import { useDebouncedValue } from "@/hooks/use-debouncer";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowUpRightIcon, FolderCode } from "lucide-react";
+import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
 
 interface AdminUsersPageProps {}
 
@@ -91,6 +91,7 @@ function useUsersSearch() {
 
 export function AdminUsersPage({}: AdminUsersPageProps) {
   const { search, setSearch } = useUsersSearch();
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const { debouncedValue } = useDebouncedValue(searchInput, 400);
@@ -176,6 +177,13 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage and filter users in your application</p>
+        </div>
+
+        <div>
+          <Button onClick={() => navigate({ to: '/dashboard/admin/users/new' })}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create User
+          </Button>
         </div>
       </div>
 
