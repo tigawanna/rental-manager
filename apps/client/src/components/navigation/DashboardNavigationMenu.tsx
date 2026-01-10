@@ -17,37 +17,37 @@ export function DashboardNavigationMenu({}: DashboardNavigationMenuProps) {
     <NavigationMenu className="w-full">
       <NavigationMenuList>
         {routes.map((route) => {
-          if(route.name==="Home"){
+          if(route.title==="Home"){
             return
           }
-          if (!route.children) {
+          if (!route.sublinks) {
             return (
-              <NavigationMenuItem key={route.name}>
+              <NavigationMenuItem key={route.title}>
                 <NavigationMenuLink asChild>
-                  <Link to={route.href}>{route.name}</Link>
+                  <Link to={route.href}>{route.title}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             );
           }
           return (
             <NavigationMenuItem
-              key={route.name}
+              key={route.title}
             >
               <NavigationMenuTrigger className="hover:bg-primary">
-                {route.name}
+                {route.title}
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-2 bg-primary/20 p-1 rounded-md sm:w-62.5 md:w-100 sm:grid-cols-2 lg:grid-cols-[.75fr_1fr]">
-                  {route.children.map((child) => (
+                  {route.sublinks.map((child) => (
                     <NavigationMenuLink
                       asChild
-                      key={child.name}
+                      key={child.title}
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-linear-to-b from-base-300 to-base-100 p-2 no-underline outline-none hover:via-primary/30 focus:shadow-md"
                     >
                       <Link to={child.href} className="">
                         <div className="flex w-full justify-evenly gap-2 p-2">
-                          {child.name}
-                          {child.icon}
+                          {child.title}
+                          <child.icon/>
                         </div>
                       </Link>
                     </NavigationMenuLink>
@@ -78,7 +78,7 @@ export function NavItem({ label, to, Icon }: NavItemProps) {
             "box-border flex flex-1 flex-row items-center gap-2.5 rounded-lg p-4 underline-offset-2 hover:bg-accent",
           )}
           activeProps={{
-            className: "bg-blue-100 font-semibold underline hover:bg-blue-100",
+            className: "bg-base-100 font-semibold underline hover:bg-base-100/70",
           }}
         >
           {Icon}

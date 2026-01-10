@@ -58,18 +58,6 @@ const searchOperators = [
   { label: "Ends with", value: "ends_with" as const },
 ];
 
-const sortByFields = [
-  { label: "Created", value: "createdAt" },
-  { label: "Updated", value: "updatedAt" },
-  { label: "Name", value: "name" },
-  { label: "Email", value: "email" },
-];
-
-const filterFields = [
-  { label: "Role", value: "role" },
-  { label: "Email Verified", value: "emailVerified" },
-  { label: "Banned", value: "banned" },
-];
 
 function useUsersSearch() {
   // Read current route search values

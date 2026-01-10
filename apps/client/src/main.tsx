@@ -8,16 +8,36 @@ import { RouterErrorComponent } from "./lib/tanstack/router/routerErrorComponent
 import { RouterNotFoundComponent } from "./lib/tanstack/router/RouterNotFoundComponent";
 import { App } from "./App";
 import "./styles.css";
+import { queryKeyPrefixes } from "./data-access-layer/query-keys";
 // Set up a QueryClient instance
+
+
+
+type QueryKey = [(typeof queryKeyPrefixes)[keyof typeof queryKeyPrefixes], ...(readonly unknown[])];
+
+interface MyMeta extends Record<string, unknown> {
+  invalidates?: [QueryKey[0], ...(readonly unknown[])][];
+  [key: string]: unknown;
+}
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    queryKey: QueryKey;
+    mutationKey: QueryKey;
+    queryMeta: MyMeta;
+    mutationMeta: MyMeta;
+  }
+}
+
 
 export const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: async (_, __, ___, mutation) => {
       if (Array.isArray(mutation.meta?.invalidates)) {
         // biome-ignore lint/complexity/noForEach: <explanation>
-        mutation.meta?.invalidates.forEach((key) => {
+        mutation.meta?.invalidates.forEach((queryKey) => {
           return queryClient.invalidateQueries({
-            queryKey: [key.trim()],
+            queryKey,
           });
         });
       }
@@ -28,10 +48,10 @@ export const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 60,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 });
-
 // Set up a Router instance
 export const router = createRouter({
   routeTree,

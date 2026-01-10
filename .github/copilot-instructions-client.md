@@ -190,3 +190,22 @@ const form = useAppForm({
 5. Forgetting `data-test` attributes
 6. Not using `beforeLoad` for route protection
 7. Creating routes without folder structure
+8. Avoid casting to any or any types , request for permisson to do any such thig .Hiding type issues by casting t other pes is STRICTLY FORBIDDEN
+9. Errors should be of type unknown in the catch block
+Do
+```ts
+    onError(err: unknown) {
+      if (err instanceof Error) {
+        toast.error("Failed to update organization", { description: err.message });
+        return;
+      } else {
+        toast.error("Failed to update organization", { description: String(err) });
+      }
+    },
+```
+DON'T
+```ts
+    onError(err: any) {
+      toast.error("Failed to create organization", { description: String(err?.message ?? err) });
+    },
+```

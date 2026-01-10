@@ -39,7 +39,7 @@ export function adminUsersQueryOptions({
 }: AdminUsersQueryOptionsParams) {
   return queryOptions({
     queryKey: [
-      "admin-users",
+      "users",
       searchValue,
       searchField,
       searchOperator,
