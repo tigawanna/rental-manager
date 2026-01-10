@@ -25,7 +25,7 @@ export type AdminUsersResult = NonNullable<
     | { users: never[]; total: number }
   );
 
-export function adminUsers({
+export function adminUsersQueryOptions({
   searchValue,
   searchField,
   searchOperator,
@@ -69,7 +69,7 @@ export function adminUsers({
       if (error) {
         return { data: null, error };
       }
-      if (!("limit" in data && "offset" in data)) {
+      if (!("limit" in data && "limit" in data)) {
         return { data: null, error: new Error("No data available") };
       }
       return { data, error: null };

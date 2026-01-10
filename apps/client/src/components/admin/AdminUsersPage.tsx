@@ -1,10 +1,24 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { adminUsers, AdminUsersQueryOptionsParams } from "@/data-access-layer/users/admin-suers";
-import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { getRelativeTimeString } from "@/utils/date-helpers";
+import { RoleIcons } from "@/components/identity/RoleIcons";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -12,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -22,24 +35,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { RoleIcons } from "@/components/identity/RoleIcons";
+  adminUsersQueryOptions,
+  AdminUsersQueryOptionsParams,
+} from "@/data-access-layer/users/admin-suers";
+import { useDebouncedValue } from "@/hooks/use-debouncer";
+import { getRelativeTimeString } from "@/utils/date-helpers";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowUpRightIcon, FolderCode } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
+import { useMemo, useState } from "react";
 
 interface AdminUsersPageProps {}
 
@@ -70,9 +74,7 @@ const filterFields = [
 function useUsersSearch() {
   // Read current route search values
   // Types come from validateSearch in the route definition
-  const search = useSearch({ strict: false }) as unknown as Required<
-    Omit<AdminUsersQueryOptionsParams, "filterValue"> & { filterValue?: string | number | boolean }
-  >;
+  const search = useSearch({ strict: false })
   const navigate = useNavigate();
 
   function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
@@ -80,6 +82,7 @@ function useUsersSearch() {
       to: ".",
       search: (prev) => ({ ...prev, ...patch }),
       replace: true,
+
     });
   }
 
@@ -89,6 +92,7 @@ function useUsersSearch() {
 export function AdminUsersPage({}: AdminUsersPageProps) {
   const { search, setSearch } = useUsersSearch();
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const { debouncedValue } = useDebouncedValue(searchInput, 400);
 
   // Apply debounced search to URL
@@ -101,7 +105,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
     [search, debouncedValue]
   );
 
-  const query = useQuery(adminUsers(effectiveParams));
+  const query = useQuery(adminUsersQueryOptions(effectiveParams));
 
   if (query.error || query.data?.error) {
     return (
@@ -168,9 +172,16 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
 
   return (
     <div className="min-h-screen mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Users</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage and filter users in your application</p>
+        </div>
+      </div>
+
       <div className="flex items-end gap-3 flex-wrap">
+        {/* Search Section */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm text-muted-foreground">Search</label>
           <div className="flex gap-2">
             <Select
               value={search.searchField ?? undefined}
@@ -211,91 +222,16 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm text-muted-foreground">Filter</label>
-          <div className="flex gap-2 items-center">
-            <Select
-              value={(search.filterField as string | undefined) ?? undefined}
-              onValueChange={(v) =>
-                setSearch({
-                  filterField: v,
-                  filterOperator: undefined,
-                  filterValue: undefined,
-                  offset: 0,
-                })
-              }>
-              <SelectTrigger className="min-w-40">
-                <SelectValue placeholder="Filter field" />
-              </SelectTrigger>
-              <SelectContent>
-                {filterFields.map((f) => (
-                  <SelectItem key={String(f.value)} value={f.value}>
-                    {f.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={(search.filterOperator as string | undefined) ?? undefined}
-              onValueChange={(v) => setSearch({ filterOperator: v, offset: 0 })}
-              disabled={!search.filterField}>
-              <SelectTrigger className="min-w-36">
-                <SelectValue placeholder="Operator" />
-              </SelectTrigger>
-              <SelectContent>
-                {(["eq", "contains", "ne", "lt", "lte", "gt", "gte"] as const).map((o) => (
-                  <SelectItem key={o} value={o}>
-                    {o}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Filter value input varies by field; keep simple text for now */}
-            <Input
-              className="min-w-48"
-              placeholder="Filter value…"
-              value={String(search.filterValue ?? "")}
-              onChange={(e) => setSearch({ filterValue: e.target.value, offset: 0 })}
-              disabled={!search.filterField}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="text-sm text-muted-foreground">Sort</label>
-          <div className="flex gap-2">
-            <Select
-              value={(search.sortBy as string | undefined) ?? undefined}
-              onValueChange={(v) => setSearch({ sortBy: v, offset: 0 })}>
-              <SelectTrigger className="min-w-36">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                {sortByFields.map((f) => (
-                  <SelectItem key={f.value} value={f.value}>
-                    {f.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={(search.sortDirection as "asc" | "desc") ?? "desc"}
-              onValueChange={(v) => setSearch({ sortDirection: v as any, offset: 0 })}>
-              <SelectTrigger className="min-w-28">
-                <SelectValue placeholder="Direction" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="asc">Asc</SelectItem>
-                <SelectItem value="desc">Desc</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         <div className="flex-1" />
 
+        <AdminUsersFiltersDialog
+          open={filterDialogOpen}
+          onOpenChange={setFilterDialogOpen}
+          search={search}
+          setSearch={setSearch}
+        />
+
+        {/* Page Size */}
         <div className="flex flex-col gap-2 items-end">
           <label className="text-sm text-muted-foreground">Page size</label>
           <div className="flex gap-2 items-center">
@@ -313,23 +249,6 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 ))}
               </SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              onClick={() =>
-                setSearch({
-                  searchValue: undefined,
-                  searchField: undefined,
-                  searchOperator: undefined,
-                  filterField: undefined,
-                  filterOperator: undefined,
-                  filterValue: undefined,
-                  sortBy: "createdAt",
-                  sortDirection: "desc",
-                  offset: 0,
-                })
-              }>
-              Reset
-            </Button>
           </div>
         </div>
       </div>
