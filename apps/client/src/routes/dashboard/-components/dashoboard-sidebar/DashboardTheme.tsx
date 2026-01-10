@@ -24,7 +24,7 @@ export function DashboardTheme({}:DashboardThemeProps){
     }
   }
   return (
-    <div className="flex w-full items-center justify-between gap-2">
+    <div className="flex w-full items-center justify-between gap-2 px-4">
         {(import.meta.env.DEV && state === "expanded") && (
       <div className="hidden md:flex">
           <select
@@ -43,7 +43,7 @@ export function DashboardTheme({}:DashboardThemeProps){
       </div>
         )}
       <button onClick={() => transitionColors()} className="">
-        {theme === "light" ? <Moon className="size-"/> : <Sun className="size-"/>}
+        {theme === "light" ? <Moon className="size-4"/> : <Sun className="size-4"/>}
       </button>
     </div>
   );

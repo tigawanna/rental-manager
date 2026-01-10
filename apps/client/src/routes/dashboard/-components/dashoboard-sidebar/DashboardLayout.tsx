@@ -35,10 +35,9 @@ export function DashboardLayout({ sidebar_props }: DashboardLayoutProps) {
           <DashboardSidebarLinks />
         </SidebarContent>
         <SidebarFooter className="gap-3">
-          {/* <ThemeToggle /> */}
           <DashboardTheme />
           <DashboardSidebarUser />
-          <div className="h-10" />
+          <div className="h-1" />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
