@@ -24,15 +24,14 @@ export function DashboardTheme({}:DashboardThemeProps){
     }
   }
   return (
-    <div className="flex w-full items-center justify-between gap-2 px-4">
-        {(import.meta.env.DEV && state === "expanded") && (
-      <div className="hidden md:flex">
+    <div
+      data-expanded={state === "expanded"}
+      className="flex w-full items-center justify-center data-[expanded=true]:justify-between gap-2 ">
+      {import.meta.env.DEV && state === "expanded" && (
+        <div className="hidden md:flex">
           <select
             className="select select-bordered select-sm max-w-xs"
-            onChange={(e) =>
-              (document.documentElement.dataset.style = e.target.value)
-            }
-          >
+            onChange={(e) => (document.documentElement.dataset.style = e.target.value)}>
             <option value="default">Default</option>
             <option value="vertical">Vertical</option>
             <option value="wipe">Wipe</option>
@@ -40,10 +39,10 @@ export function DashboardTheme({}:DashboardThemeProps){
             <option value="flip">Flip</option>
             <option value="slides">Slides</option>
           </select>
-      </div>
-        )}
+        </div>
+      )}
       <button onClick={() => transitionColors()} className="">
-        {theme === "light" ? <Moon className="size-4"/> : <Sun className="size-4"/>}
+        {theme === "light" ? <Moon className="size-6" /> : <Sun className="size-6" />}
       </button>
     </div>
   );

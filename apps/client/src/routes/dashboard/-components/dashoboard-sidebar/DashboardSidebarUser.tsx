@@ -45,7 +45,7 @@ export function DashboardSidebarUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="size-6 rounded-lg">
                 <AvatarImage src={avatarUrl} alt={viewer.user?.name} />
                 <AvatarFallback className="rounded-lg">
                   {viewer.user?.name?.slice(0, 2)}
