@@ -2,7 +2,7 @@ import { AdminUsersPage } from "@/components/admin/AdminUsersPage";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-export const Route = createFileRoute("/dashboard/admin/users")({
+export const Route = createFileRoute("/dashboard/admin/users/")({
   validateSearch: z.object({
     searchValue: z.string().optional().catch(undefined),
     searchField: z.enum(["email", "name"]).optional().catch(undefined),
@@ -29,5 +29,8 @@ export const Route = createFileRoute("/dashboard/admin/users")({
   }),
   component: AdminUsersPage,
 });
+
+
+
 
 

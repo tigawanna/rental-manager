@@ -2,10 +2,8 @@ import { useMemo, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { adminUsers, AdminUsersQueryOptionsParams } from "@/data-access-layer/users/admin-suers";
-import { UserWithRole } from "better-auth/plugins";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
 import { getRelativeTimeString } from "@/utils/date-helpers";
-
 import { Input } from "@/components/ui/input";
 import {
   Select,

@@ -24,8 +24,10 @@ import { Route as DashboardPaymentsRouteImport } from './routes/dashboard/paymen
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as DashboardAdminLayoutRouteImport } from './routes/dashboard/admin/layout'
 import { Route as DashboardAdminIndexRouteImport } from './routes/dashboard/admin/index'
-import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
+import { Route as DashboardAdminUsersIndexRouteImport } from './routes/dashboard/admin/users/index'
 import { Route as DashboardAdminOrganizationsIndexRouteImport } from './routes/dashboard/admin/organizations/index'
+import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users/new'
+import { Route as DashboardAdminUsersUseridRouteImport } from './routes/dashboard/admin/users/$userid'
 import { Route as DashboardAdminOrganizationsNewRouteImport } from './routes/dashboard/admin/organizations/new'
 
 const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
@@ -103,15 +105,27 @@ const DashboardAdminIndexRoute = DashboardAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardAdminLayoutRoute,
 } as any)
-const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => DashboardAdminLayoutRoute,
-} as any)
+const DashboardAdminUsersIndexRoute =
+  DashboardAdminUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => DashboardAdminLayoutRoute,
+  } as any)
 const DashboardAdminOrganizationsIndexRoute =
   DashboardAdminOrganizationsIndexRouteImport.update({
     id: '/organizations/',
     path: '/organizations/',
+    getParentRoute: () => DashboardAdminLayoutRoute,
+  } as any)
+const DashboardAdminUsersNewRoute = DashboardAdminUsersNewRouteImport.update({
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => DashboardAdminLayoutRoute,
+} as any)
+const DashboardAdminUsersUseridRoute =
+  DashboardAdminUsersUseridRouteImport.update({
+    id: '/users/$userid',
+    path: '/users/$userid',
     getParentRoute: () => DashboardAdminLayoutRoute,
   } as any)
 const DashboardAdminOrganizationsNewRoute =
@@ -136,10 +150,12 @@ export interface FileRoutesByFullPath {
   '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/profile': typeof ProfileIndexRoute
-  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/admin/': typeof DashboardAdminIndexRoute
   '/dashboard/admin/organizations/new': typeof DashboardAdminOrganizationsNewRoute
+  '/dashboard/admin/users/$userid': typeof DashboardAdminUsersUseridRoute
+  '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/admin/organizations': typeof DashboardAdminOrganizationsIndexRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -153,10 +169,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/profile': typeof ProfileIndexRoute
-  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/admin': typeof DashboardAdminIndexRoute
   '/dashboard/admin/organizations/new': typeof DashboardAdminOrganizationsNewRoute
+  '/dashboard/admin/users/$userid': typeof DashboardAdminUsersUseridRoute
+  '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/admin/organizations': typeof DashboardAdminOrganizationsIndexRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -174,10 +192,12 @@ export interface FileRoutesById {
   '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/profile/': typeof ProfileIndexRoute
-  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/admin/': typeof DashboardAdminIndexRoute
   '/dashboard/admin/organizations/new': typeof DashboardAdminOrganizationsNewRoute
+  '/dashboard/admin/users/$userid': typeof DashboardAdminUsersUseridRoute
+  '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/admin/organizations/': typeof DashboardAdminOrganizationsIndexRoute
+  '/dashboard/admin/users/': typeof DashboardAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -196,10 +216,12 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/dashboard/'
     | '/profile'
-    | '/dashboard/admin/users'
     | '/dashboard/admin/'
     | '/dashboard/admin/organizations/new'
+    | '/dashboard/admin/users/$userid'
+    | '/dashboard/admin/users/new'
     | '/dashboard/admin/organizations'
+    | '/dashboard/admin/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -213,10 +235,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/profile'
-    | '/dashboard/admin/users'
     | '/dashboard/admin'
     | '/dashboard/admin/organizations/new'
+    | '/dashboard/admin/users/$userid'
+    | '/dashboard/admin/users/new'
     | '/dashboard/admin/organizations'
+    | '/dashboard/admin/users'
   id:
     | '__root__'
     | '/'
@@ -233,10 +257,12 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/dashboard/'
     | '/profile/'
-    | '/dashboard/admin/users'
     | '/dashboard/admin/'
     | '/dashboard/admin/organizations/new'
+    | '/dashboard/admin/users/$userid'
+    | '/dashboard/admin/users/new'
     | '/dashboard/admin/organizations/'
+    | '/dashboard/admin/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,11 +379,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminIndexRouteImport
       parentRoute: typeof DashboardAdminLayoutRoute
     }
-    '/dashboard/admin/users': {
-      id: '/dashboard/admin/users'
+    '/dashboard/admin/users/': {
+      id: '/dashboard/admin/users/'
       path: '/users'
       fullPath: '/dashboard/admin/users'
-      preLoaderRoute: typeof DashboardAdminUsersRouteImport
+      preLoaderRoute: typeof DashboardAdminUsersIndexRouteImport
       parentRoute: typeof DashboardAdminLayoutRoute
     }
     '/dashboard/admin/organizations/': {
@@ -365,6 +391,20 @@ declare module '@tanstack/react-router' {
       path: '/organizations'
       fullPath: '/dashboard/admin/organizations'
       preLoaderRoute: typeof DashboardAdminOrganizationsIndexRouteImport
+      parentRoute: typeof DashboardAdminLayoutRoute
+    }
+    '/dashboard/admin/users/new': {
+      id: '/dashboard/admin/users/new'
+      path: '/users/new'
+      fullPath: '/dashboard/admin/users/new'
+      preLoaderRoute: typeof DashboardAdminUsersNewRouteImport
+      parentRoute: typeof DashboardAdminLayoutRoute
+    }
+    '/dashboard/admin/users/$userid': {
+      id: '/dashboard/admin/users/$userid'
+      path: '/users/$userid'
+      fullPath: '/dashboard/admin/users/$userid'
+      preLoaderRoute: typeof DashboardAdminUsersUseridRouteImport
       parentRoute: typeof DashboardAdminLayoutRoute
     }
     '/dashboard/admin/organizations/new': {
@@ -392,17 +432,21 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 )
 
 interface DashboardAdminLayoutRouteChildren {
-  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
   DashboardAdminIndexRoute: typeof DashboardAdminIndexRoute
   DashboardAdminOrganizationsNewRoute: typeof DashboardAdminOrganizationsNewRoute
+  DashboardAdminUsersUseridRoute: typeof DashboardAdminUsersUseridRoute
+  DashboardAdminUsersNewRoute: typeof DashboardAdminUsersNewRoute
   DashboardAdminOrganizationsIndexRoute: typeof DashboardAdminOrganizationsIndexRoute
+  DashboardAdminUsersIndexRoute: typeof DashboardAdminUsersIndexRoute
 }
 
 const DashboardAdminLayoutRouteChildren: DashboardAdminLayoutRouteChildren = {
-  DashboardAdminUsersRoute: DashboardAdminUsersRoute,
   DashboardAdminIndexRoute: DashboardAdminIndexRoute,
   DashboardAdminOrganizationsNewRoute: DashboardAdminOrganizationsNewRoute,
+  DashboardAdminUsersUseridRoute: DashboardAdminUsersUseridRoute,
+  DashboardAdminUsersNewRoute: DashboardAdminUsersNewRoute,
   DashboardAdminOrganizationsIndexRoute: DashboardAdminOrganizationsIndexRoute,
+  DashboardAdminUsersIndexRoute: DashboardAdminUsersIndexRoute,
 }
 
 const DashboardAdminLayoutRouteWithChildren =
