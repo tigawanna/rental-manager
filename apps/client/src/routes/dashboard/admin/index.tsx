@@ -9,7 +9,7 @@ export const Route = createFileRoute('/dashboard/admin/')({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen h-full mx-auto p-6 space-y-6">
+    <div className="min-h-screen h-full mx-auto p-6 space-y-6 flex justify-center items-center">
       <div>
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground">

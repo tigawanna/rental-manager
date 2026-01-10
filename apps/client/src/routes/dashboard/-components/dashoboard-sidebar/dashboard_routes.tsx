@@ -14,9 +14,13 @@ import {
 } from "lucide-react";
 import { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
+import { SlOrganization } from "react-icons/sl";
+import { GrUserAdmin } from "react-icons/gr";
+import { FaUsersGear } from "react-icons/fa6";
+import { PiWarehouseLight } from "react-icons/pi";
 
 export const dashboard_routes = [
-  { title: "units", href: "/dashboard/units", icon: Store },
+  { title: "units", href: "/dashboard/units", icon: PiWarehouseLight },
   {
     title: "utilities",
     href: "/dashboard/utilities",
@@ -27,18 +31,23 @@ export const dashboard_routes = [
   {
     title: "staff",
     href: "/dashboard/staff",
-    icon: Users2Icon,
+    icon: FaUsersGear,
   },
   { title: "todos", href: "/dashboard/todos", icon: NotepadText },
   {
     title: "admin",
     href: "/dashboard/admin",
-    icon: LockIcon,
+    icon: GrUserAdmin,
     sublinks: [
       {
         title: "users",
         href: "/dashboard/admin/users",
         icon: User,
+      },
+      {
+        title: "organizations",
+        href: "/dashboard/admin/organizations",
+        icon: SlOrganization,
       },
     ],
   },

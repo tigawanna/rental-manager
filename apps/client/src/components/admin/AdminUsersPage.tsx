@@ -107,7 +107,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
 
   if (query.error || query.data?.error) {
     return (
-      <div className="min-h-screen h-full mx-auto p-6">
+      <div className="min-h-screen h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">

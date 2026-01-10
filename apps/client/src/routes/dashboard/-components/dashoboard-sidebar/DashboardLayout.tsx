@@ -26,7 +26,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ sidebar_props }: DashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen={false}>
-      <Helmet title="Rentals | Dashboard"  description="Dashboard for your rentals"/>
+      <Helmet title="Rentals | Dashboard" description="Dashboard for your rentals" />
       <Sidebar className="" collapsible="icon" {...sidebar_props}>
         <SidebarHeader>
           <DashboardSidebarHeader />
@@ -51,7 +51,7 @@ export function DashboardLayout({ sidebar_props }: DashboardLayoutProps) {
           </div>
         </header>
         {/* main content */}
-        <div data-test="dashboard-layout">
+        <div className="min-h-screen h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
           <Outlet />
         </div>
       </SidebarInset>

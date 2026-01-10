@@ -1,4 +1,4 @@
-import { OrgSwitcher } from "@/components/org-switcher";
+import { OrgSwitcher } from "@/components/identity/OrgSwitcher";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
 import { LayoutDashboard } from "lucide-react";
