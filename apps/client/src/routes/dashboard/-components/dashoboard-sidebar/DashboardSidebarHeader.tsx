@@ -1,33 +1,44 @@
-import { Castle, LayoutDashboard } from "lucide-react";
+import { OrgSwitcher } from "@/components/org-switcher";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
+import { LayoutDashboard } from "lucide-react";
+
 interface DashboardSidebarHeaderProps {}
 
 export function DashboardSidebarHeader({}: DashboardSidebarHeaderProps) {
-  const { state,setOpenMobile,isMobile } = useSidebar();
-    const { pathname } = useLocation();
-    return (
-      <div className="flex flex-col gap-3" onClick={() => {setOpenMobile(false)}}>
-        <Link
-          to="/"
-          className="flex w-full items-center justify-center border-b border-primary py-4 hover:bg-primary/20"
-        >
-          <Castle className="size-14" />
-        </Link>
-        <Link
-          to="/dashboard"
-          className={
-            pathname === "/dashboard"
-              ? ` flex w-full cursor-pointer items-center gap-2 rounded-lg  text-primary p-1 underline-offset-2 `
-              : `flex w-full cursor-pointer items-center gap-2 rounded-sm p-1 underline-offset-2 hover:bg-base-300 hover:underline`
-          }
+  const { state, setOpenMobile, isMobile } = useSidebar();
+  const { pathname } = useLocation();
 
-        >
-          <LayoutDashboard />
-          {(state === "expanded" || isMobile) && (
-            <h1 className="text-xl font-bold">Dashboard</h1>
-          )}
-        </Link>
-      </div>
-    );
+  // TODO: Replace with actual organizations from better-auth
+  const organizations = [
+    {
+      id: "1",
+      name: "My Organization",
+      plan: "Pro",
+    },
+    {
+      id: "2",
+      name: "Secondary Org",
+      plan: "Free",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-3" onClick={() => { setOpenMobile(false) }}>
+      <OrgSwitcher organizations={organizations} />
+      <Link
+        to="/dashboard"
+        className={
+          pathname === "/dashboard"
+            ? `flex w-full cursor-pointer items-center gap-2 rounded-lg bg-primary/10 text-primary p-1 font-medium`
+            : `flex w-full cursor-pointer items-center gap-2 rounded-sm p-1 hover:bg-base-300`
+        }
+      >
+        <LayoutDashboard className="size-5" />
+        {(state === "expanded" || isMobile) && (
+          <h1 className="text-sm font-semibold">Dashboard</h1>
+        )}
+      </Link>
+    </div>
+  );
 }
