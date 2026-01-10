@@ -37,7 +37,6 @@ import {
   AdminUsersQueryOptionsParams,
 } from "@/data-access-layer/users/admin-suers";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { InferUserRoles } from "@/lib/better-auth/client";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
@@ -84,7 +83,6 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const { debouncedValue } = useDebouncedValue(searchInput, 400);
-  const isMobile = useIsMobile();
 
   // Apply debounced search to URL
   // Keep operator/field stable from current search
@@ -162,7 +160,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
   return (
-    <div className="min-h-screen mx-auto p-6 space-y-6 min-w-[70%]">
+    <div className="min-h-screen mx-auto p-6 space-y-6 min-w-[90%]">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
@@ -203,20 +201,20 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
         </div>
       </div>
 
-      <div className="rounded-md border overflow-hidden">
-        {isMobile ? (
-          // Mobile Card View
-          <div className="space-y-4 p-4">
-            {query.isPending ? (
-              <div className="text-center py-10 text-muted-foreground">
-                Loading users…
-              </div>
-            ) : (usersList ?? []).length === 0 ? (
-              <div className="text-center py-10 text-muted-foreground">
-                No users found
-              </div>
-            ) : (
-              usersList.map((u) => (
+      <div className="@container rounded-md border overflow-hidden">
+        {/* Mobile Card View - visible when container < 640px */}
+        <div className="block @md:hidden">
+          {query.isPending ? (
+            <div className="text-center py-10 text-muted-foreground">
+              Loading users…
+            </div>
+          ) : (usersList ?? []).length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground">
+              No users found
+            </div>
+          ) : (
+            <div className="space-y-4 p-4">
+              {usersList.map((u) => (
                 <Card key={u.id} className="cursor-pointer hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
@@ -249,11 +247,13 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                     </div>
                   </CardContent>
                 </Card>
-              ))
-            )}
-          </div>
-        ) : (
-          // Desktop Table View
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Table View - visible when container >= 640px */}
+        <div className="hidden @md:block">
           <Table>
             <TableHeader>
               <TableRow>
@@ -304,7 +304,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
               )}
             </TableBody>
           </Table>
-        )}
+        </div>
       </div>
 
       <div className="flex items-center justify-between">
