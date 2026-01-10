@@ -18,6 +18,7 @@
 ## ✅ DO
 
 ### Routing
+
 - ✅ Create routes in folders with `index.tsx` file
 - ✅ Put route-specific components in `-components` folder
   ```
@@ -32,21 +33,25 @@
 - ✅ Throw `redirect()` for unauthorized access
 
 ### React Query
+
 - ✅ Create `queryOptions` and use hooks directly in components
+
   ```typescript
   export const usersQueryOptions = queryOptions({
     queryKey: ["users"],
     queryFn: async () => treatyClient.users.get(),
   });
-  
+
   // In component
   const query = useSuspenseQuery(usersQueryOptions);
   ```
+
 - ✅ Use `useSuspenseQuery` for required data
 - ✅ Handle mutations inline in components
 - ✅ Exception: Auth/viewer logic can have custom hooks
 
 ### Styling
+
 - ✅ Use shadcn components for UI elements
 - ✅ Use DaisyUI for:
   - Theme utilities: `bg-base-100`, `bg-base-200`, `text-base-content`
@@ -57,6 +62,7 @@
 - ✅ Add `data-test` attributes for testability
 
 ### Forms
+
 - ✅ Use TanStack Form with custom field components
 - ✅ Validate with Zod inline
   ```typescript
@@ -68,6 +74,7 @@
   ```
 
 ### Code Organization
+
 - ✅ Use path alias `@/` for imports
 - ✅ Import types from `@backend/` for end-to-end type safety
 - ✅ Keep route logic in route files
@@ -79,28 +86,33 @@
 ## ❌ DON'T
 
 ### React 19 with Compiler
+
 - ❌ DON'T use `useMemo` - React Compiler handles it
 - ❌ DON'T use `useCallback` - React Compiler handles it
 - ❌ DON'T manually optimize unless profiling shows issues
 
 ### React Query
+
 - ❌ DON'T create custom hooks for every query
 - ❌ DON'T wrap `queryOptions` in custom hooks (except auth/viewer)
 - ❌ DON'T over-abstract data fetching
 
 ### Routing
+
 - ❌ DON'T put components directly in route file if they're reusable
 - ❌ DON'T create route files without folder structure
 - ❌ DON'T skip `beforeLoad` for protected routes
 - ❌ DON'T create flat route structure - use folders with index files
 
 ### Styling
+
 - ❌ DON'T mix DaisyUI components with shadcn (stick to shadcn for UI)
 - ❌ DON'T use DaisyUI except for theme utilities and button classes or simple component taht can no seroius accessibility require,nets an dis standalone enough
 - ❌ DON'T forget responsive design (`md:`, `lg:` prefixes)
 - ❌ DON'T hardcode colors - use theme variables
 
 ### File Organization
+
 - ❌ DON'T put route-specific components in global `components/` folder
 - ❌ DON'T create components in route file itself - use `-components` folder
 - ❌ DON'T forget to use path aliases (`@/`)
@@ -110,6 +122,7 @@
 ## Quick Reference
 
 ### Route Structure
+
 ```typescript
 // routes/dashboard/index.tsx
 export const Route = createFileRoute("/dashboard")({
@@ -128,6 +141,7 @@ function DashboardPage() {
 ```
 
 ### Query Pattern
+
 ```typescript
 // Define queryOptions
 export const itemsQueryOptions = queryOptions({
@@ -144,6 +158,7 @@ const { data } = useSuspenseQuery(itemsQueryOptions);
 ```
 
 ### Mutation Pattern
+
 ```typescript
 const mutation = useMutation({
   mutationFn: async (data) => treatyClient.items.post(data),
@@ -157,6 +172,7 @@ const mutation = useMutation({
 ```
 
 ### Form Pattern
+
 ```typescript
 const form = useAppForm({
   ...formOptions({ defaultValues: { name: "" } }),
@@ -165,6 +181,7 @@ const form = useAppForm({
 ```
 
 ### Styling Classes
+
 ```tsx
 // DaisyUI theme utilities
 <div className="bg-base-100 text-base-content">
@@ -192,19 +209,34 @@ const form = useAppForm({
 7. Creating routes without folder structure
 8. Avoid casting to any or any types , request for permisson to do any such thig .Hiding type issues by casting t other pes is STRICTLY FORBIDDEN
 9. Errors should be of type unknown in the catch block
-Do
+   Do
+
 ```ts
+    onSuccess() {
+      toast.success("User removed");
+      if (onSuccess) onSuccess(undefined);
+    },
     onError(err: unknown) {
-      if (err instanceof Error) {
-        toast.error("Failed to update organization", { description: err.message });
-        return;
-      } else {
-        toast.error("Failed to update organization", { description: String(err) });
-      }
+      toast.error("Failed to remove user", {
+        description: unwrapUnknownError(err).message,
+      });
+    },
+    meta: {
+      invalidates: [["users"]],
     },
 ```
+
 DON'T
+
 ```ts
+    onSuccess() {
+      toast.success("User removed");
+      if (onSuccess) {
+        onSuccess(undefined);
+        qc.invalidatesQuery({queryKey:["users]
+        })
+        }
+    },
     onError(err: any) {
       toast.error("Failed to create organization", { description: String(err?.message ?? err) });
     },

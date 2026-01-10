@@ -1,6 +1,5 @@
-import { Link, useRouter, useLocation } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Github, Mail, MapPinHouse, Twitter } from "lucide-react";
-import { useReducer } from "react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();

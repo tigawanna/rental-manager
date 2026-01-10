@@ -53,7 +53,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.145.11",
     "@tanstack/zod-form-adapter": "^0.42.1",
-    "better-auth": "^1.4.10",
+    "better-auth": "*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -78,7 +78,9 @@
     "tw-animate-css": "^1.4.0",
     "vaul": "^1.1.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "@repo/elysia": "workspace:*",
+    "@repo/isomorphic": "workspace:*"
   },
   "devDependencies": {
     "@tanstack/devtools-vite": "^0.4.1",

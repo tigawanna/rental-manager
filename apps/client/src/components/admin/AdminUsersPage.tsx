@@ -44,6 +44,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
+import { InferUserRoles } from "@/lib/better-auth/client";
 
 interface AdminUsersPageProps {}
 
@@ -164,11 +165,13 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage and filter users in your application</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage and filter users in your application
+          </p>
         </div>
 
         <div>
-          <Button onClick={() => navigate({ to: '/dashboard/admin/users/new' })}>
+          <Button onClick={() => navigate({ to: "/dashboard/admin/users/new" })}>
             <Plus className="w-4 h-4 mr-2" />
             Create User
           </Button>
@@ -278,7 +281,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 <TableRow key={u.id}>
                   <TableCell>
                     <div className="flex items-center justify-center">
-                      <RoleIcons role={(u.role as any) ?? "tenant"} />
+                      <RoleIcons role={(u.role as InferUserRoles) ?? "tenant"} />
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{u.name ?? "—"}</TableCell>

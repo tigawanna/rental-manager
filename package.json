@@ -16,5 +16,8 @@
   "packageManager": "pnpm@10.27.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "better-auth": "^1.4.10"
   }
 }

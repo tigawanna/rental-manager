@@ -40,6 +40,7 @@ export const BetterAuthOpenAPI = {
         reference[key] = paths[path];
 
         for (const method of Object.keys(paths[path])) {
+          // ignore the as any type cast below it is very intentional
           const operation = (reference[key] as any)[method];
 
           operation.tags = ["Better Auth"];

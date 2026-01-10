@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { authClient } from "@/lib/better-auth/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -70,6 +70,9 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
     },
   });
 
+  // prefer typed invalidation call
+  const invalidateOrgs = () => qc.invalidateQueries({ queryKey: ['organizations'] })
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -120,7 +123,6 @@ export function EditOrg({
     },
     onSuccess(data) {
       toast.success("Organization updated");
-      qc.invalidateQueries({ queryKey: ["user-organizations"] } as any);
       if (onUpdated)
         onUpdated({
           organizationId: org.organizationId,
@@ -141,6 +143,9 @@ export function EditOrg({
         toast.error("Failed to update organization", { description: String(err) });
       }
     },
+    meta:{
+      invalidates: [["organizations"]]
+    }
   });
 
   return (

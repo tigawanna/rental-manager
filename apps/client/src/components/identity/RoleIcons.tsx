@@ -1,7 +1,7 @@
-import { TRoles } from "@/data-access-layer/users/viewer";
+import { InferUserRoles } from "@/lib/better-auth/client";
 
 interface RoleIconsProps {
-  role: TRoles;
+  role: InferUserRoles;
 }
 
 export function RoleIcons({ role }: RoleIconsProps) {

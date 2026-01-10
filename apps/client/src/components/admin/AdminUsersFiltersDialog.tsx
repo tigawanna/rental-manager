@@ -127,7 +127,7 @@ export function AdminUsersFiltersDialog({ open, onOpenChange, search, setSearch 
               </Select>
               <Select
                 value={(search.sortDirection as "asc" | "desc") ?? "desc"}
-                onValueChange={(v) => setSearch({ sortDirection: v as any, offset: 0 })}>
+                onValueChange={(v) => setSearch({ sortDirection: (v === 'asc' ? 'asc' : 'desc'), offset: 0 })}>
                 <SelectTrigger className="min-w-28">
                   <SelectValue placeholder="Direction" />
                 </SelectTrigger>
