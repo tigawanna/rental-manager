@@ -1,4 +1,4 @@
-import { AdminUsersPage } from "@/components/admin/AdminUsersPage";
+import { AdminUsersPage } from "@/routes/dashboard/admin/users/-components/AdminUsersPage";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 

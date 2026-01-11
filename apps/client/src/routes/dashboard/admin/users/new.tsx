@@ -1,4 +1,4 @@
-import { AdminUserForm } from '@/components/admin/AdminUserForm'
+import { AdminUserForm } from '@/routes/dashboard/admin/users/-components/AdminUserForm'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
