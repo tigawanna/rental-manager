@@ -2,9 +2,9 @@
   "name": "@repo/elysia",
   "type": "module",
   "version": "1.0.0",
-    "exports": {
-      "./*": "./src/*.ts"
-    },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "build": "tsc -p tsconfig.build.json && tsc-alias",

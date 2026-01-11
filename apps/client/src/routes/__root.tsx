@@ -1,7 +1,5 @@
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import ReactQueryDevtoolsPanel from "@/lib/tanstack/query/devtools";
+
 import type { QueryClient } from "@tanstack/react-query";
 import { TViewer } from "@/data-access-layer/users/viewer";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,6 +10,7 @@ import "@/view-transition/wipe-transition.css";
 import "@/view-transition/slides-transition.css";
 import "@/view-transition/flip-transition.css";
 import "@/view-transition/vertical-transition.css";
+import { TanstackDevtools } from "@/lib/tanstack/devtools/devtools";
 
 const searchparams = z.object({
   globalPage: z.number().optional(),
@@ -31,18 +30,7 @@ export function RootComponent() {
     <div className="content min-h-screen w-full bg-base-100">
       <Outlet />
       <Toaster />
-      <TanStackDevtools
-        config={{
-          position: "bottom-right",
-        }}
-        plugins={[
-          {
-            name: "Tanstack Router",
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-          ReactQueryDevtoolsPanel,
-        ]}
-      />
+      <TanstackDevtools />
     </div>
   );
 }
