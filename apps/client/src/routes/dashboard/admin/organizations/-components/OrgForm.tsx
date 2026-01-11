@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 import { useAppForm } from "@/lib/tanstack/form";
+import { slugify } from "@/utils/slugify";
 import { formOptions } from "@tanstack/react-form";
 import { z } from "zod";
 
@@ -103,7 +104,16 @@ export function OrgForm({
         form.handleSubmit();
       }}
       className="space-y-4">
-      <form.AppField name="name" validators={{ onChange: z.string().min(1, "Name is required") }}>
+      <form.AppField
+        name="name"
+        validators={{ onChange: z.string().min(1, "Name is required") }}
+        listeners={{
+          onChangeDebounceMs: 500, // 500ms debounce
+          onChange: ({ value }) => {
+            if (!value || value.trim() === "") return;
+            form.setFieldValue("slug", slugify(value));
+          },
+        }}>
         {(f) => <f.TextField label="Organization name" />}
       </form.AppField>
 

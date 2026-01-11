@@ -74,7 +74,7 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className={className}>
+        <Button size="sm" variant="default" className={className}>
           {triggerLabel}
         </Button>
       </DialogTrigger>
@@ -187,14 +187,3 @@ export function EditOrg({
 }
 
 
-interface SelectOrgDialogProps {
-
-}
-
-export function SelectOrgDialog({}:SelectOrgDialogProps){
-return (
- <div className='w-full h-full flex flex-col items-center justify-center'>
-
- </div>
-);
-}

@@ -7,10 +7,10 @@ import { queryKeyPrefixes } from "../query-keys";
 // ============================================================================
 
 type TUserOrgsInput = NonNullable<Parameters<typeof authClient.organization.list>[0]>;
-export const userOrgsQueryOptions = queryOptions({
+export const userOrgsQueryOptions =(input: TUserOrgsInput) => queryOptions({
   queryKey: [queryKeyPrefixes.organizations] as const,
   queryFn: async () => {
-    const { data, error } = await authClient.organization.list();
+    const { data, error } = await authClient.organization.list(input);
     if (error) throw error;
     return data;
   },
