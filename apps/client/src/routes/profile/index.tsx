@@ -1,12 +1,13 @@
 import { ResponsiveGenericToolbar } from "@/components/navigation/ResponsiveGenericToolbar";
 import { Helmet } from "@/components/wrappers/custom-helmet";
-import { TRoles, useViewer } from "@/data-access-layer/users/viewer";
+import { useViewer } from "@/data-access-layer/users/viewer";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Footer } from "react-day-picker";
 import { AccountActions } from "./-components/AccountActions";
 import { ChangePasswordForm } from "./-components/ChangePasswordForm";
 import { EditProfileForm } from "./-components/EditProfileForm";
 import { UserProfileCard } from "./-components/UserProfileCard";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 
 
 export const Route = createFileRoute("/profile/")({
@@ -48,7 +49,7 @@ function RouteComponent() {
               <UserProfileCard
                 user={{
                   ...viewer.user,
-                  role: viewer.user?.role as TRoles,
+                  role: viewer.user?.role as BetterAuthUserRoles,
                 }}
               />
             </div>

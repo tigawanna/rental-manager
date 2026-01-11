@@ -1,15 +1,12 @@
+import { authClient, BetterAuthSession } from "@/lib/better-auth/client";
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
-import { authClient } from "@/lib/better-auth/client";
 
-type InferGetSession = NonNullable<Awaited<ReturnType<typeof authClient.getSession<any>>>>;
-type ViewerPayloadData = Extract<InferGetSession, { data: any; error: null }>["data"];
-type ViewerPayloadError = Extract<InferGetSession, { data: null; error: any }>["error"];
-type ViewerUser = NonNullable<ViewerPayloadData>["user"];
-type ViewerSession = NonNullable<ViewerPayloadData>["session"];
+type ViewerUser = BetterAuthSession["user"];
+type ViewerSession = BetterAuthSession["session"];
 
 
-export type TRoles = "tenant" | "staff" | "admin" | "manager";
+// export type BetterAuthUserRoles = "tenant" | "staff" | "admin" | "manager";
 export type TViewer = {
   user?: ViewerUser;
   session?: ViewerSession;

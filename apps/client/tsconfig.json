@@ -1,5 +1,7 @@
 {
+  "extends": "@repo/typescript-config/base.json",
   "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["../elysia/**"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

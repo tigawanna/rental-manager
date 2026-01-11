@@ -70,8 +70,6 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
     },
   });
 
-  // prefer typed invalidation call
-  const invalidateOrgs = () => qc.invalidateQueries({ queryKey: ['organizations'] })
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -186,4 +184,17 @@ export function EditOrg({
       </DialogContent>
     </Dialog>
   );
+}
+
+
+interface SelectOrgDialogProps {
+
+}
+
+export function SelectOrgDialog({}:SelectOrgDialogProps){
+return (
+ <div className='w-full h-full flex flex-col items-center justify-center'>
+
+ </div>
+);
 }

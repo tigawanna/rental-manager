@@ -1,5 +1,5 @@
 import { RoleIcons } from "@/components/identity/RoleIcons";
-import type { TRoles } from "@/data-access-layer/users/viewer";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { Calendar, Mail, User } from "lucide-react";
 
 interface UserProfileCardProps {
@@ -11,7 +11,7 @@ interface UserProfileCardProps {
     emailVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
-    role?: TRoles;
+    role?: BetterAuthUserRoles;
   };
 }
 

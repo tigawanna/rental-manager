@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 import { RoleIcons } from "./RoleIcons";
-import { TRoles } from "@/data-access-layer/users/viewer";
+
 
 interface ProfileLinkCardProps {
   viewer: {
@@ -10,7 +11,7 @@ interface ProfileLinkCardProps {
     image?: string | null;
     name: string;
     email: string;
-    role?: TRoles;
+    role?: BetterAuthUserRoles;
   };
 }
 

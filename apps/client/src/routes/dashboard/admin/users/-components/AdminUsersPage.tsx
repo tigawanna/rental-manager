@@ -37,7 +37,7 @@ import {
   AdminUsersQueryOptionsParams,
 } from "@/data-access-layer/users/admin-suers";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { InferUserRoles } from "@/lib/better-auth/client";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -98,7 +98,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
 
   if (query.error || query.data?.error) {
     return (
-      <div className="min-h-screen h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
+      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -219,7 +219,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-base">{u.name ?? "—"}</CardTitle>
-                      <RoleIcons role={(u.role as InferUserRoles) ?? "tenant"} />
+                      <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -282,7 +282,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                   <TableRow key={u.id}>
                     <TableCell>
                       <div className="flex items-center justify-center">
-                        <RoleIcons role={(u.role as InferUserRoles) ?? "tenant"} />
+                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{u.name ?? "—"}</TableCell>

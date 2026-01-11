@@ -27,9 +27,17 @@ export const Route = createFileRoute("/dashboard/admin/users/")({
       .optional()
       .catch(undefined),
   }),
-  component: AdminUsersPage,
+  component: RouteComponent,
 });
 
+
+function RouteComponent() {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      <AdminUsersPage />
+    </div>
+  );
+}
 
 
 
