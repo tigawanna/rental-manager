@@ -28,14 +28,12 @@ import {
 } from "@/components/ui/table";
 import {
   organizationMembersQueryOptions,
-  removeMemberMutationOptions,
 } from "@/data-access-layer/users/organization-members";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowLeft, Users } from "lucide-react";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 interface OrgMembersProps {
   orgId: string;
@@ -49,7 +47,6 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
   // Read current route search values - Types come from validateSearch in the route definition
   const search = useSearch({ strict: false });
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const { debouncedValue } = useDebouncedValue(searchInput, 400);
@@ -97,30 +94,6 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
       query: effectiveParams,
     })
   );
-
-  const removeMemberMutation = useMutation({
-    mutationFn: removeMemberMutationOptions.mutationFn,
-    onSuccess: () => {
-      toast.success("Member removed successfully");
-      // Access meta invalidates from mutation options
-      const invalidateKeys = (removeMemberMutationOptions.meta as any)?.invalidates;
-      if (invalidateKeys) {
-        queryClient.invalidateQueries({ queryKey: invalidateKeys[0] });
-        queryClient.invalidateQueries({ queryKey: invalidateKeys[1] });
-      }
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to remove member");
-    },
-  });
-
-  const handleRemoveMember = (userId: string) => {
-    if (!confirm("Are you sure you want to remove this member?")) return;
-    removeMemberMutation.mutate({
-      memberIdOrEmail: userId,
-      organizationId: orgId,
-    });
-  };
 
   if (query.error) {
     return (
@@ -248,7 +221,6 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
                 <TableRow>
                   <TableHead className="w-15">Role</TableHead>
                   <TableHead>Name (User ID)</TableHead>
-                  <TableHead>Email</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -267,9 +239,10 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
                       banned: false,
                       createdAt: member.createdAt,
                     }}
-                    onRemove={handleRemoveMember}
-                    isRemoving={removeMemberMutation.isPending}
-                    showRemoveButton={true}
+                    orgId={orgId}
+                    showActions={true}
+                    showEmail={false}
+                    onSuccess={() => query.refetch()}
                   />
                 ))}
               </TableBody>
@@ -290,9 +263,10 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
                   banned: false,
                   createdAt: member.createdAt,
                 }}
-                onRemove={handleRemoveMember}
-                isRemoving={removeMemberMutation.isPending}
-                showRemoveButton={true}
+                orgId={orgId}
+                showActions={true}
+                showEmail={false}
+                onSuccess={() => query.refetch()}
               />
             ))}
           </div>

@@ -27,14 +27,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  adminUsersQueryOptions,
-  AdminUsersQueryOptionsParams,
+  adminUsersQueryOptions
 } from "@/data-access-layer/users/admin-suers";
-import { useDebouncedValue } from "@/hooks/use-debouncer";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
 
 interface AdminUsersPageProps {}
@@ -254,6 +252,8 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                       banned: u.banned ?? undefined,
                       createdAt: u.createdAt,
                     }}
+                    showActions={true}
+                    onSuccess={() => query.refetch()}
                   />
                 ))
               )}
