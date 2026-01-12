@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { adminUsersQueryOptions } from "@/data-access-layer/users/admin-suers";
+import { adminUsersQueryOptions } from "@/data-access-layer/users/admin-users";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";

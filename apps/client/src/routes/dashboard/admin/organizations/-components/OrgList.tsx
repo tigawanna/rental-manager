@@ -26,15 +26,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { userOrgsQueryOptions } from "@/data-access-layer/users/user-orgs";
+import { organizationsCollection } from "@/data-access-layer/collections/admin/organizations-collection";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";
-import { useQuery } from "@tanstack/react-query";
+import { like, or } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CreateOrg, EditOrg } from "./OrgDialogs";
-import { UseSearchOptions } from "node_modules/@tanstack/react-router/dist/esm/useSearch";
 
 interface OrgListProps {}
 
@@ -44,53 +44,37 @@ export function OrgList({}: OrgListProps) {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
 
-  const query = useQuery(userOrgsQueryOptions({}));
-
   const { debouncedValue, isDebouncing, keyword, setKeyword } = useTSRSearchQuery({
     search,
     navigate,
     query_param: "sq",
   });
-  
-  const filteredOrgs = useMemo(() => {
-    if (!query.data) return [];
 
-    const searchTerm = debouncedValue?.toLowerCase() || "";
-    if (!searchTerm) return query.data;
+  // Use TanStack DB with client-side filtering
+  const query = useLiveQuery((q) => {
+    let dbQuery = q.from({ orgs: organizationsCollection });
 
-    return query.data.filter(
-      (org) =>
-        org.name?.toLowerCase().includes(searchTerm) || org.slug?.toLowerCase().includes(searchTerm)
-    );
-  }, [query.data, debouncedValue]);
+    // Apply search filter if present
+    if (debouncedValue) {
+      const searchTerm = `%${debouncedValue}%`;
+      dbQuery = dbQuery.where(({ orgs }) =>
+        or(like(orgs.name, searchTerm), like(orgs.slug, searchTerm))
+      );
+    }
 
-  const total = filteredOrgs.length;
-  const paginatedOrgs = filteredOrgs.slice(offset, offset + limit);
+    return dbQuery
+      .select(({ orgs }) => orgs)
+      .orderBy(({ orgs }) => orgs.createdAt, "desc")
+      .limit(limit)
+      .offset(offset);
+  });
+
+  const total = query.data?.length ?? 0;
+  const paginatedOrgs = query.data ?? [];
   const page = Math.floor(offset / limit) + 1;
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
-  if (query.error) {
-    return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Building2 />
-            </EmptyMedia>
-            <EmptyTitle>Error Loading Organizations</EmptyTitle>
-            <EmptyDescription>
-              {query.error instanceof Error ? query.error.message : "An error occurred"}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button onClick={() => query.refetch()}>Try Again</Button>
-          </EmptyContent>
-        </Empty>
-      </div>
-    );
-  }
-
-  if (query.isPending) {
+  if (query.isLoading) {
     return (
       <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <div className="text-muted-foreground">Loading organizations…</div>
@@ -98,7 +82,7 @@ export function OrgList({}: OrgListProps) {
     );
   }
 
-  if (!query.data || query.data.length === 0) {
+  if (!paginatedOrgs || paginatedOrgs.length === 0) {
     return (
       <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <Empty>
