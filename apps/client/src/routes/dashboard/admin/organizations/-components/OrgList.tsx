@@ -18,6 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -29,12 +30,14 @@ import {
 import { organizationsCollection } from "@/data-access-layer/collections/admin/organizations-collection";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";
-import { like, or } from "@tanstack/db";
+import { count, ilike } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
 import { useState } from "react";
 import { CreateOrg, EditOrg } from "./OrgDialogs";
+import { createSortableColumns } from "@/lib/tanstack/db/sortable-columns";
+import { TanstackDBColumnFilters } from "@/lib/tanstack/db/TanstackDBColumnfilters";
 
 interface OrgListProps {}
 
@@ -50,39 +53,52 @@ export function OrgList({}: OrgListProps) {
     query_param: "sq",
   });
 
-  // Use TanStack DB with client-side filtering
-  const query = useLiveQuery((q) => {
-    let dbQuery = q.from({ orgs: organizationsCollection });
+  // Query for paginated data with limit/offset
+  const query = useLiveQuery(
+    (q) =>
+      q
+        .from({ orgs: organizationsCollection })
+        .where(({ orgs }) => ilike(orgs.name, `%${debouncedValue}%`))
+        .orderBy(({ orgs }) => orgs.createdAt, "desc")
+        .limit(limit)
+        .offset(offset)
+        .select(({ orgs }) => ({
+          id: orgs.id,
+          name: orgs.name,
+          slug: orgs.slug,
+          logo: orgs.logo,
+          metadata: orgs.metadata,
+          createdAt: orgs.createdAt,
+        })),
+    [debouncedValue, limit, offset]
+  );
 
-    // Apply search filter if present
-    if (debouncedValue) {
-      const searchTerm = `%${debouncedValue}%`;
-      dbQuery = dbQuery.where(({ orgs }) =>
-        or(like(orgs.name, searchTerm), like(orgs.slug, searchTerm))
-      );
-    }
+  // Separate query for total count (without limit/offset)
+  const countQuery = useLiveQuery(
+    (q) =>
+      q
+        .from({ orgs: organizationsCollection })
+        .where(({ orgs }) => ilike(orgs.name, `%${debouncedValue}%`))
+        .select(({ orgs }) => ({
+          total: count(orgs.id),
+        })),
+    [debouncedValue]
+  );
+  const sortableColumns = createSortableColumns(organizationsCollection, [
+    { value: "name", label: "Name" },
+    { value: "createdAt", label: "Created At" },
+    { value: "slug", label: "Slug" },
+  ]);
 
-    return dbQuery
-      .select(({ orgs }) => orgs)
-      .orderBy(({ orgs }) => orgs.createdAt, "desc")
-      .limit(limit)
-      .offset(offset);
-  });
-
-  const total = query.data?.length ?? 0;
   const paginatedOrgs = query.data ?? [];
+  const total = countQuery.data?.[0]?.total ?? 0;
   const page = Math.floor(offset / limit) + 1;
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
-  if (query.isLoading) {
-    return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
-        <div className="text-muted-foreground">Loading organizations…</div>
-      </div>
-    );
-  }
+  // Show empty state only when there's no data at all (initial load with no orgs)
+  const hasNoOrgsAtAll = !query.isLoading && !countQuery.isLoading && total === 0 && !debouncedValue;
 
-  if (!paginatedOrgs || paginatedOrgs.length === 0) {
+  if (hasNoOrgsAtAll) {
     return (
       <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <Empty>
@@ -117,18 +133,62 @@ export function OrgList({}: OrgListProps) {
         </div>
       </div>
 
-      <div className="flex items-end gap-3 flex-wrap">
+      <div className="flex items-end gap-3 ">
         <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
+        <TanstackDBColumnFilters
+          collection={organizationsCollection}
+          sortableColumns={sortableColumns}
+          search={search}
+          navigate={navigate}
+          defaultSortBy="createdAt"
+        />
       </div>
 
       <div className="@container rounded-md border overflow-hidden">
         {/* Mobile Card View */}
         <div className="block @md:hidden">
-          {paginatedOrgs.length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">No organizations found</div>
+          {query.isLoading ? (
+            <div className="space-y-4 p-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i}>
+                  <CardHeader className="pb-3">
+                    <Skeleton className="h-5 w-3/4" />
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <Skeleton className="h-3 w-16 mb-1" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                    <div>
+                      <Skeleton className="h-3 w-16 mb-2" />
+                      <Skeleton className="h-5 w-24" />
+                    </div>
+                    <div>
+                      <Skeleton className="h-3 w-16" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : paginatedOrgs.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground mb-4">
+                No organizations found{debouncedValue ? " matching your search" : ""}
+              </p>
+              {debouncedValue && (
+                <Button
+                  onClick={() => {
+                    setKeyword("");
+                    setOffset(0);
+                  }}>
+                  Clear Filter
+                </Button>
+              )}
+            </div>
           ) : (
             <div className="space-y-4 p-4">
-              {paginatedOrgs.map((org) => (
+              {paginatedOrgs?.map((org) => (
                 <Card
                   key={org.id}
                   className="cursor-pointer hover:shadow-md transition-shadow"
@@ -174,10 +234,41 @@ export function OrgList({}: OrgListProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedOrgs.length === 0 ? (
+              {query.isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-8 w-16" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : paginatedOrgs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
-                    No organizations found
+                  <TableCell colSpan={4} className="text-center py-10">
+                    <div>
+                      <p className="text-muted-foreground mb-4">
+                        No organizations found{debouncedValue ? " matching your search" : ""}
+                      </p>
+                      {debouncedValue && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setKeyword("");
+                            setOffset(0);
+                          }}>
+                          Clear Filter
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (

@@ -30,7 +30,7 @@ export function useTSRSearchQuery<TSearch extends Record<string, any>>(
   opts: UseTSRSearchQueryProps<TSearch>
 ) {
   const queryParam = opts.query_param;
-  const debounceDelay = opts.debounce_delay || 2000;
+  const debounceDelay = opts.debounce_delay || 1000;
   const [_, startTransition] = useTransition();
   const paramValueStr = opts.search?.[queryParam] ? String(opts.search?.[queryParam]) : undefined;
   // Get the query param value from search object

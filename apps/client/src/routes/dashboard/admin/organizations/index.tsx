@@ -6,6 +6,8 @@ export const Route = createFileRoute("/dashboard/admin/organizations/")({
   component: RouteComponent,
   validateSearch: z.object({
     sq: z.string().optional().catch(undefined),
+    sortBy: z.string().optional(),
+    sortDirection: z.enum(["asc", "desc"]).optional(),
   }),
 });
 

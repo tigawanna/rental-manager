@@ -1,32 +1,31 @@
-import { FiltersDialog } from "@/components/admin/shared/FiltersDialog";
 import { UserActionsDialog } from "@/components/admin/shared/UserActionsDialog";
 import { RoleIcons } from "@/components/identity/RoleIcons";
-import { SearchBox } from "@/components/search/SearchBox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Empty,
-    EmptyContent,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
 } from "@/components/ui/empty";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { organizationMembersQueryOptions } from "@/data-access-layer/users/organization-members";
+import { organizationMembersCollection } from "@/data-access-layer/collections/admin/organization-members-collection";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";
-import { useQuery } from "@tanstack/react-query";
+import { eq, like, or } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowLeft, Settings, Users } from "lucide-react";
 import { useState } from "react";
@@ -61,73 +60,51 @@ export function OrgMembers({
     query_param: "searchValue",
   });
 
-  // Search section takes priority over Filter section for the filter params
-  const effectiveFilterField = search.searchField ?? search.filterField;
-  // Map search operators to supported filter operators (API doesn't support starts_with/ends_with)
-  const searchOperatorMapped = search.searchOperator === "starts_with" || search.searchOperator === "ends_with" 
-    ? "contains" as const 
-    : search.searchOperator;
-  const effectiveFilterOperator = searchOperatorMapped ?? search.filterOperator;
-  const effectiveFilterValue = search.searchValue ?? search.filterValue;
+  const limit = search.limit ?? 10;
+  const offset = search.offset ?? 0;
 
-  const query = useQuery(
-    organizationMembersQueryOptions({
-      query: {
-        organizationId: orgId,
-        filterValue: effectiveFilterValue,
-        filterField: effectiveFilterField,
-        filterOperator: effectiveFilterOperator,
-        limit: search.limit,
-        offset: search.offset,
-        sortBy: search.sortBy,
-        sortDirection: search.sortDirection,
-      },
-    })
-  );
+  // Use TanStack DB with client-side filtering
+  const query = useLiveQuery((q) => {
+    let dbQuery = q.from({ members: organizationMembersCollection });
 
-  if (query.error) {
-    return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Users />
-            </EmptyMedia>
-            <EmptyTitle>Error Loading Members</EmptyTitle>
-            <EmptyDescription>
-              {query.error instanceof Error ? query.error.message : "An error occurred"}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => navigate({ to: `/dashboard/admin/organizations/${orgId}` })}>
-                Back to Organization
-              </Button>
-              <Button onClick={() => query.refetch()}>Try Again</Button>
-            </div>
-          </EmptyContent>
-        </Empty>
-      </div>
-    );
-  }
+    // Filter by organization ID
+    dbQuery = dbQuery.where(({ members }) => eq(members.organizationId, orgId));
 
-  if (query.isPending) {
+    // Apply search if present
+    if (debouncedValue) {
+      const searchTerm = `%${debouncedValue}%`;
+      dbQuery = dbQuery.where(({ members }) =>
+        or(like(members.user.email, searchTerm), like(members.user.name, searchTerm))
+      );
+    }
+
+    // Apply role filter if present
+    if (search.filterField === "role" && search.filterValue) {
+      dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
+    }
+
+    // Apply sorting
+    const sortBy = search.sortBy ?? "createdAt";
+    const sortDirection = search.sortDirection ?? "desc";
+    dbQuery = dbQuery.orderBy(({ members }) => members[sortBy as keyof typeof members], sortDirection);
+
+    return dbQuery.select(({ members }) => members);
+  });
+
+  // Client-side pagination
+  const allMembers = query.data ?? [];
+  const total = allMembers.length;
+  const membersList = allMembers.slice(offset, offset + limit);
+  const page = Math.floor(offset / limit) + 1;
+  const pageCount = Math.max(1, Math.ceil(total / limit));
+
+  if (query.isLoading) {
     return (
       <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
         <div className="text-muted-foreground">Loading members…</div>
       </div>
     );
   }
-
-  const membersData = query.data;
-  const membersList = membersData?.members ?? [];
-  const total = membersData?.total ?? 0;
-  const limit = search.limit ?? 10;
-  const offset = search.offset ?? 0;
-  const page = Math.floor(offset / limit) + 1;
-  const pageCount = Math.max(1, Math.ceil(total / limit));
 
   return (
     <div className="h-full w-full space-y-6 p-6 min-w-[90%]">
@@ -163,7 +140,7 @@ export function OrgMembers({
       </div> */}
 
       {/* Empty/Loading state */}
-      {(membersList.length === 0 || query.isPending) && (
+      {(membersList.length === 0 || query.isLoading) && (
         <div className="min-h-[70%] mx-auto max-w-2xl flex flex-col items-center justify-center">
           <Empty>
             <EmptyHeader>
@@ -171,21 +148,21 @@ export function OrgMembers({
                 <Users />
               </EmptyMedia>
               <EmptyTitle>
-                {query.isPending
+                {query.isLoading
                   ? "Loading..."
                   : debouncedValue
                     ? "No members found"
                     : "No members yet"}
               </EmptyTitle>
               <EmptyDescription>
-                {query.isPending
+                {query.isLoading
                   ? "Fetching members data..."
                   : debouncedValue
                     ? "Try adjusting your search filters"
                     : "This organization doesn't have any members yet"}
               </EmptyDescription>
             </EmptyHeader>
-            {debouncedValue && !query.isPending && (
+            {debouncedValue && !query.isLoading && (
               <EmptyContent>
                 <Button
                   variant="outline"
@@ -379,7 +356,6 @@ export function OrgMembers({
             banned: false,
           }}
           orgId={orgId}
-          onSuccess={() => query.refetch()}
         />
       )}
     </div>
