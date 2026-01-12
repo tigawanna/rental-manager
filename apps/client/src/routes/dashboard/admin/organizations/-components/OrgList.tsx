@@ -1,3 +1,4 @@
+import { SearchBox } from "@/components/search/SearchBox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +10,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -27,36 +27,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { userOrgsQueryOptions } from "@/data-access-layer/users/user-orgs";
-import { useDebouncedValue } from "@/hooks/use-debouncer";
+import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CreateOrg, EditOrg } from "./OrgDialogs";
+import { UseSearchOptions } from "node_modules/@tanstack/react-router/dist/esm/useSearch";
 
 interface OrgListProps {}
 
 export function OrgList({}: OrgListProps) {
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState("");
+  const search = useSearch({ from: "/dashboard/admin/organizations/" });
+  const navigate = useNavigate({ from: "/dashboard/admin/organizations" });
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
-  const { debouncedValue: debouncedSearchInput } = useDebouncedValue(searchInput, 400);
 
   const query = useQuery(userOrgsQueryOptions({}));
 
+  const { debouncedValue, isDebouncing, keyword, setKeyword } = useTSRSearchQuery({
+    search,
+    navigate,
+    query_param: "sq",
+  });
+  
   const filteredOrgs = useMemo(() => {
     if (!query.data) return [];
 
-    const searchTerm = debouncedSearchInput.toLowerCase();
+    const searchTerm = debouncedValue?.toLowerCase() || "";
     if (!searchTerm) return query.data;
 
     return query.data.filter(
       (org) =>
         org.name?.toLowerCase().includes(searchTerm) || org.slug?.toLowerCase().includes(searchTerm)
     );
-  }, [query.data, debouncedSearchInput]);
+  }, [query.data, debouncedValue]);
 
   const total = filteredOrgs.length;
   const paginatedOrgs = filteredOrgs.slice(offset, offset + limit);
@@ -128,15 +134,7 @@ export function OrgList({}: OrgListProps) {
       </div>
 
       <div className="flex items-end gap-3 flex-wrap">
-        <Input
-          className="min-w-64 max-w-[90%]"
-          placeholder="Search by name or slug…"
-          value={searchInput}
-          onChange={(e) => {
-            setSearchInput(e.target.value);
-            setOffset(0); // Reset to first page on search
-          }}
-        />
+        <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
       </div>
 
       <div className="@container rounded-md border overflow-hidden">

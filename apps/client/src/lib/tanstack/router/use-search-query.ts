@@ -1,11 +1,11 @@
 import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { useSearch, useNavigate } from "@tanstack/react-router";
-import { useTransition, useState, useEffect } from "react";
-import { SearchParamKeysForRoute, ValidRoutes } from "./router-types";
+import { type NavigateOptions } from "@tanstack/react-router";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
-interface UseTSRSearchQueryProps<T extends ValidRoutes> {
-  from: T; // Route path like "/dashboard/payments"
-  query_param?: SearchParamKeysForRoute<T>; // defaults to "sq"
+interface UseTSRSearchQueryProps<TSearch extends Record<string, any>> {
+  search: TSearch; // Search params from useSearch()
+  navigate: (opts: NavigateOptions<any>) => void; // Navigate function from useNavigate()
+  query_param: keyof TSearch; // defaults to "sq"
   default_value?: string;
   debounce_delay?: number; // defaults to 2000ms
 }
@@ -14,44 +14,63 @@ interface UseTSRSearchQueryProps<T extends ValidRoutes> {
  * Generic search query hook for any route
  *
  * Requirements:
+ * - Call useSearch() and useNavigate() in your component and pass them in
  * - The route must have the query param defined in validateSearch (defaults to "sq")
- * - Pass the `from` route path when using the hook
  *
  * @example
- * const { debouncedValue, isDebouncing, keyword, setKeyword } = useSearchQuery({
- *   from: "/dashboard/payments",
+ * const search = useSearch({ from: "/dashboard/payments" });
+ * const navigate = useNavigate({ from: "/dashboard/payments" });
+ * const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } = useTSRSearchQuery({
+ *   search,
+ *   navigate,
  *   query_param: "sq"
  * })
  */
-export function useTSRSearchQuery<T extends ValidRoutes>(opts: UseTSRSearchQueryProps<T>) {
-  const queryParam = opts.query_param || "sq";
+export function useTSRSearchQuery<TSearch extends Record<string, any>>(
+  opts: UseTSRSearchQueryProps<TSearch>
+) {
+  const queryParam = opts.query_param;
   const debounceDelay = opts.debounce_delay || 2000;
-
-  // Use the provided route context (cast to any to bypass strict type checking)
-  const search = useSearch({ from: opts.from as any }) as Record<string, any>;
-  const navigate = useNavigate({ from: opts.from as any });
   const [_, startTransition] = useTransition();
-
-  // Get the query param value from search object (handles any param name)
-  const paramValue = search[queryParam as keyof typeof search] as string | undefined;
+  const paramValueStr = opts.search?.[queryParam] ? String(opts.search?.[queryParam]) : undefined;
+  // Get the query param value from search object
+  const paramValue = paramValueStr ?? opts.default_value ?? "";
 
   const [keyword, setKeyword] = useState(paramValue ?? opts.default_value ?? "");
   const { debouncedValue, isDebouncing } = useDebouncedValue(keyword, debounceDelay);
 
+  // Immediate search params update (for filters, pagination, etc.)
+  const setSearchParams = useCallback(
+    (patch: Partial<TSearch>) => {
+      startTransition(() => {
+        opts.navigate({
+          search: (prev: any) => ({
+            ...prev,
+            ...patch,
+          }),
+          replace: true,
+          viewTransition: false,
+        });
+      });
+    },
+    [opts.navigate, startTransition]
+  );
+
+  // Debounced search value update
   useEffect(() => {
     if (paramValue !== debouncedValue) {
       startTransition(() => {
-        navigate({
-          // @ts-expect-error : Dynamic query param
-          search: (prev) => ({
+        opts.navigate({
+          search: (prev: any) => ({
             ...prev,
-            [queryParam]: debouncedValue,
+            [queryParam]: debouncedValue || undefined,
           }),
+          replace: true,
           viewTransition: false,
         });
       });
     }
-  }, [debouncedValue, paramValue, queryParam, navigate, startTransition]);
+  }, [debouncedValue, paramValue, queryParam, opts.navigate, startTransition]);
 
-  return { debouncedValue, isDebouncing, keyword, setKeyword };
+  return { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams };
 }

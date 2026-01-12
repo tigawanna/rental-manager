@@ -35,7 +35,8 @@ export const Route = createFileRoute("/dashboard/admin/organizations/$orgId/memb
       .default("createdAt"),
     sortDirection: z.enum(["asc", "desc"]).default("desc"),
     filterField: z
-      .enum(["role"]) // member filter fields
+      // .enum(["role"]) // member filter fields
+      .string()
       .optional()
       .catch(undefined),
     filterOperator: z

@@ -1,33 +1,35 @@
 import { FiltersDialog } from "@/components/admin/shared/FiltersDialog";
-import { UserRowCard } from "@/components/admin/shared/UserRowCard";
-import { UserRowTable } from "@/components/admin/shared/UserRowTable";
+import { UserActionsDialog } from "@/components/admin/shared/UserActionsDialog";
+import { RoleIcons } from "@/components/identity/RoleIcons";
 import { SearchBox } from "@/components/search/SearchBox";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
 } from "@/components/ui/empty";
-import { Input } from "@/components/ui/input";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { organizationMembersQueryOptions } from "@/data-access-layer/users/organization-members";
-import { useDebouncedValue } from "@/hooks/use-debouncer";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
+import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowLeft, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowLeft, Settings, Users } from "lucide-react";
+import { useState } from "react";
 
 interface OrgMembersProps {
   orgId: string;
@@ -45,43 +47,36 @@ export function OrgMembers({
   sortByFields,
 }: OrgMembersProps) {
   // Read current route search values - Types come from validateSearch in the route definition
-  const search = useSearch({ strict: false });
-  const navigate = useNavigate();
-  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-  const searchInput =search.searchValue ?? ""; 
-  // const { debouncedValue } = useDebouncedValue(searchInput, 400);
 
-  function setSearchInput(value: string) {
-    navigate({
-      to: ".",
-      search: (prev) => ({ ...prev, searchValue: value, offset: 0 }),
-      replace: true,
-      viewTransition:false,
+  const search = useSearch({ from: "/dashboard/admin/organizations/$orgId/members" });
+  const navigate = useNavigate({ from: "/dashboard/admin/organizations/$orgId/members" });
+  // const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<typeof membersList[0] | null>(null);
 
-    });
-  } 
+  // Centralized search/filter state management
+  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } = useTSRSearchQuery({
+    search,
+    navigate,
+    query_param: "searchValue",
+  });
 
-  function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
-    navigate({
-      to: ".",
-      search: (prev) => ({ ...prev, ...patch }),
-      replace: true,
-    });
-  }
-
-    const { debouncedValue, isDebouncing, keyword, setKeyword } = useTSRSearchQuery({
-      from: "/dashboard/admin/organizations/$orgId/members",
-      query_param: "searchValue",
-    });
-
+  // Search section takes priority over Filter section for the filter params
+  const effectiveFilterField = search.searchField ?? search.filterField;
+  // Map search operators to supported filter operators (API doesn't support starts_with/ends_with)
+  const searchOperatorMapped = search.searchOperator === "starts_with" || search.searchOperator === "ends_with" 
+    ? "contains" as const 
+    : search.searchOperator;
+  const effectiveFilterOperator = searchOperatorMapped ?? search.filterOperator;
+  const effectiveFilterValue = search.searchValue ?? search.filterValue;
 
   const query = useQuery(
     organizationMembersQueryOptions({
       query: {
         organizationId: orgId,
-        filterValue: search.searchValue,
-        filterField: search.filterField,
-        filterOperator: search.filterOperator,
+        filterValue: effectiveFilterValue,
+        filterField: effectiveFilterField,
+        filterOperator: effectiveFilterOperator,
         limit: search.limit,
         offset: search.offset,
         sortBy: search.sortBy,
@@ -153,26 +148,23 @@ export function OrgMembers({
       </div>
 
       {/* Search & Filters */}
-      <div className="flex items-end gap-3">
+      {/* <div className="flex items-end gap-3">
         <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
         <FiltersDialog
           open={filterDialogOpen}
           onOpenChange={setFilterDialogOpen}
           search={search}
-          setSearch={setSearch}
-          searchInput={searchInput}
-          setSearchInput={setSearchInput}
-          limit={limit}
+          navigate={navigate}
           searchFields={searchFields}
           searchOperators={searchOperators}
           filterFields={filterFields}
           sortByFields={sortByFields}
         />
-      </div>
+      </div> */}
 
       {/* Empty/Loading state */}
       {(membersList.length === 0 || query.isPending) && (
-        <div className="h-full mx-auto max-w-2xl flex flex-col items-center justify-center">
+        <div className="min-h-[70%] mx-auto max-w-2xl flex flex-col items-center justify-center">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -198,8 +190,18 @@ export function OrgMembers({
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setSearchInput("");
-                    setSearch({ offset: 0 });
+                    setKeyword("");
+                    setSearchParams({
+                      offset: 0,
+                      filterField: undefined,
+                      filterOperator: undefined,
+                      filterValue: undefined,
+                      sortBy: undefined,
+                      sortDirection: undefined,
+                      searchField: undefined,
+                      searchOperator: undefined,
+                      searchValue: undefined,
+                    } as any);
                   }}>
                   Clear Search
                 </Button>
@@ -216,31 +218,44 @@ export function OrgMembers({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-15">Role</TableHead>
-                  <TableHead>Name (User ID)</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="w-15">Pic</TableHead>
+                  <TableHead>Name</TableHead>                  
+                  <TableHead>Email</TableHead>
+             
+                  <TableHead>Role</TableHead>
                   <TableHead>Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {membersList.map((member) => (
-                  <UserRowTable
-                    key={member.id}
-                    user={{
-                      id: member.userId,
-                      name: member.userId,
-                      email: member.userId, // member data doesn't have email separately
-                      role: member.role,
-                      emailVerified: false,
-                      banned: false,
-                      createdAt: member.createdAt,
-                    }}
-                    orgId={orgId}
-                    showActions={true}
-                    showEmail={false}
-                    onSuccess={() => query.refetch()}
-                  />
+                  <TableRow key={member.id}>
+                    <TableCell>
+                      <div className="flex items-center justify-center">
+                        <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{member.user.name ?? "—"}</TableCell>
+                    <TableCell>{member.user.email}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{member.role}</Badge>
+                    </TableCell>
+                    <TableCell title={String(member.createdAt ?? "")}>
+                      {member.createdAt ? getRelativeTimeString(new Date(member.createdAt)) : "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setActionsOpen(true);
+                        }}>
+                        <Settings className="h-4 w-4 mr-1" />
+                        Actions
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -249,22 +264,45 @@ export function OrgMembers({
           {/* Mobile Card View */}
           <div className="block @md:hidden space-y-4 p-4">
             {membersList.map((member) => (
-              <UserRowCard
-                key={member.id}
-                user={{
-                  id: member.userId,
-                  name: member.userId,
-                  email: member.userId,
-                  role: member.role,
-                  emailVerified: false,
-                  banned: false,
-                  createdAt: member.createdAt,
-                }}
-                orgId={orgId}
-                showActions={true}
-                showEmail={false}
-                onSuccess={() => query.refetch()}
-              />
+              <Card key={member.id} className="overflow-hidden">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="shrink-0">
+                      <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
+                    </div>
+                    <CardTitle className="text-base truncate min-w-0">
+                      {member.user.name ?? "—"}
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Email</p>
+                    <p className="text-sm wrap-break-word">{member.user.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-2">Role</p>
+                    <Badge variant="outline">{member.role}</Badge>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Joined</p>
+                    <p className="text-sm" title={String(member.createdAt ?? "")}>
+                      {member.createdAt ? getRelativeTimeString(new Date(member.createdAt)) : "—"}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      setSelectedMember(member);
+                      setActionsOpen(true);
+                    }}>
+                    <Settings className="h-4 w-4 mr-1" />
+                    Actions
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
@@ -291,7 +329,7 @@ export function OrgMembers({
                 onClick={(e) => {
                   e.preventDefault();
                   if (page <= 1) return;
-                  setSearch({ offset: Math.max(0, offset - limit) });
+                  setSearchParams({ offset: Math.max(0, offset - limit) } as any);
                 }}
               />
             </PaginationItem>
@@ -307,7 +345,7 @@ export function OrgMembers({
                     isActive={p === page}
                     onClick={(e) => {
                       e.preventDefault();
-                      setSearch({ offset: (p - 1) * limit });
+                      setSearchParams({ offset: (p - 1) * limit } as any);
                     }}>
                     {p}
                   </PaginationLink>
@@ -321,17 +359,29 @@ export function OrgMembers({
                 onClick={(e) => {
                   e.preventDefault();
                   if (page >= pageCount) return;
-                  setSearch({ offset: offset + limit });
+                  setSearchParams({ offset: offset + limit } as any);
                 }}
               />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
       </div>
+
+      {selectedMember && (
+        <UserActionsDialog
+          open={actionsOpen}
+          onOpenChange={setActionsOpen}
+          user={{
+            id: selectedMember.userId,
+            name: selectedMember.user.name,
+            email: selectedMember.user.email,
+            role: selectedMember.role,
+            banned: false,
+          }}
+          orgId={orgId}
+          onSuccess={() => query.refetch()}
+        />
+      )}
     </div>
   );
 }
-function useSearchQuery(arg0: { from: string; query_param: string; }): { debouncedValue: any; isDebouncing: any; keyword: any; setKeyword: any; } {
-  throw new Error("Function not implemented.");
-}
-

@@ -1,10 +1,12 @@
-import { SiteIcon } from "@/components/icon/SiteIcon";
-import { ListOrgs } from "@/components/orgs/ListOrgs";
 import { createFileRoute } from "@tanstack/react-router";
+import z from "zod";
 import { OrgList } from "./-components/OrgList";
 
 export const Route = createFileRoute("/dashboard/admin/organizations/")({
   component: RouteComponent,
+  validateSearch: z.object({
+    sq: z.string().optional().catch(undefined),
+  }),
 });
 
 function RouteComponent() {

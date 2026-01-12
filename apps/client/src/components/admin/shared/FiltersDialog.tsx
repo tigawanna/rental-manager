@@ -15,16 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { type NavigateOptions } from "@tanstack/react-router";
 import { SlidersHorizontal } from "lucide-react";
+import { useCallback, useTransition } from "react";
 
 interface FiltersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  search: any;
-  setSearch: (patch: Partial<Record<string, any>>) => void;
-  searchInput: string;
-  setSearchInput: (value: string) => void;
-  limit: number;
+  search: Record<string, any>;
+  navigate: (opts: NavigateOptions<any>) => void;
   searchFields: Array<{ label: string; value: string }>;
   searchOperators: Array<{ label: string; value: string }>;
   filterFields: Array<{ label: string; value: string }>;
@@ -35,15 +34,34 @@ export function FiltersDialog({
   open,
   onOpenChange,
   search,
-  setSearch,
-  searchInput,
-  setSearchInput,
-  limit,
+  navigate,
   searchFields,
   searchOperators,
   filterFields,
   sortByFields,
 }: FiltersDialogProps) {
+  const [_, startTransition] = useTransition();
+
+  // Internal setSearch function that handles navigation
+  const setSearch = useCallback(
+    (patch: Partial<Record<string, any>>) => {
+      startTransition(() => {
+        navigate({
+          search: (prev: any) => ({
+            ...prev,
+            ...patch,
+          }),
+          replace: true,
+          viewTransition: false,
+        });
+      });
+    },
+    [navigate]
+  );
+
+  const limit = search.limit ?? 10;
+  // const searchInput = search.searchValue ?? "";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -67,9 +85,9 @@ export function FiltersDialog({
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 <Select
-                value={search.searchField ?? ""}
-                onValueChange={(v) => setSearch({ searchField: v || undefined, offset: 0 })}>
-                  <SelectTrigger className="min-w-40">
+                  value={search.searchField ?? ""}
+                  onValueChange={(v) => setSearch({ searchField: v || undefined, offset: 0 })}>
+                  <SelectTrigger className="min-w-40 w-full">
                     <SelectValue placeholder="Field" />
                   </SelectTrigger>
                   <SelectContent>
@@ -85,7 +103,7 @@ export function FiltersDialog({
                   value={search.searchOperator ?? ""}
                   onValueChange={(v) => setSearch({ searchOperator: v || undefined, offset: 0 })}
                   disabled={!search.searchField}>
-                  <SelectTrigger className="min-w-40">
+                  <SelectTrigger className="min-w-40 w-full">
                     <SelectValue placeholder="Operator" />
                   </SelectTrigger>
                   <SelectContent>
@@ -98,12 +116,12 @@ export function FiltersDialog({
                 </Select>
               </div>
 
-              <Input
+              {/* <Input
                 placeholder="Search value…"
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={(e) => setSearch({ searchValue: e.target.value, offset: 0 })}
                 disabled={!search.searchField}
-              />
+              /> */}
             </div>
           </div>
 

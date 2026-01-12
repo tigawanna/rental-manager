@@ -1,6 +1,8 @@
-import { UserRowCard } from "@/components/admin/shared/UserRowCard";
-import { UserRowTable } from "@/components/admin/shared/UserRowTable";
+import { UserActionsDialog } from "@/components/admin/shared/UserActionsDialog";
+import { RoleIcons } from "@/components/identity/RoleIcons";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Empty,
   EmptyContent,
@@ -27,9 +29,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { adminUsersQueryOptions } from "@/data-access-layer/users/admin-suers";
+import { BetterAuthUserRoles } from "@/lib/better-auth/client";
+import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
+import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { FolderCode, Plus } from "lucide-react";
+import { FolderCode, Plus, Settings } from "lucide-react";
 import { useState } from "react";
 import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
 
@@ -46,30 +51,19 @@ const searchOperators = [
   { label: "Ends with", value: "ends_with" as const },
 ];
 
-function useUsersSearch() {
-  // Read current route search values
-  // Types come from validateSearch in the route definition
-  const search = useSearch({ from: "/dashboard/admin/users/" });
-  const navigate = useNavigate();
-
-  function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
-    navigate({
-      to: ".",
-      search: (prev) => ({ ...prev, ...patch }),
-      replace: true,
-    });
-  }
-
-  return { search, setSearch } as const;
-}
-
 export function AdminUsersPage({}: AdminUsersPageProps) {
-  const { search, setSearch } = useUsersSearch();
-  const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
+  const search = useSearch({ from: "/dashboard/admin/users/" });
+  const navigate = useNavigate({ from: "/dashboard/admin/users" });
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  // Apply debounced search to URL
-  // Keep operator/field stable from current search
+  // Centralized search/filter state management
+  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } = useTSRSearchQuery({
+    search,
+    navigate,
+    query_param: "searchValue",
+  });
 
   const query = useQuery(adminUsersQueryOptions(search));
 
@@ -150,18 +144,15 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           <Input
             className="min-w-[60%]"
             placeholder="Search value…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
           />
 
           <AdminUsersFiltersDialog
             open={filterDialogOpen}
             onOpenChange={setFilterDialogOpen}
             search={search}
-            setSearch={setSearch}
-            searchInput={searchInput}
-            setSearchInput={setSearchInput}
-            limit={limit}
+            navigate={navigate}
             searchFields={searchFields}
             searchOperators={searchOperators}
           />
@@ -178,18 +169,53 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           ) : (
             <div className="space-y-4 p-4">
               {usersList.map((u) => (
-                <UserRowCard
-                  key={u.id}
-                  user={{
-                    id: u.id,
-                    name: u.name,
-                    email: u.email,
-                    role: u.role,
-                    emailVerified: u.emailVerified,
-                    banned: u.banned ?? undefined,
-                    createdAt: u.createdAt,
-                  }}
-                />
+                <Card key={u.id} className="overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="shrink-0">
+                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
+                      </div>
+                      <CardTitle className="text-base truncate min-w-0">
+                        {u.name ?? "—"}
+                      </CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Email</p>
+                      <p className="text-sm wrap-break-word">{u.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Status</p>
+                      <div className="flex flex-wrap gap-2">
+                        {u.emailVerified ? (
+                          <Badge variant="outline">Verified</Badge>
+                        ) : (
+                          <Badge variant="secondary">Unverified</Badge>
+                        )}
+                        {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
+                        {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Created</p>
+                      <p className="text-sm" title={String(u.createdAt ?? "")}>
+                        {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        setSelectedUser(u);
+                        setActionsOpen(true);
+                      }}>
+                      <Settings className="h-4 w-4 mr-1" />
+                      Actions
+                    </Button>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
@@ -205,37 +231,57 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {query.isPending ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                     Loading users…
                   </TableCell>
                 </TableRow>
               ) : (usersList ?? []).length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                     No users found
                   </TableCell>
                 </TableRow>
               ) : (
                 usersList.map((u) => (
-                  <UserRowTable
-                    key={u.id}
-                    user={{
-                      id: u.id,
-                      name: u.name,
-                      email: u.email,
-                      role: u.role,
-                      emailVerified: u.emailVerified,
-                      banned: u.banned ?? undefined,
-                      createdAt: u.createdAt,
-                    }}
-                    showActions={true}
-                    onSuccess={() => query.refetch()}
-                  />
+                  <TableRow key={u.id}>
+                    <TableCell>
+                      <div className="flex items-center justify-center">
+                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{u.name ?? "—"}</TableCell>
+                    <TableCell>{u.email}</TableCell>
+                    <TableCell className="space-x-2">
+                      {u.emailVerified ? (
+                        <Badge variant="outline">Verified</Badge>
+                      ) : (
+                        <Badge variant="secondary">Unverified</Badge>
+                      )}
+                      {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
+                      {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                    </TableCell>
+                    <TableCell title={String(u.createdAt ?? "")}>
+                      {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(u);
+                          setActionsOpen(true);
+                        }}>
+                        <Settings className="h-4 w-4 mr-1" />
+                        Actions
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
             </TableBody>
@@ -263,7 +309,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (page <= 1) return;
-                  setSearch({ offset: Math.max(0, offset - limit) });
+                  setSearchParams({ offset: Math.max(0, offset - limit) } as any);
                 }}
               />
             </PaginationItem>
@@ -280,7 +326,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                     isActive={p === page}
                     onClick={(e) => {
                       e.preventDefault();
-                      setSearch({ offset: (p - 1) * limit });
+                      setSearchParams({ offset: (p - 1) * limit } as any);
                     }}>
                     {p}
                   </PaginationLink>
@@ -294,13 +340,28 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (page >= pageCount) return;
-                  setSearch({ offset: offset + limit });
+                  setSearchParams({ offset: offset + limit } as any);
                 }}
               />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
       </div>
+
+      {selectedUser && (
+        <UserActionsDialog
+          open={actionsOpen}
+          onOpenChange={setActionsOpen}
+          user={{
+            id: selectedUser.id,
+            name: selectedUser.name,
+            email: selectedUser.email,
+            role: selectedUser.role,
+            banned: selectedUser.banned ?? undefined,
+          }}
+          onSuccess={() => query.refetch()}
+        />
+      )}
     </div>
   );
 }

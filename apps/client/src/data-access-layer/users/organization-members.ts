@@ -25,7 +25,7 @@ export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersI
     ] as const,
     placeholderData:(prev)=>prev,
     queryFn: async () => {
-      console.log("qurying members with:", query);
+      console.log("query params in the query function == ", {query});
       const { data, error } = await authClient.organization.listMembers({
         query: {
           organizationId: query?.organizationId,

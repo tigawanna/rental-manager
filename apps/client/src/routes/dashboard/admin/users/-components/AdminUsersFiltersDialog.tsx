@@ -1,13 +1,11 @@
 import { FiltersDialog } from "@/components/admin/shared/FiltersDialog";
+import { type NavigateOptions } from "@tanstack/react-router";
 
 interface AdminUsersFiltersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  search: any;
-  setSearch: (patch: Partial<Record<string, any>>) => void;
-  searchInput: string;
-  setSearchInput: (value: string) => void;
-  limit: number;
+  search: Record<string, any>;
+  navigate: (opts: NavigateOptions<any>) => void;
   searchFields: Array<{ label: string; value: string }>;
   searchOperators: Array<{ label: string; value: string }>;
 }
@@ -29,10 +27,7 @@ export function AdminUsersFiltersDialog({
   open,
   onOpenChange,
   search,
-  setSearch,
-  searchInput,
-  setSearchInput,
-  limit,
+  navigate,
   searchFields,
   searchOperators,
 }: AdminUsersFiltersDialogProps) {
@@ -41,10 +36,7 @@ export function AdminUsersFiltersDialog({
       open={open}
       onOpenChange={onOpenChange}
       search={search}
-      setSearch={setSearch}
-      searchInput={searchInput}
-      setSearchInput={setSearchInput}
-      limit={limit}
+      navigate={navigate}
       searchFields={searchFields}
       searchOperators={searchOperators}
       filterFields={filterFields}
