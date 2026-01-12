@@ -1,18 +1,19 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { SlidersHorizontal } from "lucide-react";
 
@@ -54,6 +55,9 @@ export function FiltersDialog({
       <DialogContent className="min-w-fit max-w-[90%] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Filters</DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            Refine your user list by applying search, filters, and sorting options.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -64,8 +68,7 @@ export function FiltersDialog({
               <div className="flex gap-2">
                 <Select
                   value={search.searchField ?? undefined}
-                  onValueChange={(v) => setSearch({ searchField: v, offset: 0 })}
-                >
+                  onValueChange={(v) => setSearch({ searchField: v, offset: 0 })}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Field" />
                   </SelectTrigger>
@@ -81,8 +84,7 @@ export function FiltersDialog({
                 <Select
                   value={search.searchOperator ?? undefined}
                   onValueChange={(v) => setSearch({ searchOperator: v, offset: 0 })}
-                  disabled={!search.searchField}
-                >
+                  disabled={!search.searchField}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Operator" />
                   </SelectTrigger>
@@ -110,8 +112,7 @@ export function FiltersDialog({
             <h3 className="font-semibold text-sm">Page Size</h3>
             <Select
               value={String(limit)}
-              onValueChange={(v) => setSearch({ limit: Number(v), offset: 0 })}
-            >
+              onValueChange={(v) => setSearch({ limit: Number(v), offset: 0 })}>
               <SelectTrigger className="min-w-40">
                 <SelectValue />
               </SelectTrigger>
@@ -139,8 +140,7 @@ export function FiltersDialog({
                       filterValue: undefined,
                       offset: 0,
                     })
-                  }
-                >
+                  }>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Filter field" />
                   </SelectTrigger>
@@ -156,8 +156,7 @@ export function FiltersDialog({
                 <Select
                   value={(search.filterOperator as string | undefined) ?? undefined}
                   onValueChange={(v) => setSearch({ filterOperator: v, offset: 0 })}
-                  disabled={!search.filterField}
-                >
+                  disabled={!search.filterField}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Operator" />
                   </SelectTrigger>
@@ -186,8 +185,7 @@ export function FiltersDialog({
             <div className="flex gap-2">
               <Select
                 value={(search.sortBy as string | undefined) ?? undefined}
-                onValueChange={(v) => setSearch({ sortBy: v, offset: 0 })}
-              >
+                onValueChange={(v) => setSearch({ sortBy: v, offset: 0 })}>
                 <SelectTrigger className="min-w-36">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -203,8 +201,7 @@ export function FiltersDialog({
                 value={(search.sortDirection as "asc" | "desc") ?? "desc"}
                 onValueChange={(v) =>
                   setSearch({ sortDirection: v === "asc" ? "asc" : "desc", offset: 0 })
-                }
-              >
+                }>
                 <SelectTrigger className="min-w-28">
                   <SelectValue placeholder="Direction" />
                 </SelectTrigger>
@@ -233,8 +230,7 @@ export function FiltersDialog({
                   offset: 0,
                 });
                 onOpenChange(false);
-              }}
-            >
+              }}>
               Reset
             </Button>
 

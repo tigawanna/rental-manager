@@ -187,7 +187,7 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
       {/* Search & Filters */}
       <div className="flex items-end gap-3 flex-wrap">
         <Input
-          className="min-w-64"
+          className="min-w-64 max-w-[80%]"
           placeholder="Search value…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
