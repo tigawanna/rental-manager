@@ -1,6 +1,7 @@
 import { FiltersDialog } from "@/components/admin/shared/FiltersDialog";
 import { UserRowCard } from "@/components/admin/shared/UserRowCard";
 import { UserRowTable } from "@/components/admin/shared/UserRowTable";
+import { SearchBox } from "@/components/search/SearchBox";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -19,17 +20,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  organizationMembersQueryOptions,
-} from "@/data-access-layer/users/organization-members";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { organizationMembersQueryOptions } from "@/data-access-layer/users/organization-members";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
+import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowLeft, Users } from "lucide-react";
@@ -43,13 +37,29 @@ interface OrgMembersProps {
   sortByFields: Array<{ label: string; value: string }>;
 }
 
-export function OrgMembers({ orgId, searchFields, searchOperators, filterFields, sortByFields }: OrgMembersProps) {
+export function OrgMembers({
+  orgId,
+  searchFields,
+  searchOperators,
+  filterFields,
+  sortByFields,
+}: OrgMembersProps) {
   // Read current route search values - Types come from validateSearch in the route definition
   const search = useSearch({ strict: false });
   const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-  const { debouncedValue } = useDebouncedValue(searchInput, 400);
+  const searchInput =search.searchValue ?? ""; 
+  // const { debouncedValue } = useDebouncedValue(searchInput, 400);
+
+  function setSearchInput(value: string) {
+    navigate({
+      to: ".",
+      search: (prev) => ({ ...prev, searchValue: value, offset: 0 }),
+      replace: true,
+      viewTransition:false,
+
+    });
+  } 
 
   function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
     navigate({
@@ -59,39 +69,24 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
     });
   }
 
-  // Apply debounced search to URL query params
-  const effectiveParams = useMemo(
-    () => ({
-      organizationId: orgId,
-      searchValue: debouncedValue || undefined,
-      searchField: search.searchField,
-      searchOperator: search.searchOperator,
-      filterField: search.filterField,
-      filterOperator: search.filterOperator,
-      filterValue: search.filterValue,
-      sortBy: search.sortBy,
-      sortDirection: search.sortDirection,
-      limit: (search.limit as number) ?? 10,
-      offset: (search.offset as number) ?? 0,
-    }),
-    [
-      orgId,
-      debouncedValue,
-      search.searchField,
-      search.searchOperator,
-      search.filterField,
-      search.filterOperator,
-      search.filterValue,
-      search.sortBy,
-      search.sortDirection,
-      search.limit,
-      search.offset,
-    ]
-  );
+    const { debouncedValue, isDebouncing, keyword, setKeyword } = useTSRSearchQuery({
+      from: "/dashboard/admin/organizations/$orgId/members",
+      query_param: "searchValue",
+    });
+
 
   const query = useQuery(
     organizationMembersQueryOptions({
-      query: effectiveParams,
+      query: {
+        organizationId: orgId,
+        filterValue: search.searchValue,
+        filterField: search.filterField,
+        filterOperator: search.filterOperator,
+        limit: search.limit,
+        offset: search.offset,
+        sortBy: search.sortBy,
+        sortDirection: search.sortDirection,
+      },
     })
   );
 
@@ -134,8 +129,8 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
   const membersData = query.data;
   const membersList = membersData?.members ?? [];
   const total = membersData?.total ?? 0;
-  const limit = effectiveParams.limit ?? 10;
-  const offset = effectiveParams.offset ?? 0;
+  const limit = search.limit ?? 10;
+  const offset = search.offset ?? 0;
   const page = Math.floor(offset / limit) + 1;
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
@@ -158,14 +153,8 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
       </div>
 
       {/* Search & Filters */}
-      <div className="flex items-end gap-3 flex-wrap">
-        <Input
-          className="min-w-64 max-w-[80%]"
-          placeholder="Search value…"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
-
+      <div className="flex items-end gap-3">
+        <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
         <FiltersDialog
           open={filterDialogOpen}
           onOpenChange={setFilterDialogOpen}
@@ -189,11 +178,19 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
               <EmptyMedia variant="icon">
                 <Users />
               </EmptyMedia>
-              <EmptyTitle>{query.isPending ? "Loading..." : debouncedValue ? "No members found" : "No members yet"}</EmptyTitle>
+              <EmptyTitle>
+                {query.isPending
+                  ? "Loading..."
+                  : debouncedValue
+                    ? "No members found"
+                    : "No members yet"}
+              </EmptyTitle>
               <EmptyDescription>
-                {query.isPending ? "Fetching members data..." : debouncedValue
-                  ? "Try adjusting your search filters"
-                  : "This organization doesn't have any members yet"}
+                {query.isPending
+                  ? "Fetching members data..."
+                  : debouncedValue
+                    ? "Try adjusting your search filters"
+                    : "This organization doesn't have any members yet"}
               </EmptyDescription>
             </EmptyHeader>
             {debouncedValue && !query.isPending && (
@@ -334,3 +331,7 @@ export function OrgMembers({ orgId, searchFields, searchOperators, filterFields,
     </div>
   );
 }
+function useSearchQuery(arg0: { from: string; query_param: string; }): { debouncedValue: any; isDebouncing: any; keyword: any; setKeyword: any; } {
+  throw new Error("Function not implemented.");
+}
+

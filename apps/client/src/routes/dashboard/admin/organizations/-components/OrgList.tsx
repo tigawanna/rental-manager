@@ -129,7 +129,7 @@ export function OrgList({}: OrgListProps) {
 
       <div className="flex items-end gap-3 flex-wrap">
         <Input
-          className="min-w-64"
+          className="min-w-64 max-w-[90%]"
           placeholder="Search by name or slug…"
           value={searchInput}
           onChange={(e) => {

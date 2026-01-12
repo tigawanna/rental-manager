@@ -67,8 +67,8 @@ export function FiltersDialog({
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 <Select
-                  value={search.searchField ?? undefined}
-                  onValueChange={(v) => setSearch({ searchField: v, offset: 0 })}>
+                value={search.searchField ?? ""}
+                onValueChange={(v) => setSearch({ searchField: v || undefined, offset: 0 })}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Field" />
                   </SelectTrigger>
@@ -82,8 +82,8 @@ export function FiltersDialog({
                 </Select>
 
                 <Select
-                  value={search.searchOperator ?? undefined}
-                  onValueChange={(v) => setSearch({ searchOperator: v, offset: 0 })}
+                  value={search.searchOperator ?? ""}
+                  onValueChange={(v) => setSearch({ searchOperator: v || undefined, offset: 0 })}
                   disabled={!search.searchField}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Operator" />
@@ -132,10 +132,10 @@ export function FiltersDialog({
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
                 <Select
-                  value={(search.filterField as string | undefined) ?? undefined}
+                  value={(search.filterField as string | undefined) ?? ""}
                   onValueChange={(v) =>
                     setSearch({
-                      filterField: v,
+                      filterField: v || undefined,
                       filterOperator: undefined,
                       filterValue: undefined,
                       offset: 0,
@@ -154,8 +154,8 @@ export function FiltersDialog({
                 </Select>
 
                 <Select
-                  value={(search.filterOperator as string | undefined) ?? undefined}
-                  onValueChange={(v) => setSearch({ filterOperator: v, offset: 0 })}
+                  value={(search.filterOperator as string | undefined) ?? ""}
+                  onValueChange={(v) => setSearch({ filterOperator: v || undefined, offset: 0 })}
                   disabled={!search.filterField}>
                   <SelectTrigger className="min-w-40">
                     <SelectValue placeholder="Operator" />
@@ -184,8 +184,8 @@ export function FiltersDialog({
             <h3 className="font-semibold text-sm">Sort by</h3>
             <div className="flex gap-2">
               <Select
-                value={(search.sortBy as string | undefined) ?? undefined}
-                onValueChange={(v) => setSearch({ sortBy: v, offset: 0 })}>
+                value={(search.sortBy as string | undefined) ?? ""}
+                onValueChange={(v) => setSearch({ sortBy: v || undefined, offset: 0 })}>
                 <SelectTrigger className="min-w-36">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>

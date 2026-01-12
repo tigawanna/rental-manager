@@ -23,7 +23,9 @@ export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersI
       query?.filterOperator,
       query?.filterValue,
     ] as const,
+    placeholderData:(prev)=>prev,
     queryFn: async () => {
+      console.log("qurying members with:", query);
       const { data, error } = await authClient.organization.listMembers({
         query: {
           organizationId: query?.organizationId,
@@ -39,6 +41,7 @@ export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersI
       if (error) throw error;
       return data;
     },
+    
   });
 
 // Member Mutations
