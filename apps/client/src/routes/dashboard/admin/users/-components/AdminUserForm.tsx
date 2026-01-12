@@ -9,7 +9,7 @@ import {
   useAddUserToOrgMutation,
   useCreateUserMutation,
   useSetRoleMutation,
-  useUpdateUserMutation
+  useUpdateUserMutation,
 } from "@/data-access-layer/users/admin-user-management";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { useAppForm } from "@/lib/tanstack/form";
@@ -19,7 +19,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-type Org = { id: string; name?: string; slug?: string };
+
 
 type Mode = "create" | "edit";
 
@@ -27,12 +27,7 @@ type Props = {
   mode?: Mode;
   user?: UserWithRole | null;
   onSuccess?: (user?: UserWithRole | null) => void;
-  onBanClick?: () => void;
-  onUnbanClick?: () => void;
-  onRemoveClick?: () => void;
 };
-
-
 
 const formOpts = formOptions({
   defaultValues: {
@@ -43,7 +38,11 @@ const formOpts = formOptions({
   },
 });
 
-export function AdminUserForm({ mode = "create", user, onSuccess, onBanClick, onUnbanClick, onRemoveClick }: Props) {
+export function AdminUserForm({
+  mode = "create",
+  user,
+  onSuccess,
+}: Props) {
   const [selectedOrgId, setSelectedOrgId] = useState<string | undefined>(undefined);
 
   const createMutation = useCreateUserMutation();

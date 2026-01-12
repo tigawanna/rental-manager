@@ -68,37 +68,7 @@ export const fullOrganizationQueryOptions = ({ query }: TFullOrganizationInput) 
 type TOrganizationMembersInput = NonNullable<
   Parameters<typeof authClient.organization.listMembers>[0]
 >;
-export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersInput) =>
-  queryOptions({
-    queryKey: [
-      queryKeyPrefixes.organizations,
-      "members",
-      query?.organizationId,
-      query?.limit,
-      query?.offset,
-      query?.sortBy,
-      query?.sortDirection,
-      query?.filterField,
-      query?.filterOperator,
-      query?.filterValue,
-    ] as const,
-    queryFn: async () => {
-      const { data, error } = await authClient.organization.listMembers({
-        query: {
-          organizationId: query?.organizationId,
-          limit: query?.limit,
-          offset: query?.offset,
-          sortBy: query?.sortBy,
-          sortDirection: query?.sortDirection,
-          filterField: query?.filterField,
-          filterOperator: query?.filterOperator,
-          filterValue: query?.filterValue,
-        },
-      });
-      if (error) throw error;
-      return data;
-    },
-  });
+// organization members query moved to ./organization-members
 
 // NOTE: The following role/permission queries may require dynamic access control plugin enabled
 // type TListRolesInput = NonNullable<
@@ -214,36 +184,12 @@ export const setActiveOrganizationMutationOptions = mutationOptions({
 // Member Mutations
 
 type TRemoveMemberInput = NonNullable<Parameters<typeof authClient.organization.removeMember>[0]>;
-export const removeMemberMutationOptions = mutationOptions({
-  mutationFn: async (payload: TRemoveMemberInput) => {
-    const { data, error } = await authClient.organization.removeMember(payload);
-    if (error) throw error;
-    return data;
-  },
-  meta: {
-    invalidates: [
-      [queryKeyPrefixes.organizations, "members"],
-      [queryKeyPrefixes.organizations, "full"],
-    ],
-  },
-});
+// remove member mutation moved to ./organization-members
 
 type TUpdateMemberRoleInput = NonNullable<
   Parameters<typeof authClient.organization.updateMemberRole>[0]
 >;
-export const updateMemberRoleMutationOptions = mutationOptions({
-  mutationFn: async (payload: TUpdateMemberRoleInput) => {
-    const { data, error } = await authClient.organization.updateMemberRole(payload);
-    if (error) throw error;
-    return data;
-  },
-  meta: {
-    invalidates: [
-      [queryKeyPrefixes.organizations, "members"],
-      [queryKeyPrefixes.organizations, "full"],
-    ],
-  },
-});
+// update member role mutation moved to ./organization-members
 
 type TLeaveOrganizationInput = NonNullable<Parameters<typeof authClient.organization.leave>[0]>;
 export const leaveOrganizationMutationOptions = mutationOptions({

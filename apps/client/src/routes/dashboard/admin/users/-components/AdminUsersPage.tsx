@@ -1,12 +1,6 @@
-import { RoleIcons } from "@/components/identity/RoleIcons";
-import { Badge } from "@/components/ui/badge";
+import { UserRowCard } from "@/components/admin/shared/UserRowCard";
+import { UserRowTable } from "@/components/admin/shared/UserRowTable";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Empty,
   EmptyContent,
@@ -37,8 +31,6 @@ import {
   AdminUsersQueryOptionsParams,
 } from "@/data-access-layer/users/admin-suers";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
-import { BetterAuthUserRoles } from "@/lib/better-auth/client";
-import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
@@ -62,7 +54,7 @@ const searchOperators = [
 function useUsersSearch() {
   // Read current route search values
   // Types come from validateSearch in the route definition
-  const search = useSearch({ strict: false })
+    const search = useSearch({ from:"/dashboard/admin/users/" })
   const navigate = useNavigate();
 
   function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
@@ -70,7 +62,6 @@ function useUsersSearch() {
       to: ".",
       search: (prev) => ({ ...prev, ...patch }),
       replace: true,
-
     });
   }
 
@@ -82,19 +73,12 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-  const { debouncedValue } = useDebouncedValue(searchInput, 400);
+
 
   // Apply debounced search to URL
   // Keep operator/field stable from current search
-  const effectiveParams: AdminUsersQueryOptionsParams = useMemo(
-    () => ({
-      ...search,
-      searchValue: debouncedValue || undefined,
-    }),
-    [search, debouncedValue]
-  );
 
-  const query = useQuery(adminUsersQueryOptions(effectiveParams));
+  const query = useQuery(adminUsersQueryOptions(search));
 
   if (query.error || query.data?.error) {
     return (
@@ -215,38 +199,18 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           ) : (
             <div className="space-y-4 p-4">
               {usersList.map((u) => (
-                <Card key={u.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-base">{u.name ?? "—"}</CardTitle>
-                      <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Email</p>
-                      <p className="text-sm">{u.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-2">Status</p>
-                      <div className="flex flex-wrap gap-2">
-                        {u.emailVerified ? (
-                          <Badge variant="outline">Verified</Badge>
-                        ) : (
-                          <Badge variant="secondary">Unverified</Badge>
-                        )}
-                        {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
-                        {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Created</p>
-                      <p className="text-sm" title={String(u.createdAt ?? "")}>
-                        {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <UserRowCard
+                  key={u.id}
+                  user={{
+                    id: u.id,
+                    name: u.name,
+                    email: u.email,
+                    role: u.role,
+                    emailVerified: u.emailVerified,
+                    banned: u.banned ?? undefined,
+                    createdAt: u.createdAt,
+                  }}
+                />
               ))}
             </div>
           )}
@@ -279,27 +243,18 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 </TableRow>
               ) : (
                 usersList.map((u) => (
-                  <TableRow key={u.id}>
-                    <TableCell>
-                      <div className="flex items-center justify-center">
-                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{u.name ?? "—"}</TableCell>
-                    <TableCell>{u.email}</TableCell>
-                    <TableCell className="space-x-2">
-                      {u.emailVerified ? (
-                        <Badge variant="outline">Verified</Badge>
-                      ) : (
-                        <Badge variant="secondary">Unverified</Badge>
-                      )}
-                      {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
-                      {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
-                    </TableCell>
-                    <TableCell title={String(u.createdAt ?? "")}>
-                      {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
-                    </TableCell>
-                  </TableRow>
+                  <UserRowTable
+                    key={u.id}
+                    user={{
+                      id: u.id,
+                      name: u.name,
+                      email: u.email,
+                      role: u.role,
+                      emailVerified: u.emailVerified,
+                      banned: u.banned ?? undefined,
+                      createdAt: u.createdAt,
+                    }}
+                  />
                 ))
               )}
             </TableBody>

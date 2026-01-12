@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { authClient } from "@/lib/better-auth/client";
+import {
+  createOrganizationMutationOptions,
+  updateOrganizationMutationOptions,
+} from "@/data-access-layer/users/user-orgs";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -34,25 +37,7 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
   const [open, setOpen] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: async (payload: {
-      name: string;
-      slug: string;
-      logo?: string;
-      metadata?: any;
-      userId?: string;
-      keepCurrentActiveOrganization?: boolean;
-    }) => {
-      const { data, error } = await authClient.organization.create({
-        name: payload.name,
-        slug: payload.slug,
-        logo: payload.logo,
-        metadata: payload.metadata,
-        userId: payload.userId,
-        keepCurrentActiveOrganization: payload.keepCurrentActiveOrganization,
-      });
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: createOrganizationMutationOptions.mutationFn,
     onSuccess(data) {
       toast.success("Organization created");
       if (onCreated) onCreated(data);
@@ -69,7 +54,6 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
       invalidates: [["organizations"]],
     },
   });
-
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -107,18 +91,10 @@ export function EditOrg({
   className?: string;
   onUpdated?: (org: TOrgPayload) => void;
 }) {
-  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: async (payload: TOrgPayload) => {
-      const { data, error } = await authClient.organization.update({
-        data: payload.body,
-        organizationId: payload.organizationId,
-      });
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: updateOrganizationMutationOptions.mutationFn,
     onSuccess(data) {
       toast.success("Organization updated");
       if (onUpdated)
@@ -141,9 +117,9 @@ export function EditOrg({
         toast.error("Failed to update organization", { description: String(err) });
       }
     },
-    meta:{
-      invalidates: [["organizations"]]
-    }
+    meta: {
+      invalidates: [["organizations"]],
+    },
   });
 
   return (
@@ -170,7 +146,7 @@ export function EditOrg({
           onSubmit={async (payload) => {
             return mutation.mutateAsync({
               organizationId: org.organizationId,
-              body: {
+              data: {
                 name: payload.name,
                 slug: payload.slug,
                 logo: payload.logo,
@@ -185,5 +161,3 @@ export function EditOrg({
     </Dialog>
   );
 }
-
-

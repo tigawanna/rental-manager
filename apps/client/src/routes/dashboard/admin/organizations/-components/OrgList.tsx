@@ -38,7 +38,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRightIcon, Building2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CreateOrg } from "./OrgDialogs";
+import { CreateOrg, EditOrg } from "./OrgDialogs";
 
 interface OrgListProps {}
 
@@ -232,16 +232,20 @@ export function OrgList({}: OrgListProps) {
                       {org.createdAt ? getRelativeTimeString(new Date(org.createdAt)) : "—"}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate({ to: `/dashboard/admin/organizations/${org.id}/edit` });
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <EditOrg
+                          org={{
+                            organizationId: org.id,
+                            body: {
+                              name: org.name,
+                              slug: org.slug,
+                              logo: org.logo ?? undefined,
+                              metadata: org.metadata,
+                            },
+                          }}
+                          triggerLabel="Edit"
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
