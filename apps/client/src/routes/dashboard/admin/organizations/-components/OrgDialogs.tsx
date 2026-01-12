@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -10,15 +11,16 @@ import {
   createOrganizationMutationOptions,
   updateOrganizationMutationOptions,
 } from "@/data-access-layer/users/user-orgs";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { OrgForm } from "./OrgForm";
+import { Plus } from "lucide-react";
+import { D } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-ChNsB-ya";
 
 interface CreateOrgProps {
-  triggerLabel?: string;
   onCreated?: (org: any) => void;
-  className?: string;
+  triggerLabel?: string;
 }
 
 type TOrgPayload = {
@@ -32,8 +34,7 @@ type TOrgBodyPayload = {
   metadata?: Record<string, any> | undefined;
 };
 
-export function CreateOrg({ triggerLabel = "Create org", onCreated, className }: CreateOrgProps) {
-  const qc = useQueryClient();
+export function CreateOrg({ onCreated, triggerLabel }: CreateOrgProps) {
   const [open, setOpen] = useState(false);
 
   const mutation = useMutation({
@@ -58,14 +59,18 @@ export function CreateOrg({ triggerLabel = "Create org", onCreated, className }:
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="default" className={className}>
-          {triggerLabel}
+        <Button size="sm" variant="default">
+          <Plus className="size-4" />
+          {triggerLabel && <div className="ml-2">{triggerLabel}</div>}
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create organization</DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            Fill out the form below to create a new organization.
+          </DialogDescription>
         </DialogHeader>
 
         <OrgForm
@@ -133,6 +138,9 @@ export function EditOrg({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit organization</DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            Update the organization details using the form below.
+          </DialogDescription>
         </DialogHeader>
 
         <OrgForm

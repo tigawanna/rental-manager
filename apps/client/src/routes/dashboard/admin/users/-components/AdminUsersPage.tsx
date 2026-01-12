@@ -26,12 +26,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  adminUsersQueryOptions
-} from "@/data-access-layer/users/admin-suers";
+import { adminUsersQueryOptions } from "@/data-access-layer/users/admin-suers";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowUpRightIcon, FolderCode, Plus } from "lucide-react";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { FolderCode, Plus } from "lucide-react";
 import { useState } from "react";
 import { AdminUsersFiltersDialog } from "./AdminUsersFiltersDialog";
 
@@ -48,11 +46,10 @@ const searchOperators = [
   { label: "Ends with", value: "ends_with" as const },
 ];
 
-
 function useUsersSearch() {
   // Read current route search values
   // Types come from validateSearch in the route definition
-    const search = useSearch({ from:"/dashboard/admin/users/" })
+  const search = useSearch({ from: "/dashboard/admin/users/" });
   const navigate = useNavigate();
 
   function setSearch(patch: Partial<Record<keyof typeof search, any>>) {
@@ -68,10 +65,8 @@ function useUsersSearch() {
 
 export function AdminUsersPage({}: AdminUsersPageProps) {
   const { search, setSearch } = useUsersSearch();
-  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState(search.searchValue ?? "");
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-
 
   // Apply debounced search to URL
   // Keep operator/field stable from current search
@@ -92,15 +87,11 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <div className="flex gap-2">
+            <Link to="/dashboard/admin/users/new" className=" flex gap-2">
+              <Plus className="w-4 h-4" />
               <Button>Create User</Button>
-            </div>
+            </Link>
           </EmptyContent>
-          <Button variant="link" asChild className="text-muted-foreground" size="sm">
-            <a href="#">
-              Learn More <ArrowUpRightIcon />
-            </a>
-          </Button>
         </Empty>
       </div>
     );
@@ -115,20 +106,15 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
             </EmptyMedia>
             <EmptyTitle>No users Yet</EmptyTitle>
             <EmptyDescription>
-              You haven&apos;t created any projects yet. Get started by creating your first project.
+              You haven&apos;t created any users yet. Get started by creating your first user.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <div className="flex gap-2">
-              <Button>Create Project</Button>
-              <Button variant="outline">Import Project</Button>
-            </div>
+            <Link to="/dashboard/admin/users/new" className=" flex gap-2">
+              <Plus className="w-4 h-4" />
+              <Button>Create User</Button>
+            </Link>
           </EmptyContent>
-          <Button variant="link" asChild className="text-muted-foreground" size="sm">
-            <a href="#">
-              Learn More <ArrowUpRightIcon />
-            </a>
-          </Button>
         </Empty>
       </div>
     );
@@ -143,7 +129,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
 
   return (
     <div className="min-h-screen mx-auto p-6 space-y-6 min-w-[90%]">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -151,19 +137,18 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
           </p>
         </div>
 
-        <div className="mt-3 md:mt-0">
-          <Button onClick={() => navigate({ to: "/dashboard/admin/users/new" })}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create User
+        <Link to="/dashboard/admin/users/new" className="mt-3 md:mt-0">
+          <Button>
+            <Plus className="w-4 h-4" />
           </Button>
-        </div>
+        </Link>
       </div>
 
       <div className="flex items-end gap-3 flex-wrap">
         {/* Search Section */}
         <div className="flex gap-2 items-end">
           <Input
-            className="min-w-64"
+            className="min-w-[60%]"
             placeholder="Search value…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -187,13 +172,9 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
         {/* Mobile Card View - visible when container < 640px */}
         <div className="block @md:hidden">
           {query.isPending ? (
-            <div className="text-center py-10 text-muted-foreground">
-              Loading users…
-            </div>
+            <div className="text-center py-10 text-muted-foreground">Loading users…</div>
           ) : (usersList ?? []).length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">
-              No users found
-            </div>
+            <div className="text-center py-10 text-muted-foreground">No users found</div>
           ) : (
             <div className="space-y-4 p-4">
               {usersList.map((u) => (

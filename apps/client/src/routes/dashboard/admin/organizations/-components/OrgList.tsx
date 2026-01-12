@@ -1,42 +1,37 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Empty,
-    EmptyContent,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
 } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { userOrgsQueryOptions } from "@/data-access-layer/users/user-orgs";
 import { useDebouncedValue } from "@/hooks/use-debouncer";
 import { getRelativeTimeString } from "@/utils/date-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowUpRightIcon, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CreateOrg, EditOrg } from "./OrgDialogs";
 
@@ -53,14 +48,13 @@ export function OrgList({}: OrgListProps) {
 
   const filteredOrgs = useMemo(() => {
     if (!query.data) return [];
-    
+
     const searchTerm = debouncedSearchInput.toLowerCase();
     if (!searchTerm) return query.data;
-    
+
     return query.data.filter(
       (org) =>
-        org.name?.toLowerCase().includes(searchTerm) ||
-        org.slug?.toLowerCase().includes(searchTerm)
+        org.name?.toLowerCase().includes(searchTerm) || org.slug?.toLowerCase().includes(searchTerm)
     );
   }, [query.data, debouncedSearchInput]);
 
@@ -115,31 +109,21 @@ export function OrgList({}: OrgListProps) {
           <EmptyContent>
             <CreateOrg triggerLabel="Create Organization" />
           </EmptyContent>
-          <Button variant="link" asChild className="text-muted-foreground" size="sm">
-            <a href="#">
-              Learn More <ArrowUpRightIcon />
-            </a>
-          </Button>
         </Empty>
       </div>
     );
   }
 
   return (
-    <div className="h-full w-full min-w-[90%]">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div className="h-full w-full min-w-[90%] flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Organizations</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage and view all organizations
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Manage and view all organizations</p>
         </div>
 
         <div className="mt-3 md:mt-0">
-          <CreateOrg
-            triggerLabel="Create Organization"
-            className=""
-          />
+          <CreateOrg />
         </div>
       </div>
 
@@ -159,17 +143,14 @@ export function OrgList({}: OrgListProps) {
         {/* Mobile Card View */}
         <div className="block @md:hidden">
           {paginatedOrgs.length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">
-              No organizations found
-            </div>
+            <div className="text-center py-10 text-muted-foreground">No organizations found</div>
           ) : (
             <div className="space-y-4 p-4">
               {paginatedOrgs.map((org) => (
                 <Card
                   key={org.id}
                   className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}
-                >
+                  onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-base">{org.name ?? "—"}</CardTitle>
@@ -222,8 +203,7 @@ export function OrgList({}: OrgListProps) {
                   <TableRow
                     key={org.id}
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}
-                  >
+                    onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}>
                     <TableCell className="font-medium">{org.name ?? "—"}</TableCell>
                     <TableCell>
                       <code className="text-xs bg-muted px-2 py-1 rounded">{org.slug}</code>
@@ -294,8 +274,7 @@ export function OrgList({}: OrgListProps) {
                       onClick={(e) => {
                         e.preventDefault();
                         setOffset((p - 1) * limit);
-                      }}
-                    >
+                      }}>
                       {p}
                     </PaginationLink>
                   </PaginationItem>
