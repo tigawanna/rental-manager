@@ -36,7 +36,7 @@ export function OrgForm({
     name: string;
     slug: string;
     logo?: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     userId?: string;
     keepCurrentActiveOrganization: boolean;
   }) => Promise<any>;

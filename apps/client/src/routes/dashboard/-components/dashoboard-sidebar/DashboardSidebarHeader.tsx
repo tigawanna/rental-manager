@@ -1,3 +1,4 @@
+
 import { OrgSwitcher } from "@/components/identity/OrgSwitcher";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
@@ -9,20 +10,6 @@ export function DashboardSidebarHeader({}: DashboardSidebarHeaderProps) {
   const { state, setOpenMobile, isMobile } = useSidebar();
   const { pathname } = useLocation();
 
-  // TODO: Replace with actual organizations from better-auth
-  const organizations = [
-    {
-      id: "1",
-      name: "My Organization",
-      plan: "Pro",
-    },
-    {
-      id: "2",
-      name: "Secondary Org",
-      plan: "Free",
-    },
-  ];
-
   return (
     <div
       className="flex flex-col gap-3"
@@ -30,7 +17,7 @@ export function DashboardSidebarHeader({}: DashboardSidebarHeaderProps) {
         setOpenMobile(false);
       }}
     >
-      <OrgSwitcher organizations={organizations} />
+      <OrgSwitcher />
       <Link
         to="/dashboard"
         className={

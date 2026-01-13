@@ -29,6 +29,7 @@ export interface Option {
 
 export interface AsyncSelectProps<T> {
   /** TanStack Query options for fetching options */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryOptions: UseQueryOptions<T[], Error, T[], any>;
   /** Preload all data ahead of time */
   preload?: boolean;
@@ -173,6 +174,7 @@ export function AsyncSelect<T>({
   } = useQuery({
     ...queryOptions,
     queryKey: queryKeyWithSearch,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any) as { data: T[]; isLoading: boolean; error: Error | null };
 
   useEffect(() => {

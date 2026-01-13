@@ -16,7 +16,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { OrgForm } from "./OrgForm";
 import { Plus } from "lucide-react";
-import { D } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-ChNsB-ya";
+
 
 interface CreateOrgProps {
   onCreated?: (org: any) => void;
