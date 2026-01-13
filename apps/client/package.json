@@ -101,6 +101,7 @@
     "jsdom": "^27.3.0",
     "prettier": "*",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "eslint": "*",
     "typescript": "^5.9.3",
     "vite": "^7.2.7",
     "vitest": "^4.0.16",

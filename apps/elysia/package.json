@@ -45,6 +45,7 @@
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.31.8",
     "prettier": "*",
+    "eslint": "*",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typescript": "5.9.3"
