@@ -11,18 +11,19 @@ import { queryCollectionOptions } from "@tanstack/query-db-collection";
 
 export const organizationMembersCollection = createCollection(
   queryCollectionOptions({
+    syncMode: "on-demand", // ← New!
     queryKey: ["organizations", "members"],
     queryFn: async (ctx) => {
       const organizationId = ctx?.meta?.organizationId as string | undefined;
 
-      if (!organizationId) {
-        console.warn("No organizationId provided to organization members collection");
-        return [];
-      }
+      // if (!organizationId) {
+      //   console.warn("No organizationId provided to organization members collection");
+      //   return [];
+      // }
 
       const { data, error } = await authClient.organization.listMembers({
         query: {
-          organizationId,
+          organizationId: "WSAUjr456bf7NE0Laam3D2dVXKcQO95i",
           limit: 1000,
           offset: 0,
         },

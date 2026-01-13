@@ -1,5 +1,6 @@
 import { UserActionsDialog } from "@/components/admin/shared/UserActionsDialog";
 import { RoleIcons } from "@/components/identity/RoleIcons";
+import { SearchBox } from "@/components/search/SearchBox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,9 +23,11 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { organizationMembersCollection } from "@/data-access-layer/collections/admin/organization-members-collection";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
+import { TanstackDBColumnFilters } from "@/lib/tanstack/db/TanstackDBColumnfilters";
+import { createSortableColumns } from "@/lib/tanstack/db/sortable-columns";
 import { useTSRSearchQuery } from "@/lib/tanstack/router/use-search-query";
 import { getRelativeTimeString } from "@/utils/date-helpers";
-import { eq, like, or } from "@tanstack/db";
+import { count, eq, like, or } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowLeft, Settings, Users } from "lucide-react";
@@ -32,19 +35,15 @@ import { useState } from "react";
 
 interface OrgMembersProps {
   orgId: string;
-  searchFields: Array<{ label: string; value: string }>;
-  searchOperators: Array<{ label: string; value: string }>;
-  filterFields: Array<{ label: string; value: string }>;
-  sortByFields: Array<{ label: string; value: string }>;
 }
 
-export function OrgMembers({
-  orgId,
-  searchFields,
-  searchOperators,
-  filterFields,
-  sortByFields,
-}: OrgMembersProps) {
+const sortableColumns = createSortableColumns(organizationMembersCollection, [
+  { value: "createdAt", label: "Joined" },
+  { value: "role", label: "Role" },
+  { value: "userId", label: "User ID" },
+]);
+
+export function OrgMembers({ orgId }: OrgMembersProps) {
   // Read current route search values - Types come from validateSearch in the route definition
 
   const search = useSearch({ from: "/dashboard/admin/organizations/$orgId/members" });
@@ -62,39 +61,62 @@ export function OrgMembers({
 
   const limit = search.limit ?? 10;
   const offset = search.offset ?? 0;
+  const sortBy = search.sortBy ?? "createdAt";
+  const sortDirection = search.sortDirection ?? "desc";
 
-  // Use TanStack DB with client-side filtering
-  const query = useLiveQuery((q) => {
-    let dbQuery = q.from({ members: organizationMembersCollection });
+  // Query for paginated data with limit/offset
+  const query = useLiveQuery(
+    (q) => {
+      let dbQuery = q
+        .from({ members: organizationMembersCollection })
+        .where(({ members }) => eq(members.organizationId, orgId));
 
-    // Filter by organization ID
-    dbQuery = dbQuery.where(({ members }) => eq(members.organizationId, orgId));
+      if (debouncedValue) {
+        const searchTerm = `%${debouncedValue}%`;
+        dbQuery = dbQuery.where(({ members }) =>
+          or(like(members?.user?.email, searchTerm), like(members?.user?.name, searchTerm))
+        );
+      }
 
-    // Apply search if present
-    if (debouncedValue) {
-      const searchTerm = `%${debouncedValue}%`;
-      dbQuery = dbQuery.where(({ members }) =>
-        or(like(members.user.email, searchTerm), like(members.user.name, searchTerm))
-      );
-    }
+      if (search.filterField === "role" && search.filterValue) {
+        dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
+      }
 
-    // Apply role filter if present
-    if (search.filterField === "role" && search.filterValue) {
-      dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
-    }
+      return dbQuery
+        .orderBy(({ members }) => members[sortBy as keyof typeof members], sortDirection)
+        .limit(limit)
+        .offset(offset)
+    },
+    [orgId, debouncedValue, search.filterField, search.filterValue, sortBy, sortDirection, limit, offset]
+  );
 
-    // Apply sorting
-    const sortBy = search.sortBy ?? "createdAt";
-    const sortDirection = search.sortDirection ?? "desc";
-    dbQuery = dbQuery.orderBy(({ members }) => members[sortBy as keyof typeof members], sortDirection);
+  // Separate query for total count (without limit/offset)
+  const countQuery = useLiveQuery(
+    (q) => {
+      let dbQuery = q
+        .from({ members: organizationMembersCollection })
+        .where(({ members }) => eq(members.organizationId, orgId));
 
-    return dbQuery.select(({ members }) => members);
-  });
+      if (debouncedValue) {
+        const searchTerm = `%${debouncedValue}%`;
+        dbQuery = dbQuery.where(({ members }) =>
+          or(like(members.user.email, searchTerm), like(members?.user?.name, searchTerm))
+        );
+      }
 
-  // Client-side pagination
-  const allMembers = query.data ?? [];
-  const total = allMembers.length;
-  const membersList = allMembers.slice(offset, offset + limit);
+      if (search.filterField === "role" && search.filterValue) {
+        dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
+      }
+
+      return dbQuery.select(({ members }) => ({ total: count(members.id) }));
+    },
+    [orgId, debouncedValue, search.filterField, search.filterValue]
+  );
+
+
+  const membersList = query.data ?? [];
+
+  const total = countQuery.data?.[0]?.total ?? 0;
   const page = Math.floor(offset / limit) + 1;
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
@@ -125,19 +147,16 @@ export function OrgMembers({
       </div>
 
       {/* Search & Filters */}
-      {/* <div className="flex items-end gap-3">
+      <div className="flex items-end gap-3">
         <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
-        <FiltersDialog
-          open={filterDialogOpen}
-          onOpenChange={setFilterDialogOpen}
+        <TanstackDBColumnFilters
+          collection={organizationMembersCollection}
+          sortableColumns={sortableColumns}
           search={search}
           navigate={navigate}
-          searchFields={searchFields}
-          searchOperators={searchOperators}
-          filterFields={filterFields}
-          sortByFields={sortByFields}
+          defaultSortBy="createdAt"
         />
-      </div> */}
+      </div>
 
       {/* Empty/Loading state */}
       {(membersList.length === 0 || query.isLoading) && (
@@ -212,8 +231,8 @@ export function OrgMembers({
                         <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{member.user.name ?? "—"}</TableCell>
-                    <TableCell>{member.user.email}</TableCell>
+                    <TableCell className="font-medium">{member.user?.name ?? "—"}</TableCell>
+                    <TableCell>{member.user?.email ?? "—"}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{member.role}</Badge>
                     </TableCell>
@@ -248,14 +267,14 @@ export function OrgMembers({
                       <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
                     </div>
                     <CardTitle className="text-base truncate min-w-0">
-                      {member.user.name ?? "—"}
+                      {member.user?.name ?? "—"}
                     </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Email</p>
-                    <p className="text-sm wrap-break-word">{member.user.email}</p>
+                    <p className="text-sm wrap-break-word">{member.user?.email ?? "—"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-2">Role</p>
@@ -350,8 +369,8 @@ export function OrgMembers({
           onOpenChange={setActionsOpen}
           user={{
             id: selectedMember.userId,
-            name: selectedMember.user.name,
-            email: selectedMember.user.email,
+            name: selectedMember.user?.name,
+            email: selectedMember.user?.email ?? "",
             role: selectedMember.role,
             banned: false,
           }}
