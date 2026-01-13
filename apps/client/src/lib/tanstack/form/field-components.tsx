@@ -2,24 +2,21 @@ import * as React from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Field,
-    FieldContent,
-    FieldDescription,
-    FieldError,
-    FieldLabel,
-    FieldTitle,
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-    RadioGroup,
-    RadioGroupItem,
-} from "@/components/ui/radio-group";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,12 +33,14 @@ interface BaseFieldProps {
   orientation?: Orientation;
 }
 
-function toFieldErrors(errors: Array<{ message?: string } | string | undefined>) {
+function toFieldErrors(
+  errors: Array<{ message?: string } | string | undefined>,
+) {
   return errors
     .filter(Boolean)
-    .map((error) => (typeof error === "string" ? { message: error } : error)) as Array<
-    { message?: string }
-  >;
+    .map((error) =>
+      typeof error === "string" ? { message: error } : error,
+    ) as Array<{ message?: string }>;
 }
 
 function FieldErrorMessage({ className }: { className?: string }) {
@@ -52,7 +51,11 @@ function FieldErrorMessage({ className }: { className?: string }) {
   return <FieldError className={className} errors={errors} />;
 }
 
-function buildCommonProps(label: string | undefined, placeholder: string | undefined, name: string) {
+function buildCommonProps(
+  label: string | undefined,
+  placeholder: string | undefined,
+  name: string,
+) {
   const fieldLabel = label || name;
   const fieldPlaceholder = placeholder || `Enter ${fieldLabel}`;
   return { fieldLabel, fieldPlaceholder } as const;
@@ -69,14 +72,23 @@ export function TextField({
   className,
   orientation = "vertical",
   ...inputProps
-}: BaseFieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
+}: BaseFieldProps &
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   const field = useFieldContext<string>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
-  const { fieldLabel, fieldPlaceholder } = buildCommonProps(label, placeholder, field.name as string);
+  const { fieldLabel, fieldPlaceholder } = buildCommonProps(
+    label,
+    placeholder,
+    field.name as string,
+  );
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <FieldContent>
@@ -105,16 +117,27 @@ export function PasswordField({
   orientation = "vertical",
   ...inputProps
 }: BaseFieldProps &
-  Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type"> & {
+  Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "value" | "onChange" | "type"
+  > & {
     showPassword?: boolean;
   }) {
   const field = useFieldContext<string>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
-  const { fieldLabel, fieldPlaceholder } = buildCommonProps(label, placeholder, field.name as string);
+  const { fieldLabel, fieldPlaceholder } = buildCommonProps(
+    label,
+    placeholder,
+    field.name as string,
+  );
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <FieldContent>
@@ -142,15 +165,27 @@ export function TextAreaField({
   className,
   orientation = "vertical",
   ...textareaProps
-}: BaseFieldProps & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange">) {
+}: BaseFieldProps &
+  Omit<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    "value" | "onChange"
+  >) {
   const field = useFieldContext<string>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
-  const { fieldLabel, fieldPlaceholder } = buildCommonProps(label, placeholder, field.name as string);
+  const { fieldLabel, fieldPlaceholder } = buildCommonProps(
+    label,
+    placeholder,
+    field.name as string,
+  );
   const textareaClassName = "min-h-[120px]";
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <FieldContent>
@@ -178,13 +213,21 @@ export function EmailField({
   className,
   orientation = "vertical",
   ...inputProps
-}: BaseFieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type">) {
+}: BaseFieldProps &
+  Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "value" | "onChange" | "type"
+  >) {
   const field = useFieldContext<string>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldLabel htmlFor={field.name as string}>{label}</FieldLabel>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <FieldContent>
@@ -219,19 +262,35 @@ export function SelectField<T extends string>({
   const field = useFieldContext<T>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
-  const { fieldLabel } = buildCommonProps(label, placeholder, field.name as string);
+  const { fieldLabel } = buildCommonProps(
+    label,
+    placeholder,
+    field.name as string,
+  );
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldContent>
-        {fieldLabel ? <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel> : null}
-        {description ? <FieldDescription>{description}</FieldDescription> : null}
+        {fieldLabel ? (
+          <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel>
+        ) : null}
+        {description ? (
+          <FieldDescription>{description}</FieldDescription>
+        ) : null}
         <Select
           name={field.name as string}
           value={(field.state.value as string) ?? ""}
           onValueChange={(value) => field.handleChange(value as T)}
         >
-          <SelectTrigger id={field.name as string} aria-invalid={invalid} className="min-w-40">
+          <SelectTrigger
+            id={field.name as string}
+            aria-invalid={invalid}
+            className="min-w-40"
+          >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
@@ -260,7 +319,11 @@ export function CheckboxField({
   const fieldLabel = label || (field.name as string);
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <Checkbox
         id={field.name as string}
         name={field.name as string}
@@ -272,7 +335,9 @@ export function CheckboxField({
         <FieldLabel htmlFor={field.name as string} className="font-normal">
           {fieldLabel}
         </FieldLabel>
-        {description ? <FieldDescription>{description}</FieldDescription> : null}
+        {description ? (
+          <FieldDescription>{description}</FieldDescription>
+        ) : null}
         <FieldErrorMessage />
       </FieldContent>
     </Field>
@@ -291,10 +356,16 @@ export function SwitchField({
   const fieldLabel = label || (field.name as string);
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldContent>
         <FieldLabel htmlFor={field.name as string}>{fieldLabel}</FieldLabel>
-        {description ? <FieldDescription>{description}</FieldDescription> : null}
+        {description ? (
+          <FieldDescription>{description}</FieldDescription>
+        ) : null}
         <FieldErrorMessage />
       </FieldContent>
       <Switch
@@ -314,17 +385,25 @@ export function RadioGroupField<T extends string>({
   className,
   orientation = "vertical",
   items,
-}: BaseFieldProps & { items: { label: string; description?: string; value: T }[] }) {
+}: BaseFieldProps & {
+  items: { label: string; description?: string; value: T }[];
+}) {
   const field = useFieldContext<T>();
   const errors = toFieldErrors(field.state.meta.errors);
   const invalid = isInvalid(errors);
   const fieldLabel = label || (field.name as string);
 
   return (
-    <Field data-invalid={invalid} orientation={orientation} className={className}>
+    <Field
+      data-invalid={invalid}
+      orientation={orientation}
+      className={className}
+    >
       <FieldContent>
         <FieldLabel>{fieldLabel}</FieldLabel>
-        {description ? <FieldDescription>{description}</FieldDescription> : null}
+        {description ? (
+          <FieldDescription>{description}</FieldDescription>
+        ) : null}
         <RadioGroup
           name={field.name as string}
           value={(field.state.value as T) ?? ("" as T)}
@@ -340,7 +419,9 @@ export function RadioGroupField<T extends string>({
             >
               <FieldContent>
                 <FieldTitle>{item.label}</FieldTitle>
-                {item.description ? <FieldDescription>{item.description}</FieldDescription> : null}
+                {item.description ? (
+                  <FieldDescription>{item.description}</FieldDescription>
+                ) : null}
               </FieldContent>
               <RadioGroupItem
                 value={item.value}

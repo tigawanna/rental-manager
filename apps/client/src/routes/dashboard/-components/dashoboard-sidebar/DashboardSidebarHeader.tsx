@@ -24,14 +24,19 @@ export function DashboardSidebarHeader({}: DashboardSidebarHeaderProps) {
   ];
 
   return (
-    <div className="flex flex-col gap-3" onClick={() => { setOpenMobile(false) }}>
+    <div
+      className="flex flex-col gap-3"
+      onClick={() => {
+        setOpenMobile(false);
+      }}
+    >
       <OrgSwitcher organizations={organizations} />
       <Link
         to="/dashboard"
         className={
           pathname === "/dashboard"
-            ? `flex w-full cursor-pointer items-center gap-2 rounded-lg bg-primary/10 text-primary p-1 font-medium`
-            : `flex w-full cursor-pointer items-center gap-2 rounded-sm p-1 hover:bg-base-300`
+            ? `bg-primary/10 text-primary flex w-full cursor-pointer items-center gap-2 rounded-lg p-1 font-medium`
+            : `hover:bg-base-300 flex w-full cursor-pointer items-center gap-2 rounded-sm p-1`
         }
       >
         <LayoutDashboard className="size-5" />

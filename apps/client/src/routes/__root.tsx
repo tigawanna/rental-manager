@@ -27,7 +27,7 @@ export const Route = createRootRouteWithContext<{
 
 export function RootComponent() {
   return (
-    <div className="content min-h-screen w-full bg-base-100">
+    <div className="content bg-base-100 min-h-screen w-full">
       <Outlet />
       <Toaster />
       <TanstackDevtools />

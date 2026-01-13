@@ -1,5 +1,3 @@
-
-
 export type Prettify<T> = T extends infer o
   ? {
       [K in keyof o]: o[K];
@@ -79,7 +77,6 @@ export type ResolveSelectWithExpand<
       : {})
 >;
 
-
 type ExpandType = {
   shop: {
     collectionId: string;
@@ -104,4 +101,3 @@ type ExpandType = {
     updated: string;
   };
 };
-

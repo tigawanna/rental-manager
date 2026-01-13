@@ -99,8 +99,7 @@ export async function sendEmailwithBrevo({
             info,
             success: false,
           });
-        }
-        else {
+        } else {
           resolve({
             message: "Successfully sent, Thank you!",
             info,

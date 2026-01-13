@@ -15,8 +15,7 @@ export class InMemoryCache implements CacheStore {
   async get(key: string[]): Promise<string | null> {
     const cacheKey = JSON.stringify(key);
     const item = this.store.get(cacheKey);
-    if (!item)
-      return null;
+    if (!item) return null;
 
     if (item.expiry && item.expiry < Date.now()) {
       this.store.delete(cacheKey);
@@ -27,7 +26,7 @@ export class InMemoryCache implements CacheStore {
   }
 
   async set(key: string[], value: string, ttl: number): Promise<void> {
-    const expiry = ttl ? Date.now() + (ttl * 1000) : null;
+    const expiry = ttl ? Date.now() + ttl * 1000 : null;
     const cacheKey = JSON.stringify(key);
     this.store.set(cacheKey, { value, expiry });
   }

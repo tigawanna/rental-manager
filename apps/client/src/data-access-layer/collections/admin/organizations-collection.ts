@@ -34,7 +34,7 @@ export const organizationsCollection = createCollection(
 
             return data;
           };
-        })
+        }),
       );
       return { refetch: false };
     },
@@ -54,7 +54,7 @@ export const organizationsCollection = createCollection(
             if (error) throw error;
             return data;
           };
-        })
+        }),
       );
       return { refetch: true };
     },
@@ -67,9 +67,9 @@ export const organizationsCollection = createCollection(
             });
             if (error) throw error;
           };
-        })
+        }),
       );
       return { refetch: true };
     },
-  })
+  }),
 );

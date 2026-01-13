@@ -17,7 +17,7 @@ interface SignupProps {}
 
 export function SignupPage({}: SignupProps) {
   return (
-    <div className="to-primary/50items-center flex h-full min-h-screen w-full flex-col justify-center ">
+    <div className="to-primary/50items-center flex h-full min-h-screen w-full flex-col justify-center">
       <ResponsiveGenericToolbar>
         <Helmet title="Property | Signup" description="Create a new account" />
         <SignupComponent />

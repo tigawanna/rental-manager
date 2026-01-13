@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { date, numeric, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  date,
+  numeric,
+  pgTable,
+  text,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { properties } from "./properties";
 import { units } from "./units";
@@ -7,7 +14,9 @@ import { units } from "./units";
 // Maintenance requests table logs repair tickets, assignment, priority, and cost tracking
 export const maintenanceRequests = pgTable("maintenance_requests", {
   ...commonColumns,
-  propertyId: uuid("property_id").notNull().references(() => properties.id, { onDelete: "cascade" }),
+  propertyId: uuid("property_id")
+    .notNull()
+    .references(() => properties.id, { onDelete: "cascade" }),
   unitId: uuid("unit_id").references(() => units.id, { onDelete: "cascade" }),
   requestedById: varchar("requested_by_id", { length: 255 }).notNull(),
   assignedToId: varchar("assigned_to_id", { length: 255 }),
@@ -24,13 +33,16 @@ export const maintenanceRequests = pgTable("maintenance_requests", {
 });
 
 // Maintenance relations connect requests to property and optional unit
-export const maintenanceRequestsRelations = relations(maintenanceRequests, ({ one }) => ({
-  property: one(properties, {
-    fields: [maintenanceRequests.propertyId],
-    references: [properties.id],
+export const maintenanceRequestsRelations = relations(
+  maintenanceRequests,
+  ({ one }) => ({
+    property: one(properties, {
+      fields: [maintenanceRequests.propertyId],
+      references: [properties.id],
+    }),
+    unit: one(units, {
+      fields: [maintenanceRequests.unitId],
+      references: [units.id],
+    }),
   }),
-  unit: one(units, {
-    fields: [maintenanceRequests.unitId],
-    references: [units.id],
-  }),
-}));
+);

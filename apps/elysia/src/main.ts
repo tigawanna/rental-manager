@@ -2,8 +2,6 @@ import { Elysia } from "elysia";
 import { node } from "@elysiajs/node";
 import { allRoutes } from "./controllers/all";
 
-
-
 // Export app instance for type generation
 export const app = new Elysia({ adapter: node() })
   .use(allRoutes)
@@ -12,4 +10,4 @@ export const app = new Elysia({ adapter: node() })
     console.log(`🦊 Elysia openapi on ${url}openapi`);
   });
 
-  export type App = typeof app; 
+export type App = typeof app;

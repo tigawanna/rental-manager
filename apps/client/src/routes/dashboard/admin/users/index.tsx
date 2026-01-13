@@ -6,7 +6,10 @@ export const Route = createFileRoute("/dashboard/admin/users/")({
   validateSearch: z.object({
     searchValue: z.string().optional().catch(undefined),
     searchField: z.enum(["email", "name"]).optional().catch(undefined),
-    searchOperator: z.enum(["contains", "starts_with", "ends_with"]).optional().catch(undefined),
+    searchOperator: z
+      .enum(["contains", "starts_with", "ends_with"])
+      .optional()
+      .catch(undefined),
     limit: z.coerce.number().int().min(1).max(200).default(10),
     offset: z.coerce.number().int().min(0).default(0),
     sortBy: z
@@ -30,15 +33,10 @@ export const Route = createFileRoute("/dashboard/admin/users/")({
   component: RouteComponent,
 });
 
-
 function RouteComponent() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <AdminUsersPage />
     </div>
   );
 }
-
-
-
-

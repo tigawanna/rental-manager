@@ -5,6 +5,7 @@ This directory contains the modern TanStack Form implementation using the **Form
 ## Architecture
 
 The form system follows TanStack Form's recommended composition pattern, providing:
+
 - Type-safe, reusable field components
 - Centralized form context
 - Pre-bound field and form components
@@ -23,6 +24,7 @@ form/
 ## Core Concepts
 
 ### 1. Form Context (`form-context.ts`)
+
 Creates the shared contexts for forms and fields across your application:
 
 ```typescript
@@ -31,6 +33,7 @@ export const { fieldContext, useFieldContext, formContext, useFormContext } =
 ```
 
 ### 2. Field Components (`field-components.tsx`)
+
 Pre-bound field components that use `useFieldContext` to access field state:
 
 - `TextField` - Standard text input
@@ -39,17 +42,20 @@ Pre-bound field components that use `useFieldContext` to access field state:
 - `TextAreaField` - Multi-line text input
 
 Each component:
+
 - Automatically handles value binding, onChange, and onBlur
 - Displays validation errors
 - Supports custom labels and placeholders
 - Accepts all standard HTML input props
 
 ### 3. Form Components (`form-components.tsx`)
+
 Form-level components that use `useFormContext`:
 
 - `SubmitButton` - Reactive submit button that disables when form is invalid or submitting
 
 ### 4. Form Hook (`index.ts`)
+
 Creates the `useAppForm` hook with all components registered:
 
 ```typescript
@@ -153,7 +159,7 @@ import { useFieldContext } from "@/lib/tanstack/form";
 
 function CustomField({ label }: { label: string }) {
   const field = useFieldContext<string>();
-  
+
   return (
     <div>
       <label>{label}</label>
@@ -176,7 +182,7 @@ Then register it in `index.ts`:
 export const { useAppForm } = createFormHook({
   fieldComponents: {
     TextField,
-    CustomField,  // Add your component
+    CustomField, // Add your component
   },
   // ...
 });
@@ -193,6 +199,7 @@ export const { useAppForm } = createFormHook({
 ## Migration from Old Pattern
 
 The old pattern (TextFormField, etc.) required:
+
 - Passing `field`, `fieldKey`, `fieldlabel`, `inputOptions` as props
 - Manual onChange handlers
 - Repetitive field configuration

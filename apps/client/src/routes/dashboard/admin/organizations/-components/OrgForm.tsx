@@ -103,7 +103,8 @@ export function OrgForm({
         e.stopPropagation();
         form.handleSubmit();
       }}
-      className="space-y-4">
+      className="space-y-4"
+    >
       <form.AppField
         name="name"
         validators={{ onChange: z.string().min(1, "Name is required") }}
@@ -113,11 +114,15 @@ export function OrgForm({
             if (!value || value.trim() === "") return;
             form.setFieldValue("slug", slugify(value));
           },
-        }}>
+        }}
+      >
         {(f) => <f.TextField label="Organization name" />}
       </form.AppField>
 
-      <form.AppField name="slug" validators={{ onChange: z.string().min(1, "Slug is required") }}>
+      <form.AppField
+        name="slug"
+        validators={{ onChange: z.string().min(1, "Slug is required") }}
+      >
         {(f) => <f.TextField label="Slug" />}
       </form.AppField>
 
@@ -126,10 +131,14 @@ export function OrgForm({
         validators={{
           onChange: z
             .string()
-            .refine((val) => val === "" || z.string().url().safeParse(val).success, {
-              message: "Must be a valid URL or empty",
-            }),
-        }}>
+            .refine(
+              (val) => val === "" || z.string().url().safeParse(val).success,
+              {
+                message: "Must be a valid URL or empty",
+              },
+            ),
+        }}
+      >
         {(f) => <f.TextField label="Logo URL (optional)" />}
       </form.AppField>
 
@@ -146,9 +155,10 @@ export function OrgForm({
                 return false;
               }
             },
-            { message: "Metadata must be valid JSON or empty" }
+            { message: "Metadata must be valid JSON or empty" },
           ),
-        }}>
+        }}
+      >
         {(f) => <f.TextAreaField label="Metadata (JSON) (optional)" />}
       </form.AppField>
 
@@ -156,7 +166,7 @@ export function OrgForm({
         {(f) => <f.SwitchField label="Keep current active organization" />}
       </form.AppField>
 
-      <div className="flex gap-2 justify-end">
+      <div className="flex justify-end gap-2">
         {onCancel && (
           <Button variant="ghost" onClick={onCancel}>
             Cancel

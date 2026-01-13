@@ -12,7 +12,6 @@ import {
   Zap,
 } from "lucide-react";
 
-
 export const routes = [
   {
     title: "Home",
@@ -33,4 +32,3 @@ export const routes = [
     sublinks: undefined,
   },
 ] as const;
-

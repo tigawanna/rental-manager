@@ -59,17 +59,18 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
   // Centralized search/filter state management
-  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } = useTSRSearchQuery({
-    search,
-    navigate,
-    query_param: "searchValue",
-  });
+  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } =
+    useTSRSearchQuery({
+      search,
+      navigate,
+      query_param: "searchValue",
+    });
 
   const query = useQuery(adminUsersQueryOptions(search));
 
   if (query.error || query.data?.error) {
     return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
+      <div className="mx-auto flex h-full w-full flex-col items-center justify-center p-6">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -77,12 +78,13 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
             </EmptyMedia>
             <EmptyTitle>No users Yet</EmptyTitle>
             <EmptyDescription>
-              Error: {String(query.error?.message ?? query.data?.error?.message)}
+              Error:{" "}
+              {String(query.error?.message ?? query.data?.error?.message)}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Link to="/dashboard/admin/users/new" className=" flex gap-2">
-              <Plus className="w-4 h-4" />
+            <Link to="/dashboard/admin/users/new" className="flex gap-2">
+              <Plus className="h-4 w-4" />
               <Button>Create User</Button>
             </Link>
           </EmptyContent>
@@ -92,7 +94,7 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   }
   if (!query.data?.data) {
     return (
-      <div className="min-h-screen mx-auto p-6">
+      <div className="mx-auto min-h-screen p-6">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -100,12 +102,13 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
             </EmptyMedia>
             <EmptyTitle>No users Yet</EmptyTitle>
             <EmptyDescription>
-              You haven&apos;t created any users yet. Get started by creating your first user.
+              You haven&apos;t created any users yet. Get started by creating
+              your first user.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Link to="/dashboard/admin/users/new" className=" flex gap-2">
-              <Plus className="w-4 h-4" />
+            <Link to="/dashboard/admin/users/new" className="flex gap-2">
+              <Plus className="h-4 w-4" />
               <Button>Create User</Button>
             </Link>
           </EmptyContent>
@@ -122,25 +125,25 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
   return (
-    <div className="min-h-screen mx-auto p-6 space-y-6 min-w-[90%]">
+    <div className="mx-auto min-h-screen min-w-[90%] space-y-6 p-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Users</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm">
             Manage and filter users in your application
           </p>
         </div>
 
         <Link to="/dashboard/admin/users/new" className="mt-3 md:mt-0">
           <Button>
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
           </Button>
         </Link>
       </div>
 
-      <div className="flex items-end gap-3 flex-wrap">
+      <div className="flex flex-wrap items-end gap-3">
         {/* Search Section */}
-        <div className="flex gap-2 items-end">
+        <div className="flex items-end gap-2">
           <Input
             className="min-w-[60%]"
             placeholder="Search value…"
@@ -159,48 +162,64 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
         </div>
       </div>
 
-      <div className="@container rounded-md border overflow-hidden">
+      <div className="@container overflow-hidden rounded-md border">
         {/* Mobile Card View - visible when container < 640px */}
         <div className="block @md:hidden">
           {query.isPending ? (
-            <div className="text-center py-10 text-muted-foreground">Loading users…</div>
+            <div className="text-muted-foreground py-10 text-center">
+              Loading users…
+            </div>
           ) : (usersList ?? []).length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">No users found</div>
+            <div className="text-muted-foreground py-10 text-center">
+              No users found
+            </div>
           ) : (
             <div className="space-y-4 p-4">
               {usersList.map((u) => (
                 <Card key={u.id} className="overflow-hidden">
                   <CardHeader className="pb-3">
-                    <div className="flex items-start gap-3 min-w-0">
+                    <div className="flex min-w-0 items-start gap-3">
                       <div className="shrink-0">
-                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
+                        <RoleIcons
+                          role={(u.role as BetterAuthUserRoles) ?? "tenant"}
+                        />
                       </div>
-                      <CardTitle className="text-base truncate min-w-0">
+                      <CardTitle className="min-w-0 truncate text-base">
                         {u.name ?? "—"}
                       </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Email</p>
+                      <p className="text-muted-foreground mb-1 text-xs">
+                        Email
+                      </p>
                       <p className="text-sm wrap-break-word">{u.email}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground mb-2">Status</p>
+                      <p className="text-muted-foreground mb-2 text-xs">
+                        Status
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {u.emailVerified ? (
                           <Badge variant="outline">Verified</Badge>
                         ) : (
                           <Badge variant="secondary">Unverified</Badge>
                         )}
-                        {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
-                        {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                        {u.banned ? (
+                          <Badge variant="destructive">Banned</Badge>
+                        ) : null}
+                        {u.role ? (
+                          <Badge variant="outline">{u.role}</Badge>
+                        ) : null}
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Created</p>
+                      <p className="text-muted-foreground text-xs">Created</p>
                       <p className="text-sm" title={String(u.createdAt ?? "")}>
-                        {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                        {u.createdAt
+                          ? getRelativeTimeString(new Date(u.createdAt))
+                          : "—"}
                       </p>
                     </div>
                     <Button
@@ -210,8 +229,9 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                       onClick={() => {
                         setSelectedUser(u);
                         setActionsOpen(true);
-                      }}>
-                      <Settings className="h-4 w-4 mr-1" />
+                      }}
+                    >
+                      <Settings className="mr-1 h-4 w-4" />
                       Actions
                     </Button>
                   </CardContent>
@@ -237,13 +257,19 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
             <TableBody>
               {query.isPending ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="text-muted-foreground py-10 text-center"
+                  >
                     Loading users…
                   </TableCell>
                 </TableRow>
               ) : (usersList ?? []).length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="text-muted-foreground py-10 text-center"
+                  >
                     No users found
                   </TableCell>
                 </TableRow>
@@ -252,10 +278,14 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                   <TableRow key={u.id}>
                     <TableCell>
                       <div className="flex items-center justify-center">
-                        <RoleIcons role={(u.role as BetterAuthUserRoles) ?? "tenant"} />
+                        <RoleIcons
+                          role={(u.role as BetterAuthUserRoles) ?? "tenant"}
+                        />
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{u.name ?? "—"}</TableCell>
+                    <TableCell className="font-medium">
+                      {u.name ?? "—"}
+                    </TableCell>
                     <TableCell>{u.email}</TableCell>
                     <TableCell className="space-x-2">
                       {u.emailVerified ? (
@@ -263,11 +293,17 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                       ) : (
                         <Badge variant="secondary">Unverified</Badge>
                       )}
-                      {u.banned ? <Badge variant="destructive">Banned</Badge> : null}
-                      {u.role ? <Badge variant="outline">{u.role}</Badge> : null}
+                      {u.banned ? (
+                        <Badge variant="destructive">Banned</Badge>
+                      ) : null}
+                      {u.role ? (
+                        <Badge variant="outline">{u.role}</Badge>
+                      ) : null}
                     </TableCell>
                     <TableCell title={String(u.createdAt ?? "")}>
-                      {u.createdAt ? getRelativeTimeString(new Date(u.createdAt)) : "—"}
+                      {u.createdAt
+                        ? getRelativeTimeString(new Date(u.createdAt))
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -276,8 +312,9 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                         onClick={() => {
                           setSelectedUser(u);
                           setActionsOpen(true);
-                        }}>
-                        <Settings className="h-4 w-4 mr-1" />
+                        }}
+                      >
+                        <Settings className="mr-1 h-4 w-4" />
                         Actions
                       </Button>
                     </TableCell>
@@ -290,11 +327,14 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           {total > 0 ? (
             <span>
               Showing <span className="font-medium">{offset + 1}</span>–
-              <span className="font-medium">{Math.min(offset + limit, total)}</span> of {total}
+              <span className="font-medium">
+                {Math.min(offset + limit, total)}
+              </span>{" "}
+              of {total}
             </span>
           ) : (
             <span>—</span>
@@ -309,7 +349,9 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (page <= 1) return;
-                  setSearchParams({ offset: Math.max(0, offset - limit) } as any);
+                  setSearchParams({
+                    offset: Math.max(0, offset - limit),
+                  } as any);
                 }}
               />
             </PaginationItem>
@@ -327,7 +369,8 @@ export function AdminUsersPage({}: AdminUsersPageProps) {
                     onClick={(e) => {
                       e.preventDefault();
                       setSearchParams({ offset: (p - 1) * limit } as any);
-                    }}>
+                    }}
+                  >
                     {p}
                   </PaginationLink>
                 </PaginationItem>

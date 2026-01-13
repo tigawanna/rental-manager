@@ -23,7 +23,7 @@ export function TimeCompponent({
   return (
     <div
       {...props}
-      className={twMerge("p-1 text-secondary-foreground", props.className)}
+      className={twMerge("text-secondary-foreground p-1", props.className)}
     >
       {display_time}
     </div>

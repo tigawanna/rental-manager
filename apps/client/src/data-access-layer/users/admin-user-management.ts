@@ -83,7 +83,10 @@ export function useUpdateUserMutation() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: { userId: string; data: Partial<FormValues> }) => {
+    mutationFn: async (payload: {
+      userId: string;
+      data: Partial<FormValues>;
+    }) => {
       const result = await authClient.admin.updateUser({
         userId: payload.userId,
         data: payload.data,
@@ -111,7 +114,13 @@ export function useSetRoleMutation() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: BetterAuthUserRoles }) => {
+    mutationFn: async ({
+      userId,
+      role,
+    }: {
+      userId: string;
+      role: BetterAuthUserRoles;
+    }) => {
       const result = await authClient.admin.setRole({ userId, role });
       const { data, error } = result;
       if (error) throw error;

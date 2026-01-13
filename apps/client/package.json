@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
+    "format": "prettier --write --ignore-unknown src",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint --fix",
     "preview": "vite preview",
     "test": "vitest run"
   },
@@ -96,6 +99,8 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "daisyui": "^5.5.14",
     "jsdom": "^27.3.0",
+    "prettier": "*",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3",
     "vite": "^7.2.7",
     "vitest": "^4.0.16",

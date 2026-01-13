@@ -58,10 +58,16 @@ interface CompoundIconProps extends ComponentProps<LucideIcon> {}
 function UtilsIcon({ size, className, ...props }: CompoundIconProps) {
   return (
     <div className="flex gap-1">
-      <Droplet className={twMerge("fill-info text-info size-3", className)} size={size} {...props} />
-      <Zap className={twMerge("fill-warning text-warning size-3", className)} size={size} {...props} />
+      <Droplet
+        className={twMerge("fill-info text-info size-3", className)}
+        size={size}
+        {...props}
+      />
+      <Zap
+        className={twMerge("fill-warning text-warning size-3", className)}
+        size={size}
+        {...props}
+      />
     </div>
   );
 }
-
-

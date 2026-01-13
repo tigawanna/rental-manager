@@ -8,7 +8,7 @@ export const Route = createFileRoute("/dashboard/admin/organizations/$orgId/")({
 function RouteComponent() {
   const { orgId } = Route.useParams();
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <OrgDetails orgId={orgId} />
     </div>
   );

@@ -14,6 +14,10 @@ export const authClient = createAuthClient({
   ],
 });
 
-export type BetterAuthSession = typeof authClient.$Infer.Session
+export type BetterAuthSession = typeof authClient.$Infer.Session;
 export type BetterAuthUserRoles = keyof typeof roles;
-export type BetterAuthOrgRoles = "admin" | "member" | "owner" | ("admin" | "member" | "owner")[];
+export type BetterAuthOrgRoles =
+  | "admin"
+  | "member"
+  | "owner"
+  | ("admin" | "member" | "owner")[];

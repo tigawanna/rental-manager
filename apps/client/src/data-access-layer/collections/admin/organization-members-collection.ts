@@ -37,15 +37,16 @@ export const organizationMembersCollection = createCollection(
       await Promise.all(
         transaction.mutations.map((m) => {
           return async () => {
-            const { data, error } = await authClient.organization.updateMemberRole({
-              organizationId: m.modified.organizationId,
-              role: m.modified.role,
-              memberId: m.key,
-            });
+            const { data, error } =
+              await authClient.organization.updateMemberRole({
+                organizationId: m.modified.organizationId,
+                role: m.modified.role,
+                memberId: m.key,
+              });
             if (error) throw error;
             return data;
           };
-        })
+        }),
       );
       return { refetch: true };
     },
@@ -59,9 +60,9 @@ export const organizationMembersCollection = createCollection(
             });
             if (error) throw error;
           };
-        })
+        }),
       );
       return { refetch: true };
     },
-  })
+  }),
 );

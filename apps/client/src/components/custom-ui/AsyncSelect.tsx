@@ -5,14 +5,18 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 export interface Option {
@@ -64,18 +68,18 @@ export interface AsyncSelectProps<T> {
 
 /**
  * AsyncSelect component that integrates with TanStack Query
- * 
+ *
  * Supports both local and server-side filtering:
  * - Local filtering: Always applied if `filterFn` is provided
  * - Server-side filtering: Triggered by passing search term in queryKey
- * 
+ *
  * @example
  * ```tsx
  * interface User {
  *   id: string;
  *   name: string;
  * }
- * 
+ *
  * // Basic usage with local filtering
  * const usersQueryOptions = queryOptions({
  *   queryKey: ["users"],
@@ -84,14 +88,14 @@ export interface AsyncSelectProps<T> {
  *     return res.json();
  *   },
  * });
- * 
+ *
  * export function MyComponent() {
  *   const [selectedId, setSelectedId] = useState("");
- * 
+ *
  *   return (
  *     <AsyncSelect<User>
  *       queryOptions={usersQueryOptions}
- *       filterFn={(user, query) => 
+ *       filterFn={(user, query) =>
  *         user.name.toLowerCase().includes(query.toLowerCase())
  *       }
  *       renderOption={(user) => <span>{user.name}</span>}
@@ -104,7 +108,7 @@ export interface AsyncSelectProps<T> {
  *   );
  * }
  * ```
- * 
+ *
  * @example
  * ```tsx
  * // Advanced: With server-side filtering (queryFn reads search term from queryKey)
@@ -115,7 +119,7 @@ export interface AsyncSelectProps<T> {
  *     const searchTerm = queryKey.at(-1) as string | undefined;
  *     const params = new URLSearchParams();
  *     if (searchTerm) params.append("search", searchTerm);
- *     
+ *
  *     const res = await fetch(`/api/users?${params}`);
  *     return res.json();
  *   },
@@ -147,7 +151,7 @@ export function AsyncSelect<T>({
   const [searchTerm, setSearchTerm] = useState("");
   const { debouncedValue: debouncedSearchTerm } = useDebouncedValue(
     searchTerm,
-    preload ? 0 : 300
+    preload ? 0 : 300,
   );
   const [selectedValue, setSelectedValue] = useState(value);
   const [selectedOption, setSelectedOption] = useState<T | null>(null);
@@ -156,10 +160,17 @@ export function AsyncSelect<T>({
   // Use TanStack Query with provided query options
   // For API-based filtering, pass search term in queryKey if supported
   const queryKeyWithSearch = Array.isArray(queryOptions.queryKey)
-    ? [...queryOptions.queryKey, ...(debouncedSearchTerm ? [debouncedSearchTerm] : [])]
+    ? [
+        ...queryOptions.queryKey,
+        ...(debouncedSearchTerm ? [debouncedSearchTerm] : []),
+      ]
     : queryOptions.queryKey;
 
-  const { data: options = [] as T[], isLoading, error } = useQuery({
+  const {
+    data: options = [] as T[],
+    isLoading,
+    error,
+  } = useQuery({
     ...queryOptions,
     queryKey: queryKeyWithSearch,
   } as any) as { data: T[]; isLoading: boolean; error: Error | null };
@@ -188,7 +199,7 @@ export function AsyncSelect<T>({
     let filtered = options;
     if (debouncedSearchTerm && filterFn) {
       filtered = options.filter((option) =>
-        filterFn(option, debouncedSearchTerm)
+        filterFn(option, debouncedSearchTerm),
       );
     }
     setFilteredOptions(filtered);
@@ -196,15 +207,17 @@ export function AsyncSelect<T>({
 
   const handleSelect = useCallback(
     (currentValue: string) => {
-      const newValue = clearable && currentValue === selectedValue ? "" : currentValue;
+      const newValue =
+        clearable && currentValue === selectedValue ? "" : currentValue;
       setSelectedValue(newValue);
       setSelectedOption(
-        filteredOptions.find((option) => getOptionValue(option) === newValue) || null
+        filteredOptions.find((option) => getOptionValue(option) === newValue) ||
+          null,
       );
       onChange(newValue);
       setOpen(false);
     },
-    [selectedValue, onChange, clearable, filteredOptions, getOptionValue]
+    [selectedValue, onChange, clearable, filteredOptions, getOptionValue],
   );
 
   return (
@@ -216,18 +229,19 @@ export function AsyncSelect<T>({
           aria-expanded={open}
           className={cn(
             "justify-between",
-            disabled && "opacity-50 cursor-not-allowed",
-            triggerClassName
+            disabled && "cursor-not-allowed opacity-50",
+            triggerClassName,
           )}
           style={{ width: width }}
-          disabled={disabled}>
+          disabled={disabled}
+        >
           {selectedOption ? getDisplayValue(selectedOption) : placeholder}
           <ChevronsUpDown className="opacity-50" size={10} />
         </Button>
       </PopoverTrigger>
       <PopoverContent style={{ width: width }} className={cn("p-0", className)}>
         <Command shouldFilter={false}>
-          <div className="relative border-b w-full">
+          <div className="relative w-full border-b">
             <CommandInput
               placeholder={`Search ${label.toLowerCase()}...`}
               value={searchTerm}
@@ -236,18 +250,22 @@ export function AsyncSelect<T>({
               }}
             />
             {isLoading && filteredOptions.length > 0 && (
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
+              <div className="absolute top-1/2 right-2 flex -translate-y-1/2 transform items-center">
                 <Loader2 className="h-4 w-4 animate-spin" />
               </div>
             )}
           </div>
           <CommandList>
             {error && (
-              <div className="p-4 text-destructive text-center">
-                {error instanceof Error ? error.message : "Failed to fetch options"}
+              <div className="text-destructive p-4 text-center">
+                {error instanceof Error
+                  ? error.message
+                  : "Failed to fetch options"}
               </div>
             )}
-            {isLoading && filteredOptions.length === 0 && (loadingSkeleton || <DefaultLoadingSkeleton />)}
+            {isLoading &&
+              filteredOptions.length === 0 &&
+              (loadingSkeleton || <DefaultLoadingSkeleton />)}
             {!isLoading &&
               !error &&
               filteredOptions.length === 0 &&
@@ -261,12 +279,15 @@ export function AsyncSelect<T>({
                 <CommandItem
                   key={getOptionValue(option)}
                   value={getOptionValue(option)}
-                  onSelect={handleSelect}>
+                  onSelect={handleSelect}
+                >
                   {renderOption(option)}
                   <Check
                     className={cn(
                       "ml-auto h-3 w-3",
-                      selectedValue === getOptionValue(option) ? "opacity-100" : "opacity-0"
+                      selectedValue === getOptionValue(option)
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
                 </CommandItem>
@@ -284,11 +305,11 @@ function DefaultLoadingSkeleton() {
     <CommandGroup>
       {[1, 2, 3].map((i) => (
         <CommandItem key={i} disabled>
-          <div className="flex items-center gap-2 w-full">
-            <div className="h-6 w-6 rounded-full animate-pulse bg-muted" />
-            <div className="flex flex-col flex-1 gap-1">
-              <div className="h-4 w-24 animate-pulse bg-muted rounded" />
-              <div className="h-3 w-16 animate-pulse bg-muted rounded" />
+          <div className="flex w-full items-center gap-2">
+            <div className="bg-muted h-6 w-6 animate-pulse rounded-full" />
+            <div className="flex flex-1 flex-col gap-1">
+              <div className="bg-muted h-4 w-24 animate-pulse rounded" />
+              <div className="bg-muted h-3 w-16 animate-pulse rounded" />
             </div>
           </div>
         </CommandItem>

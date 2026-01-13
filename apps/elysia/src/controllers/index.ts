@@ -1,8 +1,9 @@
 import { Elysia } from "elysia";
 
-
-export const indexRoute = new Elysia()
-  .get("/", () => ({ message: "hello world", status: "ok" }), {
+export const indexRoute = new Elysia().get(
+  "/",
+  () => ({ message: "hello world", status: "ok" }),
+  {
     detail: {
       summary: "Health Check",
       description: "Check if the API is running",
@@ -13,5 +14,5 @@ export const indexRoute = new Elysia()
         },
       },
     },
-  })
-
+  },
+);

@@ -16,7 +16,8 @@ import { Collection } from "@tanstack/db";
  * type UserSchema = CollectionSchema<typeof usersCollection>; // = User
  * ```
  */
-export type CollectionSchema<T> = T extends Collection<infer S, any> ? S : never;
+export type CollectionSchema<T> =
+  T extends Collection<infer S, any> ? S : never;
 
 /**
  * Gets the keys (column names) from a collection's schema as a string union type.
@@ -111,6 +112,9 @@ export interface ColumnConfig<TColumn extends string> {
 export function createSortableColumns<
   TCollection extends Collection<any, any>,
   TColumns extends CollectionColumns<TCollection>,
->(_collection: TCollection, columns: Array<ColumnConfig<TColumns>>): Array<ColumnConfig<TColumns>> {
+>(
+  _collection: TCollection,
+  columns: Array<ColumnConfig<TColumns>>,
+): Array<ColumnConfig<TColumns>> {
   return columns;
 }

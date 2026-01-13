@@ -6,7 +6,7 @@ interface ListOrgsProps {}
 
 export function ListOrgs({}: ListOrgsProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
-  const usersQueryOptions = userOrgsQueryOptions({})
+  const usersQueryOptions = userOrgsQueryOptions({});
   return (
     <AsyncSelect
       queryOptions={usersQueryOptions} // Pass query options directly

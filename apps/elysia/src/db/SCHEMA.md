@@ -1,11 +1,13 @@
 # Rental Manager Database Schema
 
 ## Overview
+
 Complete Drizzle ORM schema for a rental property management system with RBAC integration.
 
 ## Schema Structure
 
 ### Multiple Schema Files
+
 Following Drizzle best practices, schemas are organized by domain:
 
 ```
@@ -23,6 +25,7 @@ src/db/schema/
 ## Tables
 
 ### Auth Tables (Better Auth)
+
 - **user** - User accounts with RBAC roles (admin, landlord, manager, staff, tenant)
 - **session** - User sessions with impersonation support
 - **account** - OAuth/credential accounts
@@ -31,29 +34,34 @@ src/db/schema/
 ### Core Tables
 
 #### properties
+
 - Property information (address, type, total units)
 - Links to landlord and optional manager
 - One-to-many: units, maintenance requests
 
 #### units
+
 - Individual rental units within properties
 - Details: bedrooms, bathrooms, square feet, rent amount
 - Availability status
 - One-to-many: leases, maintenance requests
 
 #### leases
+
 - Lease agreements between tenants and units
 - Start/end dates, rent amount, security deposit
 - Status: active, expired, terminated
 - One-to-many: payments
 
 #### payments
+
 - Rent and other payment tracking
 - Payment status: pending, paid, late, failed
 - Payment types: rent, security_deposit, late_fee, utility
 - Links to lease and tenant
 
 #### maintenance_requests
+
 - Maintenance/repair requests
 - Category: plumbing, electrical, hvac, appliance, structural
 - Priority: low, medium, high, urgent
@@ -61,6 +69,7 @@ src/db/schema/
 - Assignment to staff members
 
 #### documents
+
 - File storage metadata
 - Categories: lease_agreement, inspection, invoice, photo, other
 - Links to properties, leases, or standalone
@@ -68,6 +77,7 @@ src/db/schema/
 ## Relations
 
 ### User Relations
+
 - `ownedProperties` - Properties where user is landlord
 - `managedProperties` - Properties where user is manager
 - `leases` - Leases where user is tenant
@@ -77,6 +87,7 @@ src/db/schema/
 - `uploadedDocuments` - Documents uploaded by user
 
 ### Hierarchical Structure
+
 ```
 User (Landlord)
   └─> Property
@@ -88,6 +99,7 @@ User (Landlord)
 ## RBAC Integration
 
 Roles defined in `/src/lib/auth-rbac.ts`:
+
 - **admin** - Full system access
 - **landlord** - Property owners, can manage properties/tenants/leases
 - **manager** - Day-to-day operations
@@ -142,6 +154,7 @@ await db.insert(properties).values({
 ## Common Columns
 
 All tables include via `commonColumns`:
+
 - `id` - UUID v7 primary key
 - `created_at` - Timestamp (auto-set on insert)
 - `updated_at` - Timestamp (auto-updated)

@@ -9,7 +9,9 @@ import { queryKeyPrefixes } from "../query-keys";
 type TOrganizationMembersInput = NonNullable<
   Parameters<typeof authClient.organization.listMembers>[0]
 >;
-export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersInput) =>
+export const organizationMembersQueryOptions = ({
+  query,
+}: TOrganizationMembersInput) =>
   queryOptions({
     queryKey: [
       queryKeyPrefixes.organizations,
@@ -23,9 +25,9 @@ export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersI
       query?.filterOperator,
       query?.filterValue,
     ] as const,
-    placeholderData:(prev)=>prev,
+    placeholderData: (prev) => prev,
     queryFn: async () => {
-      console.log("query params in the query function == ", {query});
+      console.log("query params in the query function == ", { query });
       const { data, error } = await authClient.organization.listMembers({
         query: {
           organizationId: query?.organizationId,
@@ -41,12 +43,13 @@ export const organizationMembersQueryOptions = ({ query }: TOrganizationMembersI
       if (error) throw error;
       return data;
     },
-    
   });
 
 // Member Mutations
 
-type TRemoveMemberInput = NonNullable<Parameters<typeof authClient.organization.removeMember>[0]>;
+type TRemoveMemberInput = NonNullable<
+  Parameters<typeof authClient.organization.removeMember>[0]
+>;
 export const removeMemberMutationOptions = mutationOptions({
   mutationFn: async (payload: TRemoveMemberInput) => {
     const { data, error } = await authClient.organization.removeMember(payload);
@@ -58,7 +61,7 @@ export const removeMemberMutationOptions = mutationOptions({
       [queryKeyPrefixes.organizations, "members"],
       [queryKeyPrefixes.organizations, "full"],
     ] as const,
-  }
+  },
 });
 
 type TUpdateMemberRoleInput = NonNullable<
@@ -66,7 +69,8 @@ type TUpdateMemberRoleInput = NonNullable<
 >;
 export const updateMemberRoleMutationOptions = mutationOptions({
   mutationFn: async (payload: TUpdateMemberRoleInput) => {
-    const { data, error } = await authClient.organization.updateMemberRole(payload);
+    const { data, error } =
+      await authClient.organization.updateMemberRole(payload);
     if (error) throw error;
     return data;
   },

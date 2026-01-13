@@ -1,26 +1,27 @@
-import { authClient, BetterAuthOrgRoles, BetterAuthUserRoles } from "@/lib/better-auth/client";
+import {
+  authClient,
+  BetterAuthOrgRoles,
+  BetterAuthUserRoles,
+} from "@/lib/better-auth/client";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 
 // Query Options
-export const organizationInvitationsQueryOptions = (
-  organizationId?: string
-) =>
+export const organizationInvitationsQueryOptions = (organizationId?: string) =>
   queryOptions({
     queryKey: ["invitations", organizationId],
     queryFn: async () => {
-      const { data, error } =
-        await authClient.organization.listInvitations({
-          query: {
-            organizationId,
-          },
-        });
+      const { data, error } = await authClient.organization.listInvitations({
+        query: {
+          organizationId,
+        },
+      });
       if (error) throw error;
       return data;
     },
   });
 
 export const userInvitationsQueryOptions = queryOptions({
-  queryKey: ["invitations","user"],
+  queryKey: ["invitations", "user"],
   queryFn: async () => {
     const { data, error } = await authClient.organization.listUserInvitations();
     if (error) throw error;
@@ -44,8 +45,9 @@ export const invitationQueryOptions = (invitationId: string) =>
 
 // Mutation Options
 
-
-export type TInviteMemberPayload = NonNullable<Parameters<typeof authClient.organization.inviteMember>[0]>;
+export type TInviteMemberPayload = NonNullable<
+  Parameters<typeof authClient.organization.inviteMember>[0]
+>;
 
 export const inviteMemberMutationOptions = mutationOptions({
   mutationFn: async (payload: TInviteMemberPayload) => {
@@ -59,7 +61,10 @@ export const inviteMemberMutationOptions = mutationOptions({
     return data;
   },
   meta: {
-    invalidates: [["invitations","organization"], ["invitations","user"]],
+    invalidates: [
+      ["invitations", "organization"],
+      ["invitations", "user"],
+    ],
   },
 });
 
@@ -71,16 +76,16 @@ type TAcceptInvitationPayload = {
 export const acceptInvitationMutationOptions = mutationOptions({
   mutationFn: async (payload: TAcceptInvitationPayload) => {
     const { data, error } = await authClient.organization.acceptInvitation({
-      invitationId: payload.invitationId
+      invitationId: payload.invitationId,
     });
     if (error) throw error;
     return data;
   },
   meta: {
     invalidates: [
-      ["invitations","user"],
+      ["invitations", "user"],
       ["organizations"],
-      ["organizations","members"],
+      ["organizations", "members"],
     ],
   },
 });
@@ -99,7 +104,7 @@ export const rejectInvitationMutationOptions = mutationOptions({
     return data;
   },
   meta: {
-    invalidates: [["invitations","user"]],
+    invalidates: [["invitations", "user"]],
   },
 });
 
@@ -118,8 +123,8 @@ export const cancelInvitationMutationOptions = mutationOptions({
   },
   meta: {
     invalidates: [
-      ["invitations","organization"],
-      ["invitations","user"],
+      ["invitations", "organization"],
+      ["invitations", "user"],
       ["invitations"],
     ],
   },

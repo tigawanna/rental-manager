@@ -8,7 +8,7 @@ interface AuthLayoutProps {}
 
 export function AuthLayout({}: AuthLayoutProps) {
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-primary/20 via-accent/10 to-primary/50">
+    <div className="from-primary/20 via-accent/10 to-primary/50 min-h-screen w-full bg-linear-to-br">
       <Outlet />
     </div>
   );

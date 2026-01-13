@@ -6,37 +6,47 @@ import { z } from "zod";
 
 expand(
   config({
-    path: path.resolve(process.cwd(), process.env.NODE_ENV === "test" ? ".env.test" : ".env"),
+    path: path.resolve(
+      process.cwd(),
+      process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+    ),
   }),
 );
 
-const EnvSchema = z
-  .object({
-    NODE_ENV: z.string().default("development"),
-    PORT: z.coerce.number().default(5000),
-    LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
-    DATABASE_URL: z.string().url(),
-    DATABASE_AUTH_TOKEN: z.string().optional(),
-    REDIS_PORT: z.string().optional(),
-    API_URL: z.string(),
-    FRONTEND_URL: z.string(),
-    ACCESS_TOKEN_SECRET: z.string(),
-    REFRESH_TOKEN_SECRET: z.string(),
-    BREVO_API_KEY: z.string(),
-    BREVO_USER: z.string(),
-    EMAIL_FROM: z.string(),
-  });
-  // .superRefine((input, ctx) => {
-  //   if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.invalid_type,
-  //       expected: "string",
-  //       received: "undefined",
-  //       path: ["DATABASE_AUTH_TOKEN"],
-  //       message: "Must be set when NODE_ENV is 'production'",
-  //     });
-  //   }
-  // });
+const EnvSchema = z.object({
+  NODE_ENV: z.string().default("development"),
+  PORT: z.coerce.number().default(5000),
+  LOG_LEVEL: z.enum([
+    "fatal",
+    "error",
+    "warn",
+    "info",
+    "debug",
+    "trace",
+    "silent",
+  ]),
+  DATABASE_URL: z.string().url(),
+  DATABASE_AUTH_TOKEN: z.string().optional(),
+  REDIS_PORT: z.string().optional(),
+  API_URL: z.string(),
+  FRONTEND_URL: z.string(),
+  ACCESS_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_SECRET: z.string(),
+  BREVO_API_KEY: z.string(),
+  BREVO_USER: z.string(),
+  EMAIL_FROM: z.string(),
+});
+// .superRefine((input, ctx) => {
+//   if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
+//     ctx.addIssue({
+//       code: z.ZodIssueCode.invalid_type,
+//       expected: "string",
+//       received: "undefined",
+//       path: ["DATABASE_AUTH_TOKEN"],
+//       message: "Must be set when NODE_ENV is 'production'",
+//     });
+//   }
+// });
 
 export type env = z.infer<typeof EnvSchema>;
 

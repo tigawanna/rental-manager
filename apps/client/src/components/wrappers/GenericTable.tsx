@@ -21,7 +21,7 @@ export function GenericTable<T extends Record<string, any>>({
 }: GenericTableProps<T>) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const { viewer } = useViewer();
-  const role = viewer?.user?.role
+  const role = viewer?.user?.role;
   // @ts-expect-error
   const [input, setInput] = useState<T>({});
   const mutation = useMutation({
@@ -42,7 +42,7 @@ export function GenericTable<T extends Record<string, any>>({
   }
   return (
     <div className="w-full overflow-x-auto">
-      <table className="table table-zebra table-lg sticky top-0 w-full">
+      <table className="table-zebra table-lg sticky top-0 table w-full">
         <thead>
           <tr>
             {columns.map((column) => (

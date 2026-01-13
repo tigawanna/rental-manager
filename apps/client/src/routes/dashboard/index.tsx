@@ -7,9 +7,9 @@ export const Route = createFileRoute("/dashboard/")({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen w-full h-full flex justify-center items-center bg-base-100">
-      <div className="text-center flex flex-col gap-4">
-        <h1 className="text-4xl font-bold mb-4">Dashboard Home</h1>
+    <div className="bg-base-100 flex h-full min-h-screen w-full items-center justify-center">
+      <div className="flex flex-col gap-4 text-center">
+        <h1 className="mb-4 text-4xl font-bold">Dashboard Home</h1>
         <Link to="/" className="btn">
           <ChevronLeft /> Go to home
         </Link>

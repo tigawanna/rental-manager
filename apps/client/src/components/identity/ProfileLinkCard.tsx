@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 import { RoleIcons } from "./RoleIcons";
 
-
 interface ProfileLinkCardProps {
   viewer: {
     id: string;
@@ -21,9 +20,15 @@ export function ProfileLinkCard({ viewer }: ProfileLinkCardProps) {
     <Link
       to="/profile"
       data-test="homepage-section--profile-link"
-      className="group flex items-center justify-center gap-2 hover:brightness-125">
+      className="group flex items-center justify-center gap-2 hover:brightness-125"
+    >
       <Avatar>
-        <AvatarImage height={50} className="size-10" src={avatarUrl} alt={viewer?.name} />
+        <AvatarImage
+          height={50}
+          className="size-10"
+          src={avatarUrl}
+          alt={viewer?.name}
+        />
         <AvatarFallback>{viewer?.name?.slice(0, 2)}</AvatarFallback>
       </Avatar>
       <div className="flex items-center justify-center gap-10">
@@ -31,7 +36,7 @@ export function ProfileLinkCard({ viewer }: ProfileLinkCardProps) {
         {viewer?.role && <RoleIcons role={viewer.role} />}
       </div>
 
-      <ArrowRightIcon className="size-10 group-hover:animate-ping group-hover:text-secondary" />
+      <ArrowRightIcon className="group-hover:text-secondary size-10 group-hover:animate-ping" />
     </Link>
   );
 }

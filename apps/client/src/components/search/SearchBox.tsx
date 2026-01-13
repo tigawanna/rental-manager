@@ -10,7 +10,12 @@ interface SearchBoxProps {
   keyword: string;
 }
 
-export function SearchBox({ isDebouncing, setKeyword, keyword, inputProps }: SearchBoxProps) {
+export function SearchBox({
+  isDebouncing,
+  setKeyword,
+  keyword,
+  inputProps,
+}: SearchBoxProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className="sticky top-0 w-full">
@@ -18,7 +23,7 @@ export function SearchBox({ isDebouncing, setKeyword, keyword, inputProps }: Sea
         <Input
           ref={inputRef}
           placeholder="Search"
-          className="w-full bg-base-200/30"
+          className="bg-base-200/30 w-full"
           value={keyword}
           onChange={(e) => {
             setKeyword(e.target.value);

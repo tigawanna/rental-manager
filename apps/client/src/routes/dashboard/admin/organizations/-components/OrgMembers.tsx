@@ -20,7 +20,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { organizationMembersCollection } from "@/data-access-layer/collections/admin/organization-members-collection";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 import { TanstackDBColumnFilters } from "@/lib/tanstack/db/TanstackDBColumnfilters";
@@ -46,18 +53,25 @@ const sortableColumns = createSortableColumns(organizationMembersCollection, [
 export function OrgMembers({ orgId }: OrgMembersProps) {
   // Read current route search values - Types come from validateSearch in the route definition
 
-  const search = useSearch({ from: "/dashboard/admin/organizations/$orgId/members" });
-  const navigate = useNavigate({ from: "/dashboard/admin/organizations/$orgId/members" });
+  const search = useSearch({
+    from: "/dashboard/admin/organizations/$orgId/members",
+  });
+  const navigate = useNavigate({
+    from: "/dashboard/admin/organizations/$orgId/members",
+  });
   // const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<typeof membersList[0] | null>(null);
+  const [selectedMember, setSelectedMember] = useState<
+    (typeof membersList)[0] | null
+  >(null);
 
   // Centralized search/filter state management
-  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } = useTSRSearchQuery({
-    search,
-    navigate,
-    query_param: "searchValue",
-  });
+  const { debouncedValue, isDebouncing, keyword, setKeyword, setSearchParams } =
+    useTSRSearchQuery({
+      search,
+      navigate,
+      query_param: "searchValue",
+    });
 
   const limit = search.limit ?? 10;
   const offset = search.offset ?? 0;
@@ -74,20 +88,37 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
       if (debouncedValue) {
         const searchTerm = `%${debouncedValue}%`;
         dbQuery = dbQuery.where(({ members }) =>
-          or(like(members?.user?.email, searchTerm), like(members?.user?.name, searchTerm))
+          or(
+            like(members?.user?.email, searchTerm),
+            like(members?.user?.name, searchTerm),
+          ),
         );
       }
 
       if (search.filterField === "role" && search.filterValue) {
-        dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
+        dbQuery = dbQuery.where(({ members }) =>
+          eq(members.role, search.filterValue as string),
+        );
       }
 
       return dbQuery
-        .orderBy(({ members }) => members[sortBy as keyof typeof members], sortDirection)
+        .orderBy(
+          ({ members }) => members[sortBy as keyof typeof members],
+          sortDirection,
+        )
         .limit(limit)
-        .offset(offset)
+        .offset(offset);
     },
-    [orgId, debouncedValue, search.filterField, search.filterValue, sortBy, sortDirection, limit, offset]
+    [
+      orgId,
+      debouncedValue,
+      search.filterField,
+      search.filterValue,
+      sortBy,
+      sortDirection,
+      limit,
+      offset,
+    ],
   );
 
   // Separate query for total count (without limit/offset)
@@ -100,19 +131,23 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
       if (debouncedValue) {
         const searchTerm = `%${debouncedValue}%`;
         dbQuery = dbQuery.where(({ members }) =>
-          or(like(members.user.email, searchTerm), like(members?.user?.name, searchTerm))
+          or(
+            like(members.user.email, searchTerm),
+            like(members?.user?.name, searchTerm),
+          ),
         );
       }
 
       if (search.filterField === "role" && search.filterValue) {
-        dbQuery = dbQuery.where(({ members }) => eq(members.role, search.filterValue as string));
+        dbQuery = dbQuery.where(({ members }) =>
+          eq(members.role, search.filterValue as string),
+        );
       }
 
       return dbQuery.select(({ members }) => ({ total: count(members.id) }));
     },
-    [orgId, debouncedValue, search.filterField, search.filterValue]
+    [orgId, debouncedValue, search.filterField, search.filterValue],
   );
-
 
   const membersList = query.data ?? [];
 
@@ -122,26 +157,31 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
 
   if (query.isLoading) {
     return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
+      <div className="mx-auto flex h-full w-full flex-col items-center justify-center p-6">
         <div className="text-muted-foreground">Loading members…</div>
       </div>
     );
   }
 
   return (
-    <div className="h-full w-full space-y-6 p-6 min-w-[90%]">
+    <div className="h-full w-full min-w-[90%] space-y-6 p-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate({ to: `/dashboard/admin/organizations/${orgId}` })}>
+            onClick={() =>
+              navigate({ to: `/dashboard/admin/organizations/${orgId}` })
+            }
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-2xl font-semibold">Organization Members</h1>
-            <p className="text-sm text-muted-foreground mt-1">Manage members and their roles</p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Manage members and their roles
+            </p>
           </div>
         </div>
       </div>
@@ -160,7 +200,7 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
 
       {/* Empty/Loading state */}
       {(membersList.length === 0 || query.isLoading) && (
-        <div className="min-h-[70%] mx-auto max-w-2xl flex flex-col items-center justify-center">
+        <div className="mx-auto flex min-h-[70%] max-w-2xl flex-col items-center justify-center">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -198,7 +238,8 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                       searchOperator: undefined,
                       searchValue: undefined,
                     } as any);
-                  }}>
+                  }}
+                >
                   Clear Search
                 </Button>
               </EmptyContent>
@@ -209,15 +250,15 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
 
       {/* Desktop Table View */}
       {membersList.length > 0 && (
-        <div className="@container rounded-md border overflow-hidden">
+        <div className="@container overflow-hidden rounded-md border">
           <div className="hidden @md:block">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-15">Pic</TableHead>
-                  <TableHead>Name</TableHead>                  
+                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-             
+
                   <TableHead>Role</TableHead>
                   <TableHead>Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -228,16 +269,24 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                   <TableRow key={member.id}>
                     <TableCell>
                       <div className="flex items-center justify-center">
-                        <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
+                        <RoleIcons
+                          role={
+                            (member.role as BetterAuthUserRoles) ?? "tenant"
+                          }
+                        />
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{member.user?.name ?? "—"}</TableCell>
+                    <TableCell className="font-medium">
+                      {member.user?.name ?? "—"}
+                    </TableCell>
                     <TableCell>{member.user?.email ?? "—"}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{member.role}</Badge>
                     </TableCell>
                     <TableCell title={String(member.createdAt ?? "")}>
-                      {member.createdAt ? getRelativeTimeString(new Date(member.createdAt)) : "—"}
+                      {member.createdAt
+                        ? getRelativeTimeString(new Date(member.createdAt))
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -246,8 +295,9 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                         onClick={() => {
                           setSelectedMember(member);
                           setActionsOpen(true);
-                        }}>
-                        <Settings className="h-4 w-4 mr-1" />
+                        }}
+                      >
+                        <Settings className="mr-1 h-4 w-4" />
                         Actions
                       </Button>
                     </TableCell>
@@ -258,32 +308,41 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
           </div>
 
           {/* Mobile Card View */}
-          <div className="block @md:hidden space-y-4 p-4">
+          <div className="block space-y-4 p-4 @md:hidden">
             {membersList.map((member) => (
               <Card key={member.id} className="overflow-hidden">
                 <CardHeader className="pb-3">
-                  <div className="flex items-start gap-3 min-w-0">
+                  <div className="flex min-w-0 items-start gap-3">
                     <div className="shrink-0">
-                      <RoleIcons role={(member.role as BetterAuthUserRoles) ?? "tenant"} />
+                      <RoleIcons
+                        role={(member.role as BetterAuthUserRoles) ?? "tenant"}
+                      />
                     </div>
-                    <CardTitle className="text-base truncate min-w-0">
+                    <CardTitle className="min-w-0 truncate text-base">
                       {member.user?.name ?? "—"}
                     </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Email</p>
-                    <p className="text-sm wrap-break-word">{member.user?.email ?? "—"}</p>
+                    <p className="text-muted-foreground mb-1 text-xs">Email</p>
+                    <p className="text-sm wrap-break-word">
+                      {member.user?.email ?? "—"}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-2">Role</p>
+                    <p className="text-muted-foreground mb-2 text-xs">Role</p>
                     <Badge variant="outline">{member.role}</Badge>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Joined</p>
-                    <p className="text-sm" title={String(member.createdAt ?? "")}>
-                      {member.createdAt ? getRelativeTimeString(new Date(member.createdAt)) : "—"}
+                    <p className="text-muted-foreground text-xs">Joined</p>
+                    <p
+                      className="text-sm"
+                      title={String(member.createdAt ?? "")}
+                    >
+                      {member.createdAt
+                        ? getRelativeTimeString(new Date(member.createdAt))
+                        : "—"}
                     </p>
                   </div>
                   <Button
@@ -293,8 +352,9 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                     onClick={() => {
                       setSelectedMember(member);
                       setActionsOpen(true);
-                    }}>
-                    <Settings className="h-4 w-4 mr-1" />
+                    }}
+                  >
+                    <Settings className="mr-1 h-4 w-4" />
                     Actions
                   </Button>
                 </CardContent>
@@ -306,11 +366,14 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
 
       {/* Pagination and Summary */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           {total > 0 ? (
             <span>
               Showing <span className="font-medium">{offset + 1}</span>–
-              <span className="font-medium">{Math.min(offset + limit, total)}</span> of {total}
+              <span className="font-medium">
+                {Math.min(offset + limit, total)}
+              </span>{" "}
+              of {total}
             </span>
           ) : (
             <span>—</span>
@@ -325,7 +388,9 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (page <= 1) return;
-                  setSearchParams({ offset: Math.max(0, offset - limit) } as any);
+                  setSearchParams({
+                    offset: Math.max(0, offset - limit),
+                  } as any);
                 }}
               />
             </PaginationItem>
@@ -342,7 +407,8 @@ export function OrgMembers({ orgId }: OrgMembersProps) {
                     onClick={(e) => {
                       e.preventDefault();
                       setSearchParams({ offset: (p - 1) * limit } as any);
-                    }}>
+                    }}
+                  >
                     {p}
                   </PaginationLink>
                 </PaginationItem>

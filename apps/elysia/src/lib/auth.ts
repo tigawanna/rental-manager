@@ -1,13 +1,18 @@
 import { db } from "@/db/client";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, openAPI, organization, apiKey, bearer } from "better-auth/plugins";
+import {
+  admin,
+  openAPI,
+  organization,
+  apiKey,
+  bearer,
+} from "better-auth/plugins";
 import { ac, roles } from "./auth-rbac";
 import { AUTHORIZED_ORIGINS } from "@/utils/constants";
 
-
 export const auth = betterAuth({
-  trustedOrigins:AUTHORIZED_ORIGINS,
+  trustedOrigins: AUTHORIZED_ORIGINS,
   emailAndPassword: {
     enabled: true,
   },
@@ -25,7 +30,6 @@ export const auth = betterAuth({
     organization(),
   ],
 });
-
 
 let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>;
 const getSchema = async () => (_schema ??= auth.api.generateOpenAPISchema());

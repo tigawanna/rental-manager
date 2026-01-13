@@ -7,17 +7,23 @@ interface SubmitButtonProps {
   children?: React.ReactNode;
 }
 
-export function SubmitButton({ label = "Submit", className, children }: SubmitButtonProps) {
+export function SubmitButton({
+  label = "Submit",
+  className,
+  children,
+}: SubmitButtonProps) {
   const form = useFormContext();
-  
+
   return (
-    <form.Subscribe selector={(state) => ({ 
-      isSubmitting: state.isSubmitting,
-      canSubmit: state.canSubmit 
-    })}>
+    <form.Subscribe
+      selector={(state) => ({
+        isSubmitting: state.isSubmitting,
+        canSubmit: state.canSubmit,
+      })}
+    >
       {({ isSubmitting, canSubmit }) => (
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={isSubmitting || !canSubmit}
           className={className}
         >

@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    useBanUserMutation,
-    useRemoveUserMutation,
-    useUnbanUserMutation,
+  useBanUserMutation,
+  useRemoveUserMutation,
+  useUnbanUserMutation,
 } from "@/data-access-layer/users/admin-user-management";
 import type { UserWithRole } from "better-auth/plugins";
 import { useState } from "react";
@@ -119,10 +119,11 @@ export function AdminsBanUserDialog({
         <DialogHeader>
           <DialogTitle>Confirm ban</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Are you sure you want to ban {user?.name ?? user?.email}? They will not be able to access their account.
+        <p className="text-muted-foreground text-sm">
+          Are you sure you want to ban {user?.name ?? user?.email}? They will
+          not be able to access their account.
         </p>
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancel
           </Button>
@@ -172,10 +173,11 @@ export function AdminsUnbanUserDialog({
         <DialogHeader>
           <DialogTitle>Confirm unban</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Are you sure you want to unban {user?.name ?? user?.email}? They will regain access to their account.
+        <p className="text-muted-foreground text-sm">
+          Are you sure you want to unban {user?.name ?? user?.email}? They will
+          regain access to their account.
         </p>
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancel
           </Button>
@@ -225,10 +227,11 @@ export function AdminsRemoveUserDialog({
         <DialogHeader>
           <DialogTitle>Confirm remove</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Are you sure you want to remove {user?.name ?? user?.email}? This action cannot be undone.
+        <p className="text-muted-foreground text-sm">
+          Are you sure you want to remove {user?.name ?? user?.email}? This
+          action cannot be undone.
         </p>
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancel
           </Button>

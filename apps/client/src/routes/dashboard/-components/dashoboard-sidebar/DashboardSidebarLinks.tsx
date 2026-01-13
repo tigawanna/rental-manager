@@ -6,7 +6,7 @@ interface DashboardSidebarLinksProps {}
 
 export function DashboardSidebarLinks({}: DashboardSidebarLinksProps) {
   return (
-    <SidebarGroup className="h-full bg-base-300">
+    <SidebarGroup className="bg-base-300 h-full">
       <SidebarGroupLabel className="text-sm font-semibold tracking-wide">
         House keeping
       </SidebarGroupLabel>

@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { type Collection } from "@tanstack/db";
 import { type NavigateOptions } from "@tanstack/react-router";
@@ -28,7 +28,8 @@ import { CollectionColumns, ColumnConfig } from "./sortable-columns";
  */
 interface TanstackDBColumnFiltersProps<
   TCollection extends Collection<any, any>,
-  TColumns extends CollectionColumns<TCollection> = CollectionColumns<TCollection>,
+  TColumns extends CollectionColumns<TCollection> =
+    CollectionColumns<TCollection>,
 > {
   /**
    * The TanStack DB collection instance.
@@ -221,7 +222,8 @@ interface TanstackDBColumnFiltersProps<
  */
 export function TanstackDBColumnFilters<
   TCollection extends Collection<any, any>,
-  TColumns extends CollectionColumns<TCollection> = CollectionColumns<TCollection>,
+  TColumns extends CollectionColumns<TCollection> =
+    CollectionColumns<TCollection>,
 >({
   sortableColumns,
   search,
@@ -236,7 +238,8 @@ export function TanstackDBColumnFilters<
   // 1. Value from URL (search.sortBy) if present
   // 2. defaultSortBy if provided
   // 3. First sortable column as final fallback
-  const currentSortBy = (search.sortBy as TColumns) ?? defaultSortBy ?? sortableColumns[0]?.value;
+  const currentSortBy =
+    (search.sortBy as TColumns) ?? defaultSortBy ?? sortableColumns[0]?.value;
 
   // Current sort direction from URL, or use default (usually "desc")
   const currentSortDirection = search.sortDirection ?? defaultSortDirection;
@@ -248,14 +251,14 @@ export function TanstackDBColumnFilters<
       startTransition(() => {
         navigate({
           search: (prev: Record<string, unknown>) => ({
-            ...prev,           // Keep existing params (e.g., search query)
-            ...patch,          // Override with new sort params
+            ...prev, // Keep existing params (e.g., search query)
+            ...patch, // Override with new sort params
           }),
-          replace: true,       // Replace current history entry instead of pushing new one
+          replace: true, // Replace current history entry instead of pushing new one
         });
       });
     },
-    [navigate]
+    [navigate],
   );
 
   // Called when user selects a different column from the dropdown
@@ -270,7 +273,7 @@ export function TanstackDBColumnFilters<
   const handleSortDirectionToggle = () => {
     setSearch({
       sortDirection: currentSortDirection === "asc" ? "desc" : "asc",
-      offset: 0,  // Reset pagination when sort changes
+      offset: 0, // Reset pagination when sort changes
     });
   };
 
@@ -309,7 +312,8 @@ export function TanstackDBColumnFilters<
             <Button
               variant="outline"
               className="w-full justify-start gap-2"
-              onClick={handleSortDirectionToggle}>
+              onClick={handleSortDirectionToggle}
+            >
               {currentSortDirection === "asc" ? (
                 <>
                   <ArrowDownAZ className="h-4 w-4" />
@@ -361,7 +365,8 @@ export function TanstackDBColumnFilters<
  */
 export function TanstackDBSortSelect<
   TCollection extends Collection<any, any>,
-  TColumns extends CollectionColumns<TCollection> = CollectionColumns<TCollection>,
+  TColumns extends CollectionColumns<TCollection> =
+    CollectionColumns<TCollection>,
 >({
   sortableColumns,
   search,
@@ -373,7 +378,8 @@ export function TanstackDBSortSelect<
   const [, startTransition] = useTransition();
 
   // Determine what's currently selected, with fallbacks
-  const currentSortBy = (search.sortBy as TColumns) ?? defaultSortBy ?? sortableColumns[0]?.value;
+  const currentSortBy =
+    (search.sortBy as TColumns) ?? defaultSortBy ?? sortableColumns[0]?.value;
   const currentSortDirection = search.sortDirection ?? defaultSortDirection;
 
   // Helper function to update URL search params with new sort values
@@ -382,14 +388,14 @@ export function TanstackDBSortSelect<
       startTransition(() => {
         navigate({
           search: (prev: Record<string, unknown>) => ({
-            ...prev,           // Keep existing params
-            ...patch,          // Override with new sort params
+            ...prev, // Keep existing params
+            ...patch, // Override with new sort params
           }),
-          replace: true,       // Replace history entry instead of pushing
+          replace: true, // Replace history entry instead of pushing
         });
       });
     },
-    [navigate]
+    [navigate],
   );
 
   return (
@@ -398,8 +404,9 @@ export function TanstackDBSortSelect<
       {/* Column selector dropdown */}
       <Select
         value={currentSortBy}
-        onValueChange={(value) => setSearch({ sortBy: value, offset: 0 })}>
-        <SelectTrigger className="w-35 h-9">
+        onValueChange={(value) => setSearch({ sortBy: value, offset: 0 })}
+      >
+        <SelectTrigger className="h-9 w-35">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
@@ -422,14 +429,14 @@ export function TanstackDBSortSelect<
             offset: 0,
           })
         }
-        title={`Sort ${currentSortDirection === "asc" ? "descending" : "ascending"}`}>
+        title={`Sort ${currentSortDirection === "asc" ? "descending" : "ascending"}`}
+      >
         {currentSortDirection === "asc" ? (
           <ArrowDownAZ className="h-4 w-4" /> // Ascending: A→Z
         ) : (
-          <ArrowUpZA className="h-4 w-4" />   // Descending: Z→A
+          <ArrowUpZA className="h-4 w-4" /> // Descending: Z→A
         )}
       </Button>
     </div>
   );
 }
-

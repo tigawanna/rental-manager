@@ -1,4 +1,8 @@
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -6,7 +10,12 @@ import {
   SidebarMenuSub,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { SidebarItem } from "./types";
@@ -36,7 +45,8 @@ export function SidebarLinks({ links, isNested = false }: SidebarLinksProps) {
               key={item.title}
               asChild
               defaultOpen={item.isActive}
-              className="group/collapsible">
+              className="group/collapsible"
+            >
               <SidebarMenuItem>
                 {showTooltips ? (
                   <TooltipProvider>

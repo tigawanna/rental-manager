@@ -37,26 +37,30 @@ export function UserRowCard({
 
   return (
     <>
-      <Card className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+      <Card className="cursor-pointer overflow-hidden transition-shadow hover:shadow-md">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex min-w-0 items-center gap-3">
               <div className="shrink-0">
-                <RoleIcons role={(user.role as BetterAuthUserRoles) ?? "tenant"} />
+                <RoleIcons
+                  role={(user.role as BetterAuthUserRoles) ?? "tenant"}
+                />
               </div>
-              <CardTitle className="text-base truncate">{user.name ?? "—"}</CardTitle>
+              <CardTitle className="truncate text-base">
+                {user.name ?? "—"}
+              </CardTitle>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-3 overflow-hidden">
           {showEmail !== false && (
             <div className="max-w-full overflow-hidden">
-              <p className="text-xs text-muted-foreground mb-1">Email</p>
-              <p className="text-sm wrap-break-word truncate">{user.email}</p>
+              <p className="text-muted-foreground mb-1 text-xs">Email</p>
+              <p className="truncate text-sm wrap-break-word">{user.email}</p>
             </div>
           )}
           <div>
-            <p className="text-xs text-muted-foreground mb-2">Status</p>
+            <p className="text-muted-foreground mb-2 text-xs">Status</p>
             <div className="flex flex-wrap gap-2">
               {user.emailVerified ? (
                 <Badge variant="outline">Verified</Badge>
@@ -69,9 +73,11 @@ export function UserRowCard({
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Created</p>
+            <p className="text-muted-foreground text-xs">Created</p>
             <p className="text-sm" title={String(user.createdAt ?? "")}>
-              {user.createdAt ? getRelativeTimeString(new Date(user.createdAt)) : "—"}
+              {user.createdAt
+                ? getRelativeTimeString(new Date(user.createdAt))
+                : "—"}
             </p>
           </div>
           {showActions && (
@@ -81,7 +87,7 @@ export function UserRowCard({
               className="w-full"
               onClick={() => setActionsOpen(true)}
             >
-              <Settings className="h-4 w-4 mr-1" />
+              <Settings className="mr-1 h-4 w-4" />
               Manage User
             </Button>
           )}

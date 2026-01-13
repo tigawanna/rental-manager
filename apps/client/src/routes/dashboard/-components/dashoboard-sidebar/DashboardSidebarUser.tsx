@@ -1,9 +1,5 @@
 "use client";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,8 +15,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, ShieldCheck, Sparkles } from "lucide-react";
-
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 import { useViewer } from "@/data-access-layer/users/viewer";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -52,7 +55,9 @@ export function DashboardSidebarUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{viewer.user?.name}</span>
+                <span className="truncate font-medium">
+                  {viewer.user?.name}
+                </span>
                 <span className="truncate text-xs">{viewer.user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -76,7 +81,7 @@ export function DashboardSidebarUser() {
                   <span className="flex items-center gap-1 truncate font-medium">
                     {viewer.user?.name}
                     {viewer.user?.role === "tenant" && (
-                      <ShieldCheck className="size-3 text-accent" />
+                      <ShieldCheck className="text-accent size-3" />
                     )}
                   </span>
                   <span className="truncate text-xs">{viewer.user?.email}</span>

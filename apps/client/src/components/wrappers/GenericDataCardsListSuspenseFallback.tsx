@@ -14,7 +14,7 @@ export function CardsListSuspenseFallback({
   return (
     <ul
       className={twMerge(
-        "grid h-[99%] w-full grid-cols-1  gap-4 md:grid-cols-2 lg:grid-cols-4",
+        "grid h-[99%] w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4",
         containerClassName,
       )}
     >
@@ -22,7 +22,7 @@ export function CardsListSuspenseFallback({
         <li
           key={i}
           className={twMerge(
-            "skeleton flex h-56 w-full flex-col gap-2 rounded-lg bg-base-300/70 p-2",
+            "skeleton bg-base-300/70 flex h-56 w-full flex-col gap-2 rounded-lg p-2",
             cardClassName,
           )}
         />

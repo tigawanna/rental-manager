@@ -69,23 +69,30 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             e.stopPropagation();
             form.handleSubmit();
           }}
-          className="space-y-4">
+          className="space-y-4"
+        >
           <form.AppField
             name="name"
             validators={{
               onChange: z.string().min(1, "Name is required"),
-            }}>
+            }}
+          >
             {(field) => <field.TextField label="Display Name" />}
           </form.AppField>
 
           <form.AppField
             name="image"
             validators={{
-              onChange: z.string().refine((val) => val === "" || z.url().safeParse(val).success, {
-                message: "Must be a valid URL or empty",
-              }),
-            }}>
-            {(field) => <field.TextField label="Profile Image URL (optional)" />}
+              onChange: z
+                .string()
+                .refine((val) => val === "" || z.url().safeParse(val).success, {
+                  message: "Must be a valid URL or empty",
+                }),
+            }}
+          >
+            {(field) => (
+              <field.TextField label="Profile Image URL (optional)" />
+            )}
           </form.AppField>
 
           <form.AppForm>

@@ -9,7 +9,6 @@ import { EditProfileForm } from "./-components/EditProfileForm";
 import { UserProfileCard } from "./-components/UserProfileCard";
 import { BetterAuthUserRoles } from "@/lib/better-auth/client";
 
-
 export const Route = createFileRoute("/profile/")({
   component: RouteComponent,
   beforeLoad: async (context) => {
@@ -32,18 +31,20 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex h-full min-h-screen w-full flex-col bg-base-100">
+    <div className="bg-base-100 flex h-full min-h-screen w-full flex-col">
       <Helmet title="Profile" description="Manage your profile settings" />
       <ResponsiveGenericToolbar>
         <div className="container mx-auto p-5">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-base-content">Profile Settings</h1>
+            <h1 className="text-base-content text-4xl font-bold">
+              Profile Settings
+            </h1>
             <p className="text-base-content/70 mt-2">
               Manage your account information and preferences
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left Column - Profile Card */}
             <div className="lg:col-span-1">
               <UserProfileCard
@@ -55,7 +56,7 @@ function RouteComponent() {
             </div>
 
             {/* Right Column - Forms */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               <EditProfileForm user={viewer.user} />
               <ChangePasswordForm />
               <AccountActions />
@@ -67,4 +68,3 @@ function RouteComponent() {
     </div>
   );
 }
-

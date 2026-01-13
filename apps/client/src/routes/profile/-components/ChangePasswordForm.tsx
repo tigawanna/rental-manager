@@ -23,7 +23,10 @@ const formOpts = formOptions({
 
 export function ChangePasswordForm({}: ChangePasswordFormProps) {
   const mutation = useMutation({
-    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+    mutationFn: async (data: {
+      currentPassword: string;
+      newPassword: string;
+    }) => {
       return authClient.changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
@@ -69,30 +72,50 @@ export function ChangePasswordForm({}: ChangePasswordFormProps) {
             e.stopPropagation();
             form.handleSubmit();
           }}
-          className="space-y-4">
+          className="space-y-4"
+        >
           <form.AppField
             name="currentPassword"
             validators={{
               onChange: z.string().min(1, "Current password is required"),
-            }}>
-            {(field) => <field.PasswordField label="Current Password" showPassword={false} />}
+            }}
+          >
+            {(field) => (
+              <field.PasswordField
+                label="Current Password"
+                showPassword={false}
+              />
+            )}
           </form.AppField>
 
           <form.AppField
             name="newPassword"
             validators={{
-              onChange: z.string().min(8, "Password must be at least 8 characters"),
-            }}>
-            {(field) => <field.PasswordField label="New Password" showPassword={false} />}
+              onChange: z
+                .string()
+                .min(8, "Password must be at least 8 characters"),
+            }}
+          >
+            {(field) => (
+              <field.PasswordField label="New Password" showPassword={false} />
+            )}
           </form.AppField>
 
           <form.AppField
             name="confirmPassword"
             validators={{
-              onChange: z.string().min(8, "Password must be at least 8 characters"),
+              onChange: z
+                .string()
+                .min(8, "Password must be at least 8 characters"),
               onChangeListenTo: ["newPassword"],
-            }}>
-            {(field) => <field.PasswordField label="Confirm New Password" showPassword={false} />}
+            }}
+          >
+            {(field) => (
+              <field.PasswordField
+                label="Confirm New Password"
+                showPassword={false}
+              />
+            )}
           </form.AppField>
 
           <form.AppForm>

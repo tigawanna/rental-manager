@@ -48,7 +48,7 @@ export function AccountActions({}: AccountActionsProps) {
   const handleDeleteAccount = () => {
     if (
       window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
+        "Are you sure you want to delete your account? This action cannot be undone.",
       )
     ) {
       deleteAccountMutation.mutate();
@@ -63,7 +63,8 @@ export function AccountActions({}: AccountActionsProps) {
           <button
             onClick={() => logoutMutation.mutate()}
             disabled={logoutMutation.isPending}
-            className="btn btn-outline btn-error w-full gap-2">
+            className="btn btn-outline btn-error w-full gap-2"
+          >
             <LogOut className="size-5" />
             {logoutMutation.isPending ? "Logging out..." : "Logout"}
           </button>
@@ -73,7 +74,8 @@ export function AccountActions({}: AccountActionsProps) {
           <button
             onClick={handleDeleteAccount}
             disabled={deleteAccountMutation.isPending}
-            className="btn btn-error w-full gap-2">
+            className="btn btn-error w-full gap-2"
+          >
             <Trash2 className="size-5" />
             {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
           </button>

@@ -27,17 +27,24 @@ interface UseTSRSearchQueryProps<TSearch extends Record<string, any>> {
  * })
  */
 export function useTSRSearchQuery<TSearch extends Record<string, any>>(
-  opts: UseTSRSearchQueryProps<TSearch>
+  opts: UseTSRSearchQueryProps<TSearch>,
 ) {
   const queryParam = opts.query_param;
   const debounceDelay = opts.debounce_delay || 1000;
   const [_, startTransition] = useTransition();
-  const paramValueStr = opts.search?.[queryParam] ? String(opts.search?.[queryParam]) : undefined;
+  const paramValueStr = opts.search?.[queryParam]
+    ? String(opts.search?.[queryParam])
+    : undefined;
   // Get the query param value from search object
   const paramValue = paramValueStr ?? opts.default_value ?? "";
 
-  const [keyword, setKeyword] = useState(paramValue ?? opts.default_value ?? "");
-  const { debouncedValue, isDebouncing } = useDebouncedValue(keyword, debounceDelay);
+  const [keyword, setKeyword] = useState(
+    paramValue ?? opts.default_value ?? "",
+  );
+  const { debouncedValue, isDebouncing } = useDebouncedValue(
+    keyword,
+    debounceDelay,
+  );
 
   // Immediate search params update (for filters, pagination, etc.)
   const setSearchParams = useCallback(
@@ -53,7 +60,7 @@ export function useTSRSearchQuery<TSearch extends Record<string, any>>(
         });
       });
     },
-    [opts.navigate, startTransition]
+    [opts.navigate, startTransition],
   );
 
   // Debounced search value update

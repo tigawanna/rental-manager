@@ -1,10 +1,14 @@
 import { authClient, BetterAuthSession } from "@/lib/better-auth/client";
-import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
 
 type ViewerUser = BetterAuthSession["user"];
 type ViewerSession = BetterAuthSession["session"];
-
 
 // export type BetterAuthUserRoles = "tenant" | "staff" | "admin" | "manager";
 export type TViewer = {

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ChevronsUpDown, Home, Plus } from "lucide-react"
-import * as React from "react"
+import { ChevronsUpDown, Home, Plus } from "lucide-react";
+import * as React from "react";
 
 import {
   DropdownMenu,
@@ -11,33 +11,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { Link } from "@tanstack/react-router"
+} from "@/components/ui/sidebar";
+import { Link } from "@tanstack/react-router";
 
 export function OrgSwitcher({
   organizations,
 }: {
   organizations: {
-    id: string
-    name: string
-    logo?: React.ElementType
-    plan?: string
-  }[]
+    id: string;
+    name: string;
+    logo?: React.ElementType;
+    plan?: string;
+  }[];
 }) {
-  const { isMobile } = useSidebar()
-  const [activeOrg, setActiveOrg] = React.useState(organizations[0])
+  const { isMobile } = useSidebar();
+  const [activeOrg, setActiveOrg] = React.useState(organizations[0]);
 
   if (!activeOrg) {
-    return null
+    return null;
   }
 
-  const Logo = activeOrg.logo
+  const Logo = activeOrg.logo;
 
   return (
     <SidebarMenu>
@@ -53,7 +53,7 @@ export function OrgSwitcher({
                   <Logo className="size-4" />
                 </div>
               ) : (
-                <div className="bg-primary/20 flex aspect-square size-8 items-center justify-center rounded-lg font-semibold text-primary">
+                <div className="bg-primary/20 text-primary flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
                   {activeOrg.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -73,7 +73,10 @@ export function OrgSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel asChild className="p-0">
-              <Link to="/" className="flex items-center gap-2 px-2 py-1.5 text-sm">
+              <Link
+                to="/"
+                className="flex items-center gap-2 px-2 py-1.5 text-sm"
+              >
                 <Home className="size-4" />
                 Go to Home
               </Link>
@@ -83,7 +86,7 @@ export function OrgSwitcher({
               Organizations
             </DropdownMenuLabel>
             {organizations.map((org, index) => {
-              const OrgLogo = org.logo
+              const OrgLogo = org.logo;
               return (
                 <DropdownMenuItem
                   key={org.id}
@@ -95,14 +98,14 @@ export function OrgSwitcher({
                       <OrgLogo className="size-3.5 shrink-0" />
                     </div>
                   ) : (
-                    <div className="flex size-6 items-center justify-center rounded-md border font-semibold text-xs">
+                    <div className="flex size-6 items-center justify-center rounded-md border text-xs font-semibold">
                       {org.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                   {org.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
-              )
+              );
             })}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2">
@@ -115,5 +118,5 @@ export function OrgSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

@@ -6,14 +6,11 @@ import { auth, BetterAuthOpenAPI } from "@/lib/auth";
 import { indexRoute } from ".";
 import { logger } from "@bogeychan/elysia-logger";
 
-
-
 export const allRoutes = new Elysia()
   .use(
     logger({
       level: "info",
-      
-    })
+    }),
   )
   .use(
     cors({
@@ -21,13 +18,15 @@ export const allRoutes = new Elysia()
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
-    })
+    }),
   )
   .use(
     openapi({
       // Use production types in production, source files in development
       references: fromTypes(
-        process.env.NODE_ENV === "production" ? "dist/main.d.ts" : "src/main.ts"
+        process.env.NODE_ENV === "production"
+          ? "dist/main.d.ts"
+          : "src/main.ts",
       ),
       // OpenAPI documentation configuration
       documentation: {
@@ -56,7 +55,7 @@ export const allRoutes = new Elysia()
         components: await BetterAuthOpenAPI.components,
         paths: await BetterAuthOpenAPI.getPaths(),
       },
-    })
+    }),
   )
   .mount(auth.handler)
   .use(indexRoute);

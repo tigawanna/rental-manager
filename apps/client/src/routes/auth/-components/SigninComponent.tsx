@@ -37,10 +37,10 @@ export function SigninComponent({}: SigninComponentProps) {
       });
     },
     onSuccess(data) {
-      if(data.error){
+      if (data.error) {
         toast.error("Something went wrong", {
           description: `${data.error.message}`,
-          position:"top-center"
+          position: "top-center",
         });
         return;
       }
@@ -70,14 +70,19 @@ export function SigninComponent({}: SigninComponentProps) {
 
   return (
     <div className="flex h-full w-full items-center justify-evenly gap-2 p-5">
-      <img src="/logo.svg" alt="logo" className="hidden w-[30%] object-cover md:flex" />
+      <img
+        src="/logo.svg"
+        alt="logo"
+        className="hidden w-[30%] object-cover md:flex"
+      />
       <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="rounded-lg flex h-full w-[90%] flex-col items-center justify-center gap-6 p-[2%] md:w-[70%] lg:w-[40%]">
+        className="flex h-full w-[90%] flex-col items-center justify-center gap-6 rounded-lg p-[2%] md:w-[70%] lg:w-[40%]"
+      >
         <div className="flex w-full flex-col items-center justify-center gap-4">
           <h1 className="text-4xl font-bold">Sign in</h1>
 
@@ -85,16 +90,25 @@ export function SigninComponent({}: SigninComponentProps) {
             name="email"
             validators={{
               onChange: z.string().min(1, "Email is required"),
-            }}>
+            }}
+          >
             {(field) => <field.TextField label="Email or username" />}
           </form.AppField>
 
           <form.AppField
             name="password"
             validators={{
-              onChange: z.string().min(8, "Password must be at least 8 characters"),
-            }}>
-            {(field) => <field.PasswordField label="Password" showPassword={showPassword} />}
+              onChange: z
+                .string()
+                .min(8, "Password must be at least 8 characters"),
+            }}
+          >
+            {(field) => (
+              <field.PasswordField
+                label="Password"
+                showPassword={showPassword}
+              />
+            )}
           </form.AppField>
 
           <div className="w-full">
@@ -106,7 +120,7 @@ export function SigninComponent({}: SigninComponentProps) {
                 type="checkbox"
                 id="showPassword"
                 name="showPassword"
-                className="checkbox-primary checkbox ring-1 ring-primary"
+                className="checkbox-primary checkbox ring-primary ring-1"
                 checked={showPassword}
                 onChange={() => setShowPassword(!showPassword)}
               />
@@ -121,7 +135,11 @@ export function SigninComponent({}: SigninComponentProps) {
         <div className="flex w-full flex-col items-center justify-center gap-4">
           <div className="flex items-center gap-1">
             <span>Don&apos;t have an account?</span>
-            <Link to="/auth/signup" search={{ returnTo }} className="link link-primary">
+            <Link
+              to="/auth/signup"
+              search={{ returnTo }}
+              className="link link-primary"
+            >
               Sign up
             </Link>
           </div>
@@ -133,7 +151,8 @@ export function SigninComponent({}: SigninComponentProps) {
               onClick={() => {
                 form.setFieldValue("email", "stranger1@email.com");
                 form.setFieldValue("password", "stranger1@email.com");
-              }}>
+              }}
+            >
               Login as stranger 1
             </button>
             <button
@@ -143,7 +162,8 @@ export function SigninComponent({}: SigninComponentProps) {
               onClick={() => {
                 form.setFieldValue("email", "stranger2@email.com");
                 form.setFieldValue("password", "stranger2@email.com");
-              }}>
+              }}
+            >
               Login as stranger 2
             </button>
           </div>

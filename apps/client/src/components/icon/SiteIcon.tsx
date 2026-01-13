@@ -12,11 +12,21 @@ export function SiteIcon({ className, size = 24 }: SiteIconProps) {
       width={size}
       height={size}
       className={className}
-      stroke="var(--color-primary)">
+      stroke="var(--color-primary)"
+    >
       <g id="SVGRepo_bgCarrier" strokeWidth="0" />
-      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <g id="SVGRepo_iconCarrier">
-        <path d="M22 22L2 22" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path
+          d="M22 22L2 22"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
         <path
           d="M17 22V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V22"
           stroke="var(--color-primary)"
@@ -32,11 +42,36 @@ export function SiteIcon({ className, size = 24 }: SiteIconProps) {
           stroke="var(--color-primary)"
           strokeWidth="1.5"
         />
-        <path d="M12 22V19" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
-        <path d="M10 5H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
-        <path d="M10 8H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
-        <path d="M10 11H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
-        <path d="M10 14H14" stroke="var(--color-primary)" strokeLinecap="round" strokeWidth="1.5" />
+        <path
+          d="M12 22V19"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M10 5H14"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M10 8H14"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M10 11H14"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M10 14H14"
+          stroke="var(--color-primary)"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
       </g>
     </svg>
   );

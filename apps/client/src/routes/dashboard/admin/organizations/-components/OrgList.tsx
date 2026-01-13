@@ -47,11 +47,12 @@ export function OrgList({}: OrgListProps) {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
 
-  const { debouncedValue, isDebouncing, keyword, setKeyword } = useTSRSearchQuery({
-    search,
-    navigate,
-    query_param: "sq",
-  });
+  const { debouncedValue, isDebouncing, keyword, setKeyword } =
+    useTSRSearchQuery({
+      search,
+      navigate,
+      query_param: "sq",
+    });
 
   // Query for paginated data with limit/offset
   const query = useLiveQuery(
@@ -70,7 +71,7 @@ export function OrgList({}: OrgListProps) {
           metadata: orgs.metadata,
           createdAt: orgs.createdAt,
         })),
-    [debouncedValue, limit, offset]
+    [debouncedValue, limit, offset],
   );
 
   // Separate query for total count (without limit/offset)
@@ -82,7 +83,7 @@ export function OrgList({}: OrgListProps) {
         .select(({ orgs }) => ({
           total: count(orgs.id),
         })),
-    [debouncedValue]
+    [debouncedValue],
   );
   const sortableColumns = createSortableColumns(organizationsCollection, [
     { value: "name", label: "Name" },
@@ -96,11 +97,12 @@ export function OrgList({}: OrgListProps) {
   const pageCount = Math.max(1, Math.ceil(total / limit));
 
   // Show empty state only when there's no data at all (initial load with no orgs)
-  const hasNoOrgsAtAll = !query.isLoading && !countQuery.isLoading && total === 0 && !debouncedValue;
+  const hasNoOrgsAtAll =
+    !query.isLoading && !countQuery.isLoading && total === 0 && !debouncedValue;
 
   if (hasNoOrgsAtAll) {
     return (
-      <div className="h-full mx-auto p-6 w-full flex flex-col items-center justify-center">
+      <div className="mx-auto flex h-full w-full flex-col items-center justify-center p-6">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -108,8 +110,8 @@ export function OrgList({}: OrgListProps) {
             </EmptyMedia>
             <EmptyTitle>No Organizations Yet</EmptyTitle>
             <EmptyDescription>
-              You haven&apos;t created any organizations yet. Get started by creating your first
-              one.
+              You haven&apos;t created any organizations yet. Get started by
+              creating your first one.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -121,11 +123,13 @@ export function OrgList({}: OrgListProps) {
   }
 
   return (
-    <div className="h-full w-full min-w-[90%] flex flex-col gap-4">
+    <div className="flex h-full w-full min-w-[90%] flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Organizations</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage and view all organizations</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Manage and view all organizations
+          </p>
         </div>
 
         <div className="mt-3 md:mt-0">
@@ -133,7 +137,7 @@ export function OrgList({}: OrgListProps) {
         </div>
       </div>
 
-      <div className="flex items-end gap-3 ">
+      <div className="flex items-end gap-3">
         <SearchBox {...{ debouncedValue, isDebouncing, keyword, setKeyword }} />
         <TanstackDBColumnFilters
           collection={organizationsCollection}
@@ -144,7 +148,7 @@ export function OrgList({}: OrgListProps) {
         />
       </div>
 
-      <div className="@container rounded-md border overflow-hidden">
+      <div className="@container overflow-hidden rounded-md border">
         {/* Mobile Card View */}
         <div className="block @md:hidden">
           {query.isLoading ? (
@@ -156,11 +160,11 @@ export function OrgList({}: OrgListProps) {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <Skeleton className="h-3 w-16 mb-1" />
+                      <Skeleton className="mb-1 h-3 w-16" />
                       <Skeleton className="h-4 w-32" />
                     </div>
                     <div>
-                      <Skeleton className="h-3 w-16 mb-2" />
+                      <Skeleton className="mb-2 h-3 w-16" />
                       <Skeleton className="h-5 w-24" />
                     </div>
                     <div>
@@ -172,16 +176,18 @@ export function OrgList({}: OrgListProps) {
               ))}
             </div>
           ) : paginatedOrgs.length === 0 ? (
-            <div className="text-center py-10">
+            <div className="py-10 text-center">
               <p className="text-muted-foreground mb-4">
-                No organizations found{debouncedValue ? " matching your search" : ""}
+                No organizations found
+                {debouncedValue ? " matching your search" : ""}
               </p>
               {debouncedValue && (
                 <Button
                   onClick={() => {
                     setKeyword("");
                     setOffset(0);
-                  }}>
+                  }}
+                >
                   Clear Filter
                 </Button>
               )}
@@ -191,28 +197,40 @@ export function OrgList({}: OrgListProps) {
               {paginatedOrgs?.map((org) => (
                 <Card
                   key={org.id}
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}>
+                  className="cursor-pointer transition-shadow hover:shadow-md"
+                  onClick={() =>
+                    navigate({ to: `/dashboard/admin/organizations/${org.id}` })
+                  }
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-base">{org.name ?? "—"}</CardTitle>
+                      <CardTitle className="text-base">
+                        {org.name ?? "—"}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Slug</p>
-                      <p className="text-sm font-mono">{org.slug}</p>
+                      <p className="text-muted-foreground mb-1 text-xs">Slug</p>
+                      <p className="font-mono text-sm">{org.slug}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground mb-2">Status</p>
+                      <p className="text-muted-foreground mb-2 text-xs">
+                        Status
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="outline">{org.id.slice(0, 8)}</Badge>
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Created</p>
-                      <p className="text-sm" title={String(org.createdAt ?? "")}>
-                        {org.createdAt ? getRelativeTimeString(new Date(org.createdAt)) : "—"}
+                      <p className="text-muted-foreground text-xs">Created</p>
+                      <p
+                        className="text-sm"
+                        title={String(org.createdAt ?? "")}
+                      >
+                        {org.createdAt
+                          ? getRelativeTimeString(new Date(org.createdAt))
+                          : "—"}
                       </p>
                     </div>
                   </CardContent>
@@ -253,10 +271,11 @@ export function OrgList({}: OrgListProps) {
                 ))
               ) : paginatedOrgs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-10">
+                  <TableCell colSpan={4} className="py-10 text-center">
                     <div>
                       <p className="text-muted-foreground mb-4">
-                        No organizations found{debouncedValue ? " matching your search" : ""}
+                        No organizations found
+                        {debouncedValue ? " matching your search" : ""}
                       </p>
                       {debouncedValue && (
                         <Button
@@ -264,7 +283,8 @@ export function OrgList({}: OrgListProps) {
                           onClick={() => {
                             setKeyword("");
                             setOffset(0);
-                          }}>
+                          }}
+                        >
                           Clear Filter
                         </Button>
                       )}
@@ -275,14 +295,25 @@ export function OrgList({}: OrgListProps) {
                 paginatedOrgs.map((org) => (
                   <TableRow
                     key={org.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate({ to: `/dashboard/admin/organizations/${org.id}` })}>
-                    <TableCell className="font-medium">{org.name ?? "—"}</TableCell>
+                    className="hover:bg-muted/50 cursor-pointer"
+                    onClick={() =>
+                      navigate({
+                        to: `/dashboard/admin/organizations/${org.id}`,
+                      })
+                    }
+                  >
+                    <TableCell className="font-medium">
+                      {org.name ?? "—"}
+                    </TableCell>
                     <TableCell>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{org.slug}</code>
+                      <code className="bg-muted rounded px-2 py-1 text-xs">
+                        {org.slug}
+                      </code>
                     </TableCell>
                     <TableCell title={String(org.createdAt ?? "")}>
-                      {org.createdAt ? getRelativeTimeString(new Date(org.createdAt)) : "—"}
+                      {org.createdAt
+                        ? getRelativeTimeString(new Date(org.createdAt))
+                        : "—"}
                     </TableCell>
                     <TableCell>
                       <div onClick={(e) => e.stopPropagation()}>
@@ -310,12 +341,14 @@ export function OrgList({}: OrgListProps) {
 
       {total > 0 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             {total > 0 ? (
               <span>
                 Showing <span className="font-medium">{offset + 1}</span>–
-                <span className="font-medium">{Math.min(offset + limit, total)}</span> of{" "}
-                <span className="font-medium">{total}</span>
+                <span className="font-medium">
+                  {Math.min(offset + limit, total)}
+                </span>{" "}
+                of <span className="font-medium">{total}</span>
               </span>
             ) : (
               <span>—</span>
@@ -347,7 +380,8 @@ export function OrgList({}: OrgListProps) {
                       onClick={(e) => {
                         e.preventDefault();
                         setOffset((p - 1) * limit);
-                      }}>
+                      }}
+                    >
                       {p}
                     </PaginationLink>
                   </PaginationItem>

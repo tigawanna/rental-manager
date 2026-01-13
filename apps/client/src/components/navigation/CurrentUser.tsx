@@ -16,15 +16,10 @@ import {
   Mail,
   UserCircle,
 } from "lucide-react";
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MutationButton } from "@/lib/tanstack/query/MutationButton";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useViewer } from "@/data-access-layer/users/viewer";
-
 
 interface CurrentUserProps {}
 
@@ -58,7 +53,7 @@ export function CurrentUser({}: CurrentUserProps) {
       </DropdownMenu>
     );
   }
-const avatarUrl = viewer.user?.image ?? "/blank-user.png";
+  const avatarUrl = viewer.user?.image ?? "/blank-user.png";
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

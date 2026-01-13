@@ -21,7 +21,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/better-auth/client";
 import { unwrapUnknownError } from "@/utils/errors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ban, Key, Loader2, Shield, Trash2, UserCog, UserMinus, Users } from "lucide-react";
+import {
+  Ban,
+  Key,
+  Loader2,
+  Shield,
+  Trash2,
+  UserCog,
+  UserMinus,
+  Users,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -171,7 +180,13 @@ export function UserActionsDialog({
   });
 
   const banUserMutation = useMutation({
-    mutationFn: async ({ reason, expiresIn }: { reason?: string; expiresIn?: number }) => {
+    mutationFn: async ({
+      reason,
+      expiresIn,
+    }: {
+      reason?: string;
+      expiresIn?: number;
+    }) => {
       const { data, error } = await authClient.admin.banUser({
         userId: user.id,
         banReason: reason,
@@ -275,7 +290,9 @@ export function UserActionsDialog({
       case "ban-user":
         banUserMutation.mutate({
           reason: formData.banReason || undefined,
-          expiresIn: formData.banExpiresIn ? parseInt(formData.banExpiresIn) : undefined,
+          expiresIn: formData.banExpiresIn
+            ? parseInt(formData.banExpiresIn)
+            : undefined,
         });
         break;
       case "unban-user":
@@ -292,8 +309,9 @@ export function UserActionsDialog({
       case "remove-from-org":
         return (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Remove <span className="font-semibold">{user.email}</span> from this organization?
+            <p className="text-muted-foreground text-sm">
+              Remove <span className="font-semibold">{user.email}</span> from
+              this organization?
             </p>
           </div>
         );
@@ -303,7 +321,12 @@ export function UserActionsDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="memberRole">Organization Role</Label>
-              <Select value={formData.memberRole} onValueChange={(v) => setFormData({ ...formData, memberRole: v })}>
+              <Select
+                value={formData.memberRole}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, memberRole: v })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -325,7 +348,9 @@ export function UserActionsDialog({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -334,7 +359,9 @@ export function UserActionsDialog({
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
           </div>
@@ -345,7 +372,10 @@ export function UserActionsDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="role">System Role</Label>
-              <Select value={formData.role} onValueChange={(v) => setFormData({ ...formData, role: v })}>
+              <Select
+                value={formData.role}
+                onValueChange={(v) => setFormData({ ...formData, role: v })}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -367,7 +397,9 @@ export function UserActionsDialog({
                 id="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 placeholder="Enter new password"
               />
             </div>
@@ -382,20 +414,26 @@ export function UserActionsDialog({
               <Textarea
                 id="banReason"
                 value={formData.banReason}
-                onChange={(e) => setFormData({ ...formData, banReason: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, banReason: e.target.value })
+                }
                 placeholder="Enter reason for ban"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="banExpiresIn">Ban Duration (seconds, optional)</Label>
+              <Label htmlFor="banExpiresIn">
+                Ban Duration (seconds, optional)
+              </Label>
               <Input
                 id="banExpiresIn"
                 type="number"
                 value={formData.banExpiresIn}
-                onChange={(e) => setFormData({ ...formData, banExpiresIn: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, banExpiresIn: e.target.value })
+                }
                 placeholder="Leave empty for permanent ban"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Examples: 3600 = 1 hour, 86400 = 1 day, 604800 = 1 week
               </p>
             </div>
@@ -405,8 +443,9 @@ export function UserActionsDialog({
       case "unban-user":
         return (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Remove ban from <span className="font-semibold">{user.email}</span>?
+            <p className="text-muted-foreground text-sm">
+              Remove ban from{" "}
+              <span className="font-semibold">{user.email}</span>?
             </p>
           </div>
         );
@@ -414,18 +453,20 @@ export function UserActionsDialog({
       case "remove-user":
         return (
           <div className="space-y-4">
-            <p className="text-sm text-destructive">
-              ⚠️ This action is permanent and will hard delete the user from the database.
+            <p className="text-destructive text-sm">
+              ⚠️ This action is permanent and will hard delete the user from the
+              database.
             </p>
-            <p className="text-sm text-muted-foreground">
-              Are you sure you want to remove <span className="font-semibold">{user.email}</span>?
+            <p className="text-muted-foreground text-sm">
+              Are you sure you want to remove{" "}
+              <span className="font-semibold">{user.email}</span>?
             </p>
           </div>
         );
 
       default:
         return (
-          <div className="py-8 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground py-8 text-center text-sm">
             Select an action to continue
           </div>
         );
@@ -442,7 +483,10 @@ export function UserActionsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue={orgId ? "organization" : "admin"} className="w-full">
+        <Tabs
+          defaultValue={orgId ? "organization" : "admin"}
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2">
             {orgId && (
               <TabsTrigger value="organization">
@@ -460,7 +504,10 @@ export function UserActionsDialog({
             <TabsContent value="organization" className="space-y-4">
               <div className="space-y-2">
                 <Label>Organization Actions</Label>
-                <Select value={selectedAction} onValueChange={setSelectedAction}>
+                <Select
+                  value={selectedAction}
+                  onValueChange={setSelectedAction}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select an action" />
                   </SelectTrigger>
@@ -527,7 +574,7 @@ export function UserActionsDialog({
                     </SelectItem>
                   )}
                   <SelectItem value="remove-user">
-                    <div className="flex items-center text-destructive">
+                    <div className="text-destructive flex items-center">
                       <Trash2 className="mr-2 h-4 w-4" />
                       Remove User (Permanent)
                     </div>
@@ -541,12 +588,20 @@ export function UserActionsDialog({
         </Tabs>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isPending}
+          >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!selectedAction || isPending}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!selectedAction || isPending}
+          >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {selectedAction === "remove-user" || selectedAction === "remove-from-org"
+            {selectedAction === "remove-user" ||
+            selectedAction === "remove-from-org"
               ? "Remove"
               : "Apply"}
           </Button>

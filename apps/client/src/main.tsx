@@ -1,6 +1,10 @@
 import ReactDOM from "react-dom/client";
 import { createRouter } from "@tanstack/react-router";
-import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import React, { useEffect } from "react";
 import { RouterPendingComponent } from "./lib/tanstack/router/RouterPendingComponent";
@@ -11,9 +15,10 @@ import "./styles.css";
 import { queryKeyPrefixes } from "./data-access-layer/query-keys";
 // Set up a QueryClient instance
 
-
-
-type QueryKey = [(typeof queryKeyPrefixes)[keyof typeof queryKeyPrefixes], ...(readonly unknown[])];
+type QueryKey = [
+  (typeof queryKeyPrefixes)[keyof typeof queryKeyPrefixes],
+  ...(readonly unknown[]),
+];
 
 interface MyMeta extends Record<string, unknown> {
   invalidates?: [QueryKey[0], ...(readonly unknown[])][];
@@ -28,7 +33,6 @@ declare module "@tanstack/react-query" {
     mutationMeta: MyMeta;
   }
 }
-
 
 export const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -82,6 +86,6 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }

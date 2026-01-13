@@ -24,7 +24,7 @@ export function TSRBreadCrumbs({}: TSRBreadCrumbsProps) {
             ) {
               return (
                 <BreadcrumbItem key={crumb.path}>
-                  <BreadcrumbPage className="hover:text-accent-text line-clamp-1 cursor-pointer text-xs hover:max-w-fit hover:duration-300 hover:animate-in hover:fade-in">
+                  <BreadcrumbPage className="hover:text-accent-text hover:animate-in hover:fade-in line-clamp-1 cursor-pointer text-xs hover:max-w-fit hover:duration-300">
                     {crumb.name}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
@@ -35,7 +35,7 @@ export function TSRBreadCrumbs({}: TSRBreadCrumbsProps) {
                 <BreadcrumbItem key={crumb.path}>
                   <Link
                     to={crumb.path}
-                    className="hover:text-accent-text line-clamp-1 cursor-pointer text-xs hover:max-w-fit hover:duration-300 hover:animate-in hover:fade-in"
+                    className="hover:text-accent-text hover:animate-in hover:fade-in line-clamp-1 cursor-pointer text-xs hover:max-w-fit hover:duration-300"
                   >
                     {crumb.name}
                   </Link>

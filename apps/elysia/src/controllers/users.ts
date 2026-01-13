@@ -7,97 +7,97 @@ const UserModels = new Elysia().model({
       username: t.String({
         minLength: 3,
         maxLength: 50,
-        description: 'Username for authentication',
+        description: "Username for authentication",
       }),
       password: t.String({
         minLength: 8,
-        description: 'User password (at least 8 characters)',
+        description: "User password (at least 8 characters)",
       }),
     },
     {
-      description: 'Sign in credentials',
-    }
+      description: "Sign in credentials",
+    },
   ),
   SignUpRequest: t.Object(
     {
       username: t.String({
         minLength: 3,
         maxLength: 50,
-        description: 'Desired username',
+        description: "Desired username",
       }),
       email: t.String({
-        format: 'email',
-        description: 'User email address',
+        format: "email",
+        description: "User email address",
       }),
       password: t.String({
         minLength: 8,
-        description: 'User password (at least 8 characters)',
+        description: "User password (at least 8 characters)",
       }),
     },
     {
-      description: 'Sign up information',
-    }
+      description: "Sign up information",
+    },
   ),
   AuthResponse: t.Object(
     {
       token: t.String({
-        description: 'JWT authentication token',
+        description: "JWT authentication token",
       }),
       user: t.Object({
         id: t.String({
-          description: 'User unique identifier',
+          description: "User unique identifier",
         }),
         username: t.String({
-          description: 'Username',
+          description: "Username",
         }),
         email: t.String({
-          description: 'User email',
+          description: "User email",
         }),
       }),
     },
     {
-      description: 'Authentication response with token and user details',
-    }
+      description: "Authentication response with token and user details",
+    },
   ),
   UserProfile: t.Object(
     {
       id: t.String({
-        description: 'User unique identifier',
+        description: "User unique identifier",
       }),
       username: t.String({
-        description: 'Username',
+        description: "Username",
       }),
       email: t.String({
-        description: 'User email',
+        description: "User email",
       }),
       createdAt: t.String({
-        format: 'date-time',
-        description: 'Account creation timestamp',
+        format: "date-time",
+        description: "Account creation timestamp",
       }),
     },
     {
-      description: 'User profile information',
-    }
+      description: "User profile information",
+    },
   ),
   ErrorResponse: t.Object(
     {
       error: t.String({
-        description: 'Error message',
+        description: "Error message",
       }),
       statusCode: t.Number({
-        description: 'HTTP status code',
+        description: "HTTP status code",
       }),
     },
     {
-      description: 'Error response',
-    }
+      description: "Error response",
+    },
   ),
 });
 
-export const users = new Elysia({ 
+export const users = new Elysia({
   prefix: "/user",
   // Apply tags to entire group
-  tags: ['User']
+  tags: ["User"],
 })
   .use(UserModels)
   .post(
@@ -105,93 +105,93 @@ export const users = new Elysia({
     ({ body }) => {
       // Implementation placeholder
       return {
-        token: 'example-jwt-token',
+        token: "example-jwt-token",
         user: {
-          id: '1',
+          id: "1",
           username: body.username,
-          email: 'user@example.com'
-        }
+          email: "user@example.com",
+        },
       };
     },
     {
-      body: 'SignInRequest',
+      body: "SignInRequest",
       response: {
-        200: 'AuthResponse',
-        401: 'ErrorResponse',
+        200: "AuthResponse",
+        401: "ErrorResponse",
       },
       detail: {
-        summary: 'User Sign In',
-        description: 'Authenticate a user with username and password',
-        tags: ['Authentication'],
+        summary: "User Sign In",
+        description: "Authenticate a user with username and password",
+        tags: ["Authentication"],
         responses: {
           200: {
-            description: 'Successfully authenticated',
+            description: "Successfully authenticated",
           },
           401: {
-            description: 'Invalid credentials',
+            description: "Invalid credentials",
           },
         },
       },
-    }
+    },
   )
   .post(
     "/sign-up",
     ({ body }) => {
       // Implementation placeholder
       return {
-        token: 'example-jwt-token',
+        token: "example-jwt-token",
         user: {
-          id: '1',
+          id: "1",
           username: body.username,
-          email: body.email
-        }
+          email: body.email,
+        },
       };
     },
     {
-      body: 'SignUpRequest',
+      body: "SignUpRequest",
       response: {
-        201: 'AuthResponse',
-        400: 'ErrorResponse',
-        409: 'ErrorResponse',
+        201: "AuthResponse",
+        400: "ErrorResponse",
+        409: "ErrorResponse",
       },
       detail: {
-        summary: 'User Sign Up',
-        description: 'Register a new user account',
-        tags: ['Authentication'],
+        summary: "User Sign Up",
+        description: "Register a new user account",
+        tags: ["Authentication"],
         responses: {
           201: {
-            description: 'User successfully registered',
+            description: "User successfully registered",
           },
           400: {
-            description: 'Invalid input data',
+            description: "Invalid input data",
           },
           409: {
-            description: 'Username or email already exists',
+            description: "Username or email already exists",
           },
         },
       },
-    }
+    },
   )
   .get(
     "/profile",
     () => {
       // Implementation placeholder
       return {
-        id: '1',
-        username: 'example-user',
-        email: 'user@example.com',
-        createdAt: new Date().toISOString()
+        id: "1",
+        username: "example-user",
+        email: "user@example.com",
+        createdAt: new Date().toISOString(),
       };
     },
     {
       response: {
-        200: 'UserProfile',
-        401: 'ErrorResponse',
+        200: "UserProfile",
+        401: "ErrorResponse",
       },
       detail: {
-        summary: 'Get User Profile',
-        description: 'Retrieve the authenticated user\'s profile information',
-        tags: ['User'],
+        summary: "Get User Profile",
+        description: "Retrieve the authenticated user's profile information",
+        tags: ["User"],
         security: [
           {
             bearerAuth: [],
@@ -199,12 +199,12 @@ export const users = new Elysia({
         ],
         responses: {
           200: {
-            description: 'User profile retrieved successfully',
+            description: "User profile retrieved successfully",
           },
           401: {
-            description: 'Authentication required',
+            description: "Authentication required",
           },
         },
       },
-    }
+    },
   );

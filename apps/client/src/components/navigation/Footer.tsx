@@ -8,13 +8,13 @@ export function Footer() {
   return (
     <footer className="footer footer-center bg-base-200 text-base-content p-10">
       <aside>
-        <MapPinHouse className="size-12 text-primary" />
-        <p className="font-bold text-lg">
+        <MapPinHouse className="text-primary size-12" />
+        <p className="text-lg font-bold">
           My Rentals
           <br />
           Property Management Made Simple
         </p>
-        <p className="text-sm text-base-content/70">
+        <p className="text-base-content/70 text-sm">
           Copyright © {currentYear} - All rights reserved
         </p>
       </aside>
@@ -34,7 +34,8 @@ export function Footer() {
             search={{
               returnTo: pathname,
             }}
-            className="link link-hover">
+            className="link link-hover"
+          >
             Sign In
           </Link>
         </div>
@@ -45,17 +46,22 @@ export function Footer() {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-ghost btn-square btn-sm">
+            className="btn btn-ghost btn-square btn-sm"
+          >
             <Github className="size-5" />
           </a>
           <a
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-ghost btn-square btn-sm">
+            className="btn btn-ghost btn-square btn-sm"
+          >
             <Twitter className="size-5" />
           </a>
-          <a href="mailto:support@myrentals.com" className="btn btn-ghost btn-square btn-sm">
+          <a
+            href="mailto:support@myrentals.com"
+            className="btn btn-ghost btn-square btn-sm"
+          >
             <Mail className="size-5" />
           </a>
         </div>

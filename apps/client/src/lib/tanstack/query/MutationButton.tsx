@@ -2,8 +2,7 @@ import type { UseMutationResult } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-interface MutationButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface MutationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label?: React.ReactNode;
   mutation: UseMutationResult<any, any, any, any>;
   className?: string;
@@ -20,7 +19,7 @@ export function MutationButton({
   return (
     <button
       className={twMerge(
-        "btn  btn-wide flex items-center justify-center gap-2",
+        "btn btn-wide flex items-center justify-center gap-2",
         className,
       )}
       disabled={mutation.isPending}

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/organizations/")({
 
 function RouteComponent() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <OrgList />
     </div>
   );

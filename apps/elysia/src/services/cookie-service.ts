@@ -1,9 +1,9 @@
 /**
  * Cookie Service
- * 
+ *
  * Note: Authentication cookies (access/refresh tokens) are handled by better-auth.
  * This module provides general cookie utilities for the application.
- * 
+ *
  * For token-related cookie operations, use the better-auth middleware.
  */
 

@@ -11,7 +11,7 @@ export const Route = createFileRoute("/dashboard/admin")({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen w-full h-full flex justify-center items-center">
+    <div className="flex h-full min-h-screen w-full items-center justify-center">
       <Outlet />
     </div>
   );

@@ -1,6 +1,10 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
-import type { GetSelectTableSelection, SelectResultField, TableLike } from "drizzle-orm/query-builders/select.types";
+import type {
+  GetSelectTableSelection,
+  SelectResultField,
+  TableLike,
+} from "drizzle-orm/query-builders/select.types";
 
 import { QueryClient } from "@tanstack/query-core";
 import { asc, desc, eq, getTableName, sql } from "drizzle-orm";
@@ -23,13 +27,41 @@ interface FindAllretunType<T extends TableLike> {
   perPage: number;
   totalItems: number;
   totalPages: number;
-  items: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }[K]; }[];
+  items: {
+    [K in keyof {
+      [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<
+        GetSelectTableSelection<T>[Key],
+        true
+      >;
+    }]: {
+      [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<
+        GetSelectTableSelection<T>[Key],
+        true
+      >;
+    }[K];
+  }[];
 }
 interface FindOneReturnType<T extends TableLike> {
-  item: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }[K]; };
+  item: {
+    [K in keyof {
+      [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<
+        GetSelectTableSelection<T>[Key],
+        true
+      >;
+    }]: {
+      [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<
+        GetSelectTableSelection<T>[Key],
+        true
+      >;
+    }[K];
+  };
 }
 
-export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string, any>, UpdateDTO extends Record<string, any>> {
+export class BaseCrudService<
+  T extends PgTable,
+  CreateDTO extends Record<string, any>,
+  UpdateDTO extends Record<string, any>,
+> {
   protected table: T;
   protected entityType: EntityType;
   private auditLogService: AuditLogService;
@@ -38,7 +70,7 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
     this.table = table;
     this.entityType = entityType;
     this.auditLogService = new AuditLogService();
-    
+
     this.queryClient = new QueryClient({
       defaultOptions: {
         queries: {
@@ -46,10 +78,12 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
         },
       },
     });
-    
   }
 
-  async findAll(query: PaginatedQuery, conditions?: SQL<unknown>): Promise<FindAllretunType<T>> {
+  async findAll(
+    query: PaginatedQuery,
+    conditions?: SQL<unknown>,
+  ): Promise<FindAllretunType<T>> {
     // const c = getContext<AppBindings>();
     const { page, limit, sort, order } = query;
     const tableName = getTableName(this.table) as string;
@@ -86,7 +120,7 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
           totalItems: Number(count),
           totalPages: Math.ceil(Number(count) / Number(limit)),
           items,
-        }; ;
+        };
       },
     });
     return tsqData;
@@ -101,8 +135,8 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
         const item = await db
           .select()
           .from(this.table)
-        // TODO : extend type PgTable with a narrower type which always has an ID column
-        // @ts-expect-error : the type is too genrric but shape matches
+          // TODO : extend type PgTable with a narrower type which always has an ID column
+          // @ts-expect-error : the type is too genrric but shape matches
           .where(eq(this.table.id, id))
           .limit(1);
         return item[0];
@@ -120,16 +154,13 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
       queryKey: [getTableName(this.table)],
     });
     if (userId) {
-      await this.auditLogService.create(
-        {
-          userId,
-          action: auditAction.CREATE,
-          entityType: this.entityType,
-          entityId: item[0].id,
-          newData: data,
-
-        },
-      );
+      await this.auditLogService.create({
+        userId,
+        action: auditAction.CREATE,
+        entityType: this.entityType,
+        entityId: item[0].id,
+        newData: data,
+      });
     }
 
     return item[0];
@@ -140,7 +171,7 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
     const item = await db
       .update(this.table)
       .set(data as any)
-    // TODO : extend type PgTable with a narrower type which always has an ID column
+      // TODO : extend type PgTable with a narrower type which always has an ID column
       // @ts-expect-error : the type is too genrric but shape matches
       .where(eq(this.table?.id, id))
       .returning();
@@ -148,15 +179,13 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
       queryKey: [getTableName(this.table)],
     });
     if (userId) {
-      await this.auditLogService.createChangeLog(
-        {
-          userId,
-          entityType: this.entityType,
-          entityId: id,
-          oldData: oldItem,
-          newData: data,
-        },
-      );
+      await this.auditLogService.createChangeLog({
+        userId,
+        entityType: this.entityType,
+        entityId: id,
+        oldData: oldItem,
+        newData: data,
+      });
     }
     // @ts-expect-error : the type is too genrric but shape matches
     return item[0];
@@ -173,15 +202,13 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
       queryKey: [getTableName(this.table)],
     });
     if (userId) {
-      await this.auditLogService.create(
-        {
-          userId,
-          action: auditAction.DELETE,
-          entityType: this.entityType,
-          entityId: id,
-          oldData: oldItem,
-        },
-      );
+      await this.auditLogService.create({
+        userId,
+        action: auditAction.DELETE,
+        entityType: this.entityType,
+        entityId: id,
+        oldData: oldItem,
+      });
     }
 
     return item[0];
@@ -199,8 +226,8 @@ export class BaseCrudService<T extends PgTable, CreateDTO extends Record<string,
       // @ts-expect-error : the type is too genrric but shape matches
       .select({ id: this.table.id })
       .from(this.table)
-    // TODO : extend type PgTable with a narrower type which always has an ID column
-    // @ts-expect-error : the type is too genrric but shape matches
+      // TODO : extend type PgTable with a narrower type which always has an ID column
+      // @ts-expect-error : the type is too genrric but shape matches
       .where(eq(this.table.id, id))
       .limit(1);
 

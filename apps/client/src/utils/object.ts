@@ -7,4 +7,4 @@ export function getNestedProperty(obj: any, path: string): any {
     return undefined;
   }, obj);
 }
-``
+``;

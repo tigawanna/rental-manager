@@ -19,8 +19,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-
-
 type Mode = "create" | "edit";
 
 type Props = {
@@ -38,12 +36,10 @@ const formOpts = formOptions({
   },
 });
 
-export function AdminUserForm({
-  mode = "create",
-  user,
-  onSuccess,
-}: Props) {
-  const [selectedOrgId, setSelectedOrgId] = useState<string | undefined>(undefined);
+export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
+  const [selectedOrgId, setSelectedOrgId] = useState<string | undefined>(
+    undefined,
+  );
 
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
@@ -92,7 +88,10 @@ export function AdminUserForm({
           toast.error("User ID is missing");
           return;
         }
-        const result = await updateMutation.mutateAsync({ userId: user.id, data: value });
+        const result = await updateMutation.mutateAsync({
+          userId: user.id,
+          data: value,
+        });
         if (onSuccess) onSuccess(result);
       }
     },
@@ -101,7 +100,9 @@ export function AdminUserForm({
   return (
     <div className="card bg-base-200 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title">{mode === "create" ? "Create User" : "Edit User"}</h2>
+        <h2 className="card-title">
+          {mode === "create" ? "Create User" : "Edit User"}
+        </h2>
 
         <form
           onSubmit={(e) => {
@@ -109,21 +110,29 @@ export function AdminUserForm({
             e.stopPropagation();
             form.handleSubmit();
           }}
-          className="space-y-4">
+          className="space-y-4"
+        >
           <form.AppField
             name="name"
-            validators={{ onChange: z.string().min(1, "Name is required") }}>
+            validators={{ onChange: z.string().min(1, "Name is required") }}
+          >
             {(f) => <f.TextField label="Name" />}
           </form.AppField>
 
-          <form.AppField name="email" validators={{ onChange: z.string().email("Invalid email") }}>
+          <form.AppField
+            name="email"
+            validators={{ onChange: z.string().email("Invalid email") }}
+          >
             {(f) => <f.EmailField />}
           </form.AppField>
 
           {mode === "create" && (
             <form.AppField
               name="password"
-              validators={{ onChange: z.string().min(8, "Password at least 8 chars") }}>
+              validators={{
+                onChange: z.string().min(8, "Password at least 8 chars"),
+              }}
+            >
               {(f) => <f.PasswordField label="Password" />}
             </form.AppField>
           )}
@@ -148,12 +157,16 @@ export function AdminUserForm({
               {mode === "edit" && user?.id ? (
                 <div className="mt-2">
                   <label className="text-sm">Change role immediately</label>
-                  <div className="flex gap-2 items-center mt-2">
+                  <div className="mt-2 flex items-center gap-2">
                     <Select
                       value={user?.role ?? "tenant"}
                       onValueChange={(v: BetterAuthUserRoles) =>
-                        setRoleMutation.mutateAsync({ userId: user.id, role: v })
-                      }>
+                        setRoleMutation.mutateAsync({
+                          userId: user.id,
+                          role: v,
+                        })
+                      }
+                    >
                       <SelectTrigger className="min-w-56">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
@@ -165,7 +178,7 @@ export function AdminUserForm({
                         <SelectItem value="tenant">tenant</SelectItem>
                       </SelectContent>
                     </Select>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       Role will change immediately
                     </div>
                   </div>

@@ -1,28 +1,28 @@
 /**
  * Better Auth Middleware with RBAC Support
- * 
+ *
  * Usage Examples:
- * 
+ *
  * 1. Basic Authentication:
  *    app.get('/profile', ({ user }) => user, { auth: true })
- * 
+ *
  * 2. Role-Based Access Control:
- *    app.post('/properties', ({ user }) => createProperty(), { 
- *      requireRole: ['admin', 'landlord'] 
+ *    app.post('/properties', ({ user }) => createProperty(), {
+ *      requireRole: ['admin', 'landlord']
  *    })
- * 
+ *
  * 3. Permission-Based Access Control:
  *    app.put('/properties/:id', ({ user, resourceId }) => updateProperty(resourceId), {
  *      requirePermission: { property: ['update'] }
  *    })
- * 
+ *
  * Available Roles:
  * - admin: Full system access
  * - landlord: Property owner, can manage their properties and tenants
  * - manager: Property management, can handle day-to-day operations
  * - staff: Limited access, can handle maintenance and view data
  * - tenant: Can view their own data and create maintenance requests
- * 
+ *
  * Available Resources & Permissions:
  * - user: create, list, set-role, ban, delete
  * - session: list, revoke
@@ -36,7 +36,6 @@
 
 import { auth } from "@/lib/auth";
 import { Elysia } from "elysia";
-
 
 // Better Auth middleware with authentication and RBAC macros
 export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
@@ -64,7 +63,7 @@ export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
        * @example
        * // Allow only admins
        * app.post('/admin', handler, { requireRole: ['admin'] })
-       * 
+       *
        * // Allow admins or users
        * app.get('/data', handler, { requireRole: ['admin', 'user'] })
        */
@@ -94,10 +93,10 @@ export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
        * @example
        * // Require 'create' permission on 'user' resource
        * app.post('/users', handler, { requirePermission: { user: ['create'] } })
-       * 
+       *
        * // Require multiple permissions
        * app.put('/users/:id', handler, { requirePermission: { user: ['update'], session: ['revoke'] } })
-       * 
+       *
        * // Admin has all permissions by default
        */
       async resolve({ status, request: { headers } }) {
@@ -107,7 +106,12 @@ export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
 
         if (!session) return status(401);
 
-        const userRole = (session.user.role || "tenant") as "admin" | "landlord" | "manager" | "staff" | "tenant";
+        const userRole = (session.user.role || "tenant") as
+          | "admin"
+          | "landlord"
+          | "manager"
+          | "staff"
+          | "tenant";
         const hasPermission = await auth.api.userHasPermission({
           body: {
             role: userRole,
@@ -126,4 +130,3 @@ export const betterAuthMiddleware = new Elysia({ name: "better-auth" })
       },
     }),
   });
-

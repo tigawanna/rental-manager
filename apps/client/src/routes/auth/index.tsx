@@ -24,7 +24,7 @@ interface SigninPageProps {}
 
 export function SigninPage({}: SigninPageProps) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center ">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <ResponsiveGenericToolbar>
         <Helmet title="Property | Signin" description="Login to your account" />
         <SigninComponent />

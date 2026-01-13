@@ -6,7 +6,7 @@ interface ErrorOutputProps {
 
 export function ErrorWrapper({ err }: ErrorOutputProps) {
   return (
-    <div className="w-full rounded-lg p-2 text-center text-error">
+    <div className="text-error w-full rounded-lg p-2 text-center">
       {concatErrors(err)}
     </div>
   );

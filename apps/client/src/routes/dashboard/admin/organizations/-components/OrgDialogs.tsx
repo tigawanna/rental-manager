@@ -46,9 +46,13 @@ export function CreateOrg({ onCreated, triggerLabel }: CreateOrgProps) {
     },
     onError(err: unknown) {
       if (err instanceof Error) {
-        toast.error("Failed to create organization", { description: err.message });
+        toast.error("Failed to create organization", {
+          description: err.message,
+        });
       } else {
-        toast.error("Failed to create organization", { description: String(err) });
+        toast.error("Failed to create organization", {
+          description: String(err),
+        });
       }
     },
     meta: {
@@ -68,7 +72,7 @@ export function CreateOrg({ onCreated, triggerLabel }: CreateOrgProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create organization</DialogTitle>
-          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+          <DialogDescription className="text-muted-foreground mt-2 text-sm">
             Fill out the form below to create a new organization.
           </DialogDescription>
         </DialogHeader>
@@ -116,10 +120,14 @@ export function EditOrg({
     },
     onError(err: unknown) {
       if (err instanceof Error) {
-        toast.error("Failed to update organization", { description: err.message });
+        toast.error("Failed to update organization", {
+          description: err.message,
+        });
         return;
       } else {
-        toast.error("Failed to update organization", { description: String(err) });
+        toast.error("Failed to update organization", {
+          description: String(err),
+        });
       }
     },
     meta: {
@@ -138,7 +146,7 @@ export function EditOrg({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit organization</DialogTitle>
-          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+          <DialogDescription className="text-muted-foreground mt-2 text-sm">
             Update the organization details using the form below.
           </DialogDescription>
         </DialogHeader>
@@ -148,7 +156,9 @@ export function EditOrg({
             name: org?.body.name,
             slug: org?.body.slug,
             logo: org?.body.logo ?? "",
-            metadata: org?.body.metadata ? JSON.stringify(org?.body.metadata, null, 2) : "",
+            metadata: org?.body.metadata
+              ? JSON.stringify(org?.body.metadata, null, 2)
+              : "",
             keepCurrentActiveOrganization: true,
           }}
           onSubmit={async (payload) => {
