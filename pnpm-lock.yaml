@@ -280,6 +280,9 @@ importers:
       daisyui:
         specifier: ^5.5.14
         version: 5.5.14
+      eslint:
+        specifier: '*'
+        version: 9.39.1(jiti@2.6.1)
       jsdom:
         specifier: ^27.3.0
         version: 27.4.0
@@ -371,6 +374,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.8
         version: 0.31.8
+      eslint:
+        specifier: '*'
+        version: 9.39.1(jiti@2.6.1)
       prettier:
         specifier: '*'
         version: 3.7.4
@@ -432,6 +438,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      eslint:
+        specifier: '*'
+        version: 9.39.1(jiti@2.6.1)
       typescript:
         specifier: '*'
         version: 5.9.3
