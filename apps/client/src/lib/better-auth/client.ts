@@ -21,3 +21,5 @@ export type BetterAuthOrgRoles =
   | "member"
   | "owner"
   | ("admin" | "member" | "owner")[];
+
+export const userRoles = Object.keys(roles);

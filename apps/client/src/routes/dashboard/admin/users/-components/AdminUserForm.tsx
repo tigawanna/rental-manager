@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   useSetRoleMutation,
   useUpdateUserMutation,
 } from "@/data-access-layer/users/admin-user-management";
-import { BetterAuthUserRoles } from "@/lib/better-auth/client";
+import { BetterAuthUserRoles, userRoles } from "@/lib/better-auth/client";
 import { useAppForm } from "@/lib/tanstack/form";
 import { formOptions } from "@tanstack/react-form";
 import type { UserWithRole } from "better-auth/plugins";
@@ -37,9 +38,7 @@ const formOpts = formOptions({
 });
 
 export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
-  const [selectedOrgId, setSelectedOrgId] = useState<string | undefined>(
-    undefined,
-  );
+  const [selectedOrgId] = useState<string | undefined>(undefined);
 
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
@@ -100,7 +99,7 @@ export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
   return (
     <div className="card bg-base-200 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title">
+        <h2 className="card-title sr-only">
           {mode === "create" ? "Create User" : "Edit User"}
         </h2>
 
@@ -121,7 +120,7 @@ export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
 
           <form.AppField
             name="email"
-            validators={{ onChange: z.string().email("Invalid email") }}
+            validators={{ onChange: z.email("Invalid email") }}
           >
             {(f) => <f.EmailField />}
           </form.AppField>
@@ -143,13 +142,9 @@ export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
                 {(f) => (
                   <f.SelectField
                     label="Role"
-                    items={[
-                      { label: "admin", value: "admin" },
-                      { label: "landlord", value: "landlord" },
-                      { label: "manager", value: "manager" },
-                      { label: "staff", value: "staff" },
-                      { label: "tenant", value: "tenant" },
-                    ]}
+                    items={
+                      userRoles.map((role) => ({ label: role, value: role }))
+                    }
                   />
                 )}
               </form.AppField>
@@ -171,11 +166,11 @@ export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">admin</SelectItem>
-                        <SelectItem value="landlord">landlord</SelectItem>
-                        <SelectItem value="manager">manager</SelectItem>
-                        <SelectItem value="staff">staff</SelectItem>
-                        <SelectItem value="tenant">tenant</SelectItem>
+                        {userRoles.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <div className="text-muted-foreground text-sm">
@@ -185,6 +180,23 @@ export function AdminUserForm({ mode = "create", user, onSuccess }: Props) {
                 </div>
               ) : null}
             </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              type="submit"
+              disabled={
+                createMutation.isPending ||
+                updateMutation.isPending ||
+                setRoleMutation.isPending
+              }
+            >
+              {createMutation.isPending || updateMutation.isPending
+                ? "Saving..."
+                : mode === "create"
+                  ? "Create User"
+                  : "Update User"}
+            </Button>
           </div>
         </form>
       </div>

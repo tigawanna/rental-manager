@@ -231,7 +231,11 @@ export function AdminUsersPage() {
           ) : (
             <div className="space-y-4 p-4">
               {paginatedUsers.map((u) => (
-                <Card key={u.id} className="overflow-hidden">
+                <Card
+                  key={u.id}
+                  className="overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
+                  onClick={() => navigate({ to: `/dashboard/admin/users/${u.id}` })}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex min-w-0 items-start gap-3">
                       <div className="shrink-0">
@@ -366,7 +370,13 @@ export function AdminUsersPage() {
                 </TableRow>
               ) : (
                 paginatedUsers.map((u) => (
-                  <TableRow key={u.id}>
+                  <TableRow
+                    key={u.id}
+                    className="hover:bg-muted/50 cursor-pointer"
+                    onClick={() =>
+                      navigate({ to: `/dashboard/admin/users/${u.id}` })
+                    }
+                  >
                     <TableCell>
                       <div className="flex items-center justify-center">
                         <RoleIcons
@@ -400,7 +410,8 @@ export function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedUser({
                             id: u.id,
                             name: u.name,
