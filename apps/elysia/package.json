@@ -14,10 +14,10 @@
     "lint:fix": "npm run lint --fix",
     "format": "prettier --write --ignore-unknown src",
     "test": "cross-env NODE_ENV=test vitest",
-    "drizzle:gen": "drizzle-kit generate",
-    "drizzle:push": "drizzle-kit push ",
-    "drizzle:studio": "drizzle-kit studio",
-    "drizzle:migrate": "drizzle-kit migrate "
+    "db:gen": "drizzle-kit generate",
+    "db:push": "drizzle-kit push ",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate "
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",
