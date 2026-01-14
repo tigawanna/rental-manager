@@ -1,24 +1,24 @@
 import {
-  and,
-  asc,
-  desc,
-  eq,
-  getTableColumns,
-  getTableName,
-  gt,
-  gte,
-  ilike,
-  inArray,
-  isNotNull,
-  isNull,
-  lt,
-  lte,
-  ne,
-  notInArray,
-  notLike,
-  or,
-  sql,
-  type SQL,
+    and,
+    asc,
+    desc,
+    eq,
+    getTableColumns,
+    getTableName,
+    gt,
+    gte,
+    ilike,
+    inArray,
+    isNotNull,
+    isNull,
+    lt,
+    lte,
+    ne,
+    notInArray,
+    notLike,
+    or,
+    sql,
+    type SQL,
 } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 
@@ -39,9 +39,48 @@ export type InferSelectModel<T extends PgTable> = T["$inferSelect"];
 export type InferInsertModel<T extends PgTable> = T["$inferInsert"];
 
 /**
+ * Extract column names as a union type from a Drizzle table
+ */
+export type TableColumns<T extends PgTable> = keyof T["$inferSelect"] & string;
+
+/**
+ * Extract columns object type from a Drizzle table
+ */
+export type TableColumnsObject<T extends PgTable> = {
+  [K in TableColumns<T>]: PgColumn;
+};
+
+/**
+ * Sort direction prefix
+ */
+type SortDirection = "" | "+" | "-";
+
+/**
+ * Valid sort field for a table (includes @random)
+ */
+type SortField<T extends PgTable> = "@random" | `${SortDirection}${TableColumns<T>}`;
+
+/**
+ * Filter operators supported in filter expressions
+ */
+type FilterOperator =
+  | "="
+  | "!="
+  | ">"
+  | ">="
+  | "<"
+  | "<="
+  | "~"   // contains (case-insensitive)
+  | "!~"  // not contains
+  | "?="  // any of (in array)
+  | "?!=" // none of (not in array)
+  | "^"   // starts with (case-insensitive)
+  | "!^"; // not starts with
+
+/**
  * List query parameters matching PocketBase-style API
  */
-export interface ListParams {
+export interface ListParams<TTable extends PgTable = PgTable> {
   /** Page number (1-indexed, default: 1) */
   page?: number;
   /** Records per page (default: 30, max: 500) */
@@ -51,7 +90,7 @@ export interface ListParams {
    * Multiple fields separated by comma: "-created,id"
    * Special: "@random" for random order
    */
-  sort?: string;
+  sort?: SortField<TTable> | (string & {});
   /** 
    * Filter expression. Supports:
    * - Comparison: =, !=, >, >=, <, <=
@@ -72,7 +111,7 @@ export interface ListParams {
    * Supports :excerpt(maxLength, withEllipsis?) modifier
    * Example: "*,expand.relField.name,description:excerpt(200,true)"
    */
-  fields?: string;
+  fields?: TableColumns<TTable> | "*" | (string & {});
   /** Skip total count query for faster results (totalItems/totalPages = -1) */
   skipTotal?: boolean;
 }
@@ -87,23 +126,6 @@ export interface PaginatedResponse<T> {
   totalItems: number;
   items: T[];
 }
-
-/**
- * Filter operators supported in filter expressions
- */
-type FilterOperator =
-  | "="
-  | "!="
-  | ">"
-  | ">="
-  | "<"
-  | "<="
-  | "~"   // contains (case-insensitive)
-  | "!~"  // not contains
-  | "?="  // any of (in array)
-  | "?!=" // none of (not in array)
-  | "^"   // starts with (case-insensitive)
-  | "!^"; // not starts with
 
 interface ParsedFilter {
   field: string;
@@ -473,6 +495,7 @@ export class DrizzleQueryEngine<
 > {
   protected table: TTable;
   protected tableName: string;
+  protected columns: TableColumnsObject<TTable>;
   private relations?: Record<string, { table: PgTable; foreignKey: string; localKey: string }>;
 
   constructor(
@@ -483,7 +506,29 @@ export class DrizzleQueryEngine<
   ) {
     this.table = table;
     this.tableName = getTableName(table);
+    this.columns = getTableColumns(table) as TableColumnsObject<TTable>;
     this.relations = options?.relations;
+  }
+
+  /**
+   * Get all column names for this table
+   */
+  getColumnNames(): TableColumns<TTable>[] {
+    return Object.keys(this.columns) as TableColumns<TTable>[];
+  }
+
+  /**
+   * Check if a column exists in this table
+   */
+  hasColumn(name: string): name is TableColumns<TTable> {
+    return name in this.columns;
+  }
+
+  /**
+   * Get a specific column by name (type-safe)
+   */
+  getColumn<K extends TableColumns<TTable>>(name: K): PgColumn {
+    return this.columns[name];
   }
 
   // ==========================================================================
@@ -493,7 +538,7 @@ export class DrizzleQueryEngine<
   /**
    * Get a paginated list of records with filtering, sorting, and field selection
    */
-  async list(params: ListParams = {}): Promise<PaginatedResponse<TSelect>> {
+  async list(params: ListParams<TTable> = {}): Promise<PaginatedResponse<TSelect>> {
     const {
       page = 1,
       perPage = 30,
@@ -555,7 +600,7 @@ export class DrizzleQueryEngine<
     }
 
     // Apply field selection
-    const selectedItems = FieldSelector.selectFields(items as any[], fields);
+    const selectedItems = FieldSelector.selectFields(items as any[], fields as string);
 
     return {
       page: safePage,
@@ -571,7 +616,7 @@ export class DrizzleQueryEngine<
    */
   async getFirstListItem(
     filter: string,
-    params: Omit<ListParams, "filter" | "page" | "perPage"> = {},
+    params: Omit<ListParams<TTable>, "filter" | "page" | "perPage"> = {},
   ): Promise<TSelect | null> {
     const result = await this.list({
       ...params,
@@ -586,7 +631,7 @@ export class DrizzleQueryEngine<
   /**
    * Get all items matching the filter (auto-paginated, use with caution)
    */
-  async getFullList(params: Omit<ListParams, "page"> = {}): Promise<TSelect[]> {
+  async getFullList(params: Omit<ListParams<TTable>, "page"> = {}): Promise<TSelect[]> {
     const allItems: TSelect[] = [];
     let page = 1;
     const perPage = params.perPage || 500;
@@ -625,10 +670,9 @@ export class DrizzleQueryEngine<
    */
   async getOne(
     id: string,
-    params: Pick<ListParams, "expand" | "fields"> = {},
+    params: Pick<ListParams<TTable>, "expand" | "fields"> = {},
   ): Promise<TSelect | null> {
-    const columns = getTableColumns(this.table);
-    const idColumn = columns["id"];
+    const idColumn = this.columns["id" as TableColumns<TTable>];
 
     if (!idColumn) {
       throw new Error(`Table ${this.tableName} does not have an 'id' column`);
@@ -646,7 +690,7 @@ export class DrizzleQueryEngine<
     }
 
     const { fields } = params;
-    const selectedItems = FieldSelector.selectFields(result as any[], fields);
+    const selectedItems = FieldSelector.selectFields(result as any[], fields as string);
     return selectedItems[0] as TSelect;
   }
 
@@ -688,8 +732,7 @@ export class DrizzleQueryEngine<
    * Update a record by ID
    */
   async update(id: string, data: Partial<TInsert>): Promise<TSelect | null> {
-    const columns = getTableColumns(this.table);
-    const idColumn = columns["id"];
+    const idColumn = this.columns["id" as TableColumns<TTable>];
 
     if (!idColumn) {
       throw new Error(`Table ${this.tableName} does not have an 'id' column`);
@@ -734,8 +777,7 @@ export class DrizzleQueryEngine<
    * Delete a record by ID
    */
   async delete(id: string): Promise<TSelect | null> {
-    const columns = getTableColumns(this.table);
-    const idColumn = columns["id"];
+    const idColumn = this.columns["id" as TableColumns<TTable>];
 
     if (!idColumn) {
       throw new Error(`Table ${this.tableName} does not have an 'id' column`);
@@ -775,8 +817,7 @@ export class DrizzleQueryEngine<
    * Check if a record exists by ID
    */
   async exists(id: string): Promise<boolean> {
-    const columns = getTableColumns(this.table);
-    const idColumn = columns["id"];
+    const idColumn = this.columns["id" as TableColumns<TTable>];
 
     if (!idColumn) {
       throw new Error(`Table ${this.tableName} does not have an 'id' column`);
@@ -812,6 +853,26 @@ export class DrizzleQueryEngine<
   }
 
   /**
+   * Find records by a specific column value (type-safe)
+   */
+  async findByColumn<K extends TableColumns<TTable>>(
+    columnName: K,
+    value: InferSelectModel<TTable>[K],
+    params: Omit<ListParams<TTable>, "filter"> = {},
+  ): Promise<PaginatedResponse<TSelect>> {
+    const column = this.columns[columnName];
+    if (!column) {
+      throw new Error(`Column ${String(columnName)} does not exist on table ${this.tableName}`);
+    }
+
+    // Build filter string from column and value
+    const filterValue = value === null ? "null" : typeof value === "string" ? `'${value}'` : String(value);
+    const filter = `${String(columnName)}=${filterValue}`;
+
+    return this.list({ ...params, filter });
+  }
+
+  /**
    * Get the underlying Drizzle table reference
    */
   getTable(): TTable {
@@ -823,6 +884,13 @@ export class DrizzleQueryEngine<
    */
   getTableName(): string {
     return this.tableName;
+  }
+
+  /**
+   * Get the columns object
+   */
+  getColumns(): TableColumnsObject<TTable> {
+    return this.columns;
   }
 }
 
@@ -846,4 +914,5 @@ export function createQueryEngine<TTable extends PgTable>(
 // TYPE EXPORTS FOR EXTERNAL USE
 // ============================================================================
 
-export type { ParsedFilter, ParsedSort, FilterOperator };
+export type { FilterOperator, ParsedFilter, ParsedSort };
+

@@ -1,14 +1,8 @@
+import { ac, roles } from "@repo/isomorphic/auth-roles";
 import { db } from "@/db/client";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-  admin,
-  openAPI,
-  organization,
-  apiKey,
-  bearer,
-} from "better-auth/plugins";
-import { ac, roles } from "@repo/isomorphic/auth-roles";
+import { admin, openAPI, organization, apiKey, bearer } from "better-auth/plugins";
 import { AUTHORIZED_ORIGINS } from "@/utils/constants";
 
 export const auth = betterAuth({
