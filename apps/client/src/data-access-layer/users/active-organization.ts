@@ -10,6 +10,10 @@ export const setActiveOrganizationMutationOptions = mutationOptions({
     }
     return data;
   },
+
+  meta: {
+    invalidates: [["organization"]],
+  },
 });
 
 // const { data, error } = await authClient.organization.getFullOrganization({
