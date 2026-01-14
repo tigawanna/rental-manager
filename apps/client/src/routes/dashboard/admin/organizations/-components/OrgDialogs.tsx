@@ -20,6 +20,7 @@ import { Plus } from "lucide-react";
 
 interface CreateOrgProps {
   onCreated?: (org: any) => void;
+  trigger?: React.ReactNode;
   triggerLabel?: string;
 }
 
@@ -34,7 +35,7 @@ type TOrgBodyPayload = {
   metadata?: Record<string, any> | undefined;
 };
 
-export function CreateOrg({ onCreated, triggerLabel }: CreateOrgProps) {
+export function CreateOrg({ onCreated, trigger, triggerLabel }: CreateOrgProps) {
   const [open, setOpen] = useState(false);
 
   const mutation = useMutation({
@@ -63,10 +64,14 @@ export function CreateOrg({ onCreated, triggerLabel }: CreateOrgProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="default">
-          <Plus className="size-4" />
-          {triggerLabel && <div className="ml-2">{triggerLabel}</div>}
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button size="sm" variant="default">
+            <Plus className="size-4" />
+            {triggerLabel && <div className="ml-2">{triggerLabel}</div>}
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
