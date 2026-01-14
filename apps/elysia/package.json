@@ -1,5 +1,5 @@
 {
-  "name": "@repo/elysia",
+  "name": "elysia",
   "type": "module",
   "version": "1.0.0",
   "exports": {
