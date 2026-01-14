@@ -8,8 +8,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
-import { properties } from "./properties";
-import { units } from "./units";
+import { properties } from "./properties-schema";
+import { units } from "./units-schema";
 
 // Maintenance requests table logs repair tickets, assignment, priority, and cost tracking
 export const maintenanceRequests = pgTable("maintenance_requests", {
@@ -18,7 +18,8 @@ export const maintenanceRequests = pgTable("maintenance_requests", {
     .notNull()
     .references(() => properties.id, { onDelete: "cascade" }),
   unitId: uuid("unit_id").references(() => units.id, { onDelete: "cascade" }),
-  requestedById: varchar("requested_by_id", { length: 255 }).notNull(),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull(),
   assignedToId: varchar("assigned_to_id", { length: 255 }),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),

@@ -18,7 +18,7 @@
     "db:push": "drizzle-kit push ",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
-    "db:reset": "drizzle-kit reset"
+    "db:reset": "tsx src/scripts/db-reset.ts"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",

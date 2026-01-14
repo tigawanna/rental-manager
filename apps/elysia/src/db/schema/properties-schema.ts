@@ -2,8 +2,8 @@ import { relations } from "drizzle-orm";
 import { boolean, index, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
 import { organization } from "./auth-schema";
-import { maintenanceRequests } from "./maintenance";
-import { units } from "./units";
+import { maintenanceRequests } from "./maintenance-schema";
+import { units } from "./units-schema";
 
 // Properties table stores rental assets scoped to organizations
 // Access control is determined by organization membership and member roles
@@ -14,6 +14,8 @@ export const properties = pgTable(
     organizationId: text("organization_id")
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
+    createdBy: varchar("created_by", { length: 255 }).notNull(),
+    updatedBy: varchar("updated_by", { length: 255 }).notNull(),
     name: varchar("name", { length: 255 }).notNull(),
     address: text("address").notNull(),
     city: varchar("city", { length: 100 }).notNull(),

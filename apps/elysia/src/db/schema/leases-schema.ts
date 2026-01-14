@@ -8,8 +8,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
-import { units } from "./units";
-import { payments } from "./payments";
+import { payments } from "./payments-schema";
+import { units } from "./units-schema";
 
 // Leases table captures rental agreements between tenants and units with rent terms
 export const leases = pgTable("leases", {
@@ -17,6 +17,8 @@ export const leases = pgTable("leases", {
   unitId: uuid("unit_id")
     .notNull()
     .references(() => units.id, { onDelete: "cascade" }),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull(),
   tenantId: varchar("tenant_id", { length: 255 }).notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),

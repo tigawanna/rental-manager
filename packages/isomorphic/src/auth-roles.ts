@@ -1,6 +1,7 @@
 import { createAccessControl } from "better-auth/plugins/access";
-
+import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 const statement = {
+  ...defaultStatements,
   user: ["create", "list", "set-role", "ban", "delete"],
   session: ["list", "revoke"],
   property: ["create", "read", "update", "delete", "list"],
@@ -15,6 +16,7 @@ const ac = createAccessControl(statement);
 
 const roles = {
   admin: ac.newRole({
+    ...adminAc.statements,
     user: ["create", "list", "set-role", "ban", "delete"],
     session: ["list", "revoke"],
     property: ["create", "read", "update", "delete", "list"],
@@ -55,11 +57,11 @@ const roles = {
     property: ["read"],
     tenant: ["read"],
     lease: ["read"],
-    maintenance: ["create", "read"],
+    maintenance: ["create", "read", "update"],
     payment: ["read", "list"],
     document: ["read", "list"],
     session: ["list"],
   }),
 };
 
-export { ac, statement, roles };
+export { ac, roles };

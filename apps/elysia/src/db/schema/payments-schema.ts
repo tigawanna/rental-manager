@@ -8,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
-import { leases } from "./leases";
+import { leases } from "./leases-schema";
 
 // Payments table tracks rent and related charges against leases and tenants
 export const payments = pgTable("payments", {
@@ -16,6 +16,8 @@ export const payments = pgTable("payments", {
   leaseId: uuid("lease_id")
     .notNull()
     .references(() => leases.id, { onDelete: "cascade" }),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull(),
   tenantId: varchar("tenant_id", { length: 255 }).notNull(),
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: date("due_date").notNull(),

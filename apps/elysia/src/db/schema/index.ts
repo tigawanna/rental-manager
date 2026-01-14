@@ -1,8 +1,9 @@
 // Export all schemas
-export * from "./properties";
-export * from "./units";
-export * from "./leases";
-export * from "./payments";
-export * from "./maintenance";
-export * from "./documents";
 export * from "./auth-schema";
+export * from "./documents-schema";
+export * from "./leases-schema";
+export * from "./maintenance-schema";
+export * from "./payments-schema";
+export * from "./properties-schema";
+export * from "./units-schema";
+

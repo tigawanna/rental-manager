@@ -8,7 +8,7 @@ import {
   apiKey,
   bearer,
 } from "better-auth/plugins";
-import { ac, roles } from "./auth-rbac";
+import { ac, roles } from "@repo/isomorphic/auth-roles";
 import { AUTHORIZED_ORIGINS } from "@/utils/constants";
 
 export const auth = betterAuth({

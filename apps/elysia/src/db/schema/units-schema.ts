@@ -9,9 +9,9 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { commonColumns } from "../helpers/columns";
-import { properties } from "./properties";
-import { leases } from "./leases";
-import { maintenanceRequests } from "./maintenance";
+import { leases } from "./leases-schema";
+import { maintenanceRequests } from "./maintenance-schema";
+import { properties } from "./properties-schema";
 
 // Units table stores individual rentable units within a property (pricing, availability, amenities)
 export const units = pgTable("units", {
@@ -19,6 +19,8 @@ export const units = pgTable("units", {
   propertyId: uuid("property_id")
     .notNull()
     .references(() => properties.id, { onDelete: "cascade" }),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull(),
   unitNumber: varchar("unit_number", { length: 50 }).notNull(),
   floor: integer("floor"),
   bedrooms: integer("bedrooms").notNull().default(1),
